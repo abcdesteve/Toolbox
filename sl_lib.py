@@ -4,6 +4,8 @@ import zipfile
 from qfluentwidgets import *
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
+from PySide6.QtCore import *
+from qfluentwidgets.common.config import Theme
 
 from input_dialog_ui import Ui_Input_dialog
 
@@ -58,14 +60,16 @@ class sltk:
                     origin[okey] = data[okey]
         return origin
 
-    def unique_add_items(widget: QComboBox | ComboBox, *items: str | list[str], format_item: bool = True):
+    def unique_add_items(widget: QComboBox | ComboBox | QListWidget | ListWidget, *items: str | list[str], format_item: bool = True):
         '''为ComboBox不重复地添加一个或多个item，同时格式化路径（如果可以）'''
+        previous_items = [(widget.itemText(i) if type(widget)in[QComboBox,ComboBox]else widget.item(i).text()) for i in range(widget.count())]
         if type(items[0]) == list:
             items = items[0]
         for i in items:
             if format_item:
                 i = os.path.realpath(i)
-            widget.addItem(i)
+            if i not in previous_items:
+                widget.addItem(i)
 
     def unique_set_items(widget: QComboBox | ComboBox, *items: str | list[str], format_item: bool = True):
         '''先清空ComboBox，再运行 `sltk.unique_add_items` ，并尝试恢复原来的选项'''
@@ -236,3 +240,9 @@ class StatisticsWidget(QWidget):
 
     def setValue(self, value: str = '未知'):
         self.valueLabel.setText(value)
+
+class MyFluentIcon(FluentIconBase,Enum):
+    ToolBox='toolbox'
+
+    def path(self, theme=Theme.AUTO) -> str:
+        return f'{os.path.dirname(__file__)}icons/{self.value}'

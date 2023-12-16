@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>fas</class>
+ <widget class="QWidget" name="fas">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>747</width>
+    <height>522</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="TableWidget" name="tableWidget">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>任务名称</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>双向同步？</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>执行间隔</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>上次执行时间</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>执行次数</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>操作文件数统计</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>操作文件大小统计</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="PushButton" name="btn_del">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>删除</string>
+     </property>
+     <property name="lightCustonQss" stdset="0">
+      <string>PushButton{background-color:#e81123;}
+PushButton:hover{background-color:#e63342;}</string>
+     </property>
+     <property name="darkCustomQss" stdset="0">
+      <string>PushButton{background-color:#e81123;}
+PushButton:hover{background-color:#e63342;}</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="PrimaryPushButton" name="btn_add">
+     <property name="text">
+      <string>添加</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

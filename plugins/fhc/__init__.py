@@ -4,13 +4,18 @@ from PySide6.QtGui import *
 
 from .fhc_ui import Ui_fhc
 
-import os,sys,math,hashlib
+import os
+import sys
+import math
+import hashlib
 
-class FHC(QWidget,Ui_fhc):
+
+class FHC(QWidget, Ui_fhc):
     '''file hash check'''
-    def __init__(self,parent:QWidget):
+
+    def __init__(self):
         super().__init__()
-        self.setupUi(parent)
+        self.setupUi(self)
         self.signal_connect()
 
     def signal_connect(self):
@@ -19,7 +24,7 @@ class FHC(QWidget,Ui_fhc):
         self.lineedit_A.textChanged.connect(self.fhc_table_update_data)
         self.lineedit_B.textChanged.connect(self.fhc_table_update_data)
         self.tablewidget.currentItemChanged.connect(self.fhc_table_update_data)
-    
+
     def fhc_select(self):
         section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
         path = QFileDialog.getOpenFileName(self, '请选择文件')[0]
@@ -92,14 +97,10 @@ class FHC(QWidget,Ui_fhc):
 
             if self.tablewidget.item(i, 0) != None and self.tablewidget.item(i, 2) != None:
                 if self.tablewidget.item(i, 0).text() == self.tablewidget.item(i, 2).text():
-                    self.tablewidget.setItem(
-                        i, 1, QTableWidgetItem('True'))
-                    self.tablewidget.item(
-                        i, 1).setBackground(QColor('green'))
+                    self.tablewidget.setItem(i, 1, QTableWidgetItem('True'))
+                    self.tablewidget.item(i, 1).setBackground(QColor('green'))
                 else:
-                    self.tablewidget.setItem(
-                        i, 1, QTableWidgetItem('False'))
-                    self.tablewidget.item(
-                        i, 1).setBackground(QColor('red'))
+                    self.tablewidget.setItem(i, 1, QTableWidgetItem('False'))
+                    self.tablewidget.item(i, 1).setBackground(QColor('red'))
             else:
                 self.tablewidget.setItem(i, 1, QTableWidgetItem())

@@ -7,9 +7,9 @@ import os
 
 class CSL(QWidget,Ui_csl):
     '''create symbol link'''
-    def __init__(self,parent:QWidget):
+    def __init__(self):
         super().__init__()
-        self.setupUi(parent)
+        self.setupUi(self)
         self.signal_connect()
 
     def signal_connect(self):

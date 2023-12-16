@@ -12,9 +12,9 @@ import webbrowser,os
 
 class About(QWidget,Ui_about):
     '''About page'''
-    def __init__(self,parent:QWidget,parent_dir:str):
+    def __init__(self,parent_dir:str):
         super().__init__()
-        self.setupUi(parent)
+        self.setupUi(self)
         self.btn_github.setIcon(FluentIcon.GITHUB)
         # self.btn_bilibili.setIcon(FluentIcon.HOME)
         self.btn_bilibili.setIcon(QIcon(os.path.join(os.path.dirname(__name__),'icons/bilibili.svg')))

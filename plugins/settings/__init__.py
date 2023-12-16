@@ -1,15 +1,20 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
+from qfluentwidgets import *
 
 from .settings_ui import Ui_settings
-import theme_control
 
 class Settings(QWidget,Ui_settings):
     '''setting page'''
-    def __init__(self,parent:QWidget,app:QApplication,mainwindow:QMainWindow):
+    def __init__(self,app:QApplication,mainwindow:QMainWindow):
         super().__init__()
-        self.setupUi(parent)
+        self.setupUi(self)
         self.signal_connect()
+        self.cfg=AppConfig()
+        self.cfg.load('temp.config',self.cfg)
+        self.settingcard=OptionsSettingCard(self.cfg.theme_mode,FluentIcon.ACCEPT,'主题','设置主题',['AUTO','LIGHT','DARK'])
+        self.verticalLayout.addWidget(self.settingcard)
+
         self.app=app
         self.mainwindow=mainwindow
 
@@ -22,8 +27,9 @@ class Settings(QWidget,Ui_settings):
         self.btn_animation_example.clicked.connect(self.settings_perform_animation)
 
     def settings_change_status(self, do_perform_animation=True):
+        '''保存设置修改，同时刷新主题'''
         # update status
-        theme_control.apply_theme(self.app,self.btn_group_theme.checkedButton().objectName()[6:])
+        self.mainwindow.update_theme()
         if self.ckb_enable_animation.isChecked():
             self.cmb_animation.setEnabled(True)
         else:
@@ -46,3 +52,8 @@ class Settings(QWidget,Ui_settings):
         self.animation_example.setEasingCurve(
             eval('QEasingCurve.'+self.cmb_animation.currentText()))
         self.animation_example.start()
+class AppConfig(QConfig):
+    "应用配置"
+    theme_mode=OptionsConfigItem('main','theme_mode','AUTO',OptionsValidator(['AUTO','DARK','LIGHT']),restart=True)
+    animation_type=OptionsConfigItem('main','animation_type','InOutCubic',OptionsValidator(['Linear','InOutQuad','InOutCubic','InOutSine','InOutElastic','InOutBack','InOutBounce']))
+    

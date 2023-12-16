@@ -18,9 +18,9 @@ import threading,subprocess
 class AAM(QWidget, Ui_aam):
     """Android application manager"""
 
-    def __init__(self, parent: QWidget, mainwindow: QMainWindow, parent_dir: str):
+    def __init__(self, mainwindow: QMainWindow, parent_dir: str):
         super().__init__()
-        self.setupUi(parent)
+        self.setupUi(self)
         self.mainwindow = mainwindow
         self.subwin_wireless = Wireless(self)
 
@@ -62,6 +62,7 @@ class AAM(QWidget, Ui_aam):
         self.btn_unfreeze.setIcon(FluentIcon.FRIGID)
         self.btn_backup.setIcon(FluentIcon.HISTORY)
         self.btn_restore.setIcon(FluentIcon.HISTORY)
+        self.btn_grant_permission.setIcon(FluentIcon.)
 
     def init_signal(self):
         self.btn_wireless.clicked.connect(self.subwin_wireless.show)
@@ -190,7 +191,7 @@ class AAM(QWidget, Ui_aam):
             zip_path = self.aam_extract(silence=True)  # ZIP 文件的路径
             try:
                 # shell控制 | 管道符是否可用
-                result=subprocess.run(f'''{sltk.join_path(self.INSIDE_DIR,'aapt.exe')} dump badging {zip_path}''',stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',shell=True).stdout.splitlines()
+                result=subprocess.run(f'''{sltk.join_path(self.INSIDE_DIR,'aapt.exe')} dump badging {zip_path}''',stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='ignore',shell=True).stdout.splitlines()
                 # self.textedit_log.append('\n'.join(result))
                 threading.Thread(target=name, name='get_app_name',args=[i.split(':')[1][1:-1] for i in result if 'application-label'in i][0:1]).start()
                 threading.Thread(target=icon, name='get_app_icon',args=[i.split(':')[1][1:-1] for i in result if 'application-icon'in i][0:1]).start()

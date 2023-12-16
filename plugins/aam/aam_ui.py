@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'aam.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.3
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -116,78 +116,88 @@ class Ui_aam(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
-        self.gridLayout_1 = QGridLayout()
-        self.gridLayout_1.setObjectName(u"gridLayout_1")
-        self.horizontalSpacer_1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_1.addItem(self.horizontalSpacer_1, 1, 11, 2, 1)
-
-        self.btn_backup = PrimaryPushButton(aam)
-        self.btn_backup.setObjectName(u"btn_backup")
-
-        self.gridLayout_1.addWidget(self.btn_backup, 1, 9, 1, 1)
-
-        self.btn_restore = PrimaryPushButton(aam)
-        self.btn_restore.setObjectName(u"btn_restore")
-
-        self.gridLayout_1.addWidget(self.btn_restore, 2, 9, 1, 1)
-
-        self.btn_install = PrimaryPushButton(aam)
-        self.btn_install.setObjectName(u"btn_install")
-
-        self.gridLayout_1.addWidget(self.btn_install, 1, 6, 1, 1)
-
-        self.btn_uninstall = PrimaryPushButton(aam)
-        self.btn_uninstall.setObjectName(u"btn_uninstall")
-
-        self.gridLayout_1.addWidget(self.btn_uninstall, 2, 6, 1, 1)
-
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout_1.addItem(self.horizontalSpacer, 1, 1, 2, 1)
+        self.gridLayout.addItem(self.horizontalSpacer, 0, 1, 2, 1)
 
         self.btn_launch = PrimaryPushButton(aam)
         self.btn_launch.setObjectName(u"btn_launch")
 
-        self.gridLayout_1.addWidget(self.btn_launch, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.btn_launch, 0, 2, 1, 1)
 
-        self.btn_extract = PrimaryPushButton(aam)
-        self.btn_extract.setObjectName(u"btn_extract")
+        self.btn_install = PrimaryPushButton(aam)
+        self.btn_install.setObjectName(u"btn_install")
 
-        self.gridLayout_1.addWidget(self.btn_extract, 2, 2, 1, 1)
+        self.gridLayout.addWidget(self.btn_install, 0, 3, 1, 1)
 
         self.btn_freeze = PrimaryPushButton(aam)
         self.btn_freeze.setObjectName(u"btn_freeze")
 
-        self.gridLayout_1.addWidget(self.btn_freeze, 1, 8, 1, 1)
+        self.gridLayout.addWidget(self.btn_freeze, 0, 4, 1, 1)
+
+        self.btn_backup = PrimaryPushButton(aam)
+        self.btn_backup.setObjectName(u"btn_backup")
+
+        self.gridLayout.addWidget(self.btn_backup, 0, 5, 1, 1)
+
+        self.btn_grant_permission = PrimaryPushButton(aam)
+        self.btn_grant_permission.setObjectName(u"btn_grant_permission")
+
+        self.gridLayout.addWidget(self.btn_grant_permission, 0, 6, 1, 1)
 
         self.btn_getapp_low = PrimaryPushButton(aam)
         self.btn_getapp_low.setObjectName(u"btn_getapp_low")
 
-        self.gridLayout_1.addWidget(self.btn_getapp_low, 1, 12, 1, 1)
-
-        self.btn_unfreeze = PrimaryPushButton(aam)
-        self.btn_unfreeze.setObjectName(u"btn_unfreeze")
-
-        self.gridLayout_1.addWidget(self.btn_unfreeze, 2, 8, 1, 1)
-
-        self.btn_getapp_high = PrimaryPushButton(aam)
-        self.btn_getapp_high.setObjectName(u"btn_getapp_high")
-
-        self.gridLayout_1.addWidget(self.btn_getapp_high, 2, 12, 1, 1)
+        self.gridLayout.addWidget(self.btn_getapp_low, 0, 8, 1, 1)
 
         self.btn_clear = PushButton(aam)
         self.btn_clear.setObjectName(u"btn_clear")
 
-        self.gridLayout_1.addWidget(self.btn_clear, 1, 13, 2, 1)
+        self.gridLayout.addWidget(self.btn_clear, 0, 9, 2, 1)
+
+        self.btn_extract = PrimaryPushButton(aam)
+        self.btn_extract.setObjectName(u"btn_extract")
+
+        self.gridLayout.addWidget(self.btn_extract, 1, 2, 1, 1)
+
+        self.btn_uninstall = PrimaryPushButton(aam)
+        self.btn_uninstall.setObjectName(u"btn_uninstall")
+
+        self.gridLayout.addWidget(self.btn_uninstall, 1, 3, 1, 1)
+
+        self.btn_unfreeze = PrimaryPushButton(aam)
+        self.btn_unfreeze.setObjectName(u"btn_unfreeze")
+
+        self.gridLayout.addWidget(self.btn_unfreeze, 1, 4, 1, 1)
+
+        self.btn_restore = PrimaryPushButton(aam)
+        self.btn_restore.setObjectName(u"btn_restore")
+
+        self.gridLayout.addWidget(self.btn_restore, 1, 5, 1, 1)
+
+        self.btn_revoke_permission = PrimaryPushButton(aam)
+        self.btn_revoke_permission.setObjectName(u"btn_revoke_permission")
+
+        self.gridLayout.addWidget(self.btn_revoke_permission, 1, 6, 1, 1)
+
+        self.btn_getapp_high = PrimaryPushButton(aam)
+        self.btn_getapp_high.setObjectName(u"btn_getapp_high")
+
+        self.gridLayout.addWidget(self.btn_getapp_high, 1, 8, 1, 1)
+
+        self.horizontalSpacer_1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer_1, 0, 7, 2, 1)
 
         self.layout_device_info = QHBoxLayout()
         self.layout_device_info.setObjectName(u"layout_device_info")
 
-        self.gridLayout_1.addLayout(self.layout_device_info, 1, 0, 2, 1)
+        self.gridLayout.addLayout(self.layout_device_info, 0, 0, 2, 1)
 
 
-        self.verticalLayout_2.addLayout(self.gridLayout_1)
+        self.verticalLayout_2.addLayout(self.gridLayout)
 
         self.textedit_log = TextEdit(aam)
         self.textedit_log.setObjectName(u"textedit_log")
@@ -242,17 +252,19 @@ class Ui_aam(object):
         self.label_app_name.setText("")
         self.ckb_app_user.setText(QCoreApplication.translate("aam", u"\u7528\u6237\u5e94\u7528", None))
         self.ckb_app_sys.setText(QCoreApplication.translate("aam", u"\u7cfb\u7edf\u5e94\u7528", None))
-        self.btn_backup.setText(QCoreApplication.translate("aam", u"\u5907\u4efd", None))
-        self.btn_restore.setText(QCoreApplication.translate("aam", u"\u6062\u590d", None))
-        self.btn_install.setText(QCoreApplication.translate("aam", u"\u5b89\u88c5", None))
-        self.btn_uninstall.setText(QCoreApplication.translate("aam", u"\u5378\u8f7d", None))
         self.btn_launch.setText(QCoreApplication.translate("aam", u"\u542f\u52a8", None))
-        self.btn_extract.setText(QCoreApplication.translate("aam", u"\u63d0\u53d6", None))
+        self.btn_install.setText(QCoreApplication.translate("aam", u"\u5b89\u88c5", None))
         self.btn_freeze.setText(QCoreApplication.translate("aam", u"\u51bb\u7ed3", None))
+        self.btn_backup.setText(QCoreApplication.translate("aam", u"\u5907\u4efd", None))
+        self.btn_grant_permission.setText(QCoreApplication.translate("aam", u"\u63d0\u6743", None))
         self.btn_getapp_low.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u4f4e\u7248\u672c)", None))
-        self.btn_unfreeze.setText(QCoreApplication.translate("aam", u"\u89e3\u51bb", None))
-        self.btn_getapp_high.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u9ad8\u7248\u672c)", None))
         self.btn_clear.setText(QCoreApplication.translate("aam", u"\u6e05\u7a7a\u65e5\u5fd7", None))
+        self.btn_extract.setText(QCoreApplication.translate("aam", u"\u63d0\u53d6", None))
+        self.btn_uninstall.setText(QCoreApplication.translate("aam", u"\u5378\u8f7d", None))
+        self.btn_unfreeze.setText(QCoreApplication.translate("aam", u"\u89e3\u51bb", None))
+        self.btn_restore.setText(QCoreApplication.translate("aam", u"\u6062\u590d", None))
+        self.btn_revoke_permission.setText(QCoreApplication.translate("aam", u"\u964d\u6743", None))
+        self.btn_getapp_high.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u9ad8\u7248\u672c)", None))
         self.textedit_log.setHtml(QCoreApplication.translate("aam", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

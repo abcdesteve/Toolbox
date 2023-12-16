@@ -1,67 +1,100 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from qfluentwidgets import *
+
+from sl_lib import *
+import theme_control
 
 from gui_ui import Ui_gui
-from plugins.aam.main import AAM
-from plugins.csl.main import CSL
-from plugins.fhc.main import FHC
-from plugins.settings.main import Settings
-from plugins.about.main import About
+from plugins.aam import AAM
+from plugins.csl import CSL
+from plugins.fhc import FHC
+from plugins.fas import FAS
+from plugins.settings import Settings
+from plugins.about import About
 
-import os,sys,json,threading
+import os
+import sys
+import json
+import threading
 
-class Main(QMainWindow, Ui_gui):
+
+class Main(FluentWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
-        
-        self.subwin_aam=AAM(self.tab_1,self,os.path.dirname(__file__))
-        self.subwin_csl=CSL(self.tab_2)
-        self.subwin_fhc=FHC(self.tab_3)
-        self.subwin_settings=Settings(self.tab_4,app,self)
-        self.subwin_about=About(self.tab_5,os.path.dirname(__file__))
 
-        self.pivot.addItem('aam','安卓应用管理',lambda:self.update_tab(0))
-        self.pivot.addItem('csl','创建符号链接',lambda:self.update_tab(1))
-        self.pivot.addItem('fhc','文件哈希校验',lambda:self.update_tab(2))
-        self.pivot.addItem('settings','设置',lambda:self.update_tab(3))
-        self.pivot.addItem('about','关于',lambda:self.update_tab(4))
-        self.pivot.setCurrentItem('aam')
-        self.tabWidget.setCurrentIndex(0)
+        self.last_theme = ''
+        self.setAcceptDrops(True)
 
-        app.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__),'icons/toolbox.svg')))
-        # self.subwin_aam.btn_device.setIcon(QIcon(os.path.join(os.path.dirname(__file__),'icon','android.svg')))
-        
+        self.subwin_aam = AAM(self, os.path.dirname(__file__))
+        self.subwin_csl = CSL()
+        self.subwin_fhc = FHC()
+        self.subwin_fas = FAS(self)
+        self.subwin_settings = Settings(app, self)
+        self.subwin_about = About(os.path.dirname(__file__))
 
-        self.tabWidget.currentChanged.connect(self.window_size_change)
+        self.addSubInterface(self.subwin_aam, FluentIcon.APPLICATION,
+                             '安卓应用管理', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_csl, FluentIcon.APPLICATION,
+                             '创建符号链接', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_fhc, FluentIcon.APPLICATION,
+                             '文件哈希校验', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_fas, FluentIcon.APPLICATION,
+                             '文件自动同步', NavigationItemPosition.SCROLL)
+        self.addSubInterface(
+            self.subwin_settings, FluentIcon.SETTING, '设置', NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.subwin_about, FluentIcon.INFO,
+                             '关于', NavigationItemPosition.BOTTOM)
+
+        self.setWindowTitle('神龙工具箱v2.1')
         self.window_size_change()
-
-        self.drag_file = ''
+        self.stackedWidget.currentChanged.connect(self.window_size_change)
         self.read_settings()
-        
+
+        self.theme_timer = QTimer()
+        self.theme_timer.start(1000)
+        self.theme_timer.timeout.connect(self.update_theme)
+        self.update_theme()
+
         self.show()
 
-    def update_tab(self,tab_index:int):
-        self.tabWidget.setCurrentIndex(tab_index)
+    def update_theme(self):
+        current_theme = self.subwin_settings.btn_group_theme.checkedButton().objectName()[
+            6:]
+        if self.last_theme != current_theme:
+            theme_control.apply_theme(app, current_theme)
+            self.setWindowIcon(FluentIcon.icon(
+                FluentIcon.DEVELOPER_TOOLS, theme()))
+            self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
+        self.last_theme = current_theme
+    # def update_tab(self,tab_index:int):
+    #     self.stackedWidget.setCurrentIndex(tab_index)
 
     def read_settings(self):
         if os.path.isfile(os.path.join(path, '神龙工具箱', 'settings.json')):
             with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'r')as file:
                 data = json.load(file)
             try:
-                {'Auto':self.subwin_settings.radio_auto,'Light':self.subwin_settings.radio_light,'Dark':self.subwin_settings.radio_dark}[data['theme']].setChecked(True)
-                self.subwin_settings.ckb_enable_animation.setChecked(data['animation'][0])
-                self.subwin_settings.cmb_animation.setCurrentText(data['animation'][1])
+                {'Auto': self.subwin_settings.radio_auto, 'Light': self.subwin_settings.radio_light,
+                    'Dark': self.subwin_settings.radio_dark}[data['theme']].setChecked(True)
+                self.subwin_settings.ckb_enable_animation.setChecked(
+                    data['animation'][0])
+                self.subwin_settings.cmb_animation.setCurrentText(
+                    data['animation'][1])
                 self.subwin_settings.settings_change_status(False)
             except:
                 print('配置文件异常，重置所有设置')
                 self.subwin_settings.settings_change_status(False)
         else:
-            try:os.mkdir(path)
-            except:pass
-            try:os.mkdir(os.path.join(path, '神龙工具箱'))
-            except:pass
+            try:
+                os.mkdir(path)
+            except:
+                pass
+            try:
+                os.mkdir(os.path.join(path, '神龙工具箱'))
+            except:
+                pass
             with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
                 print('Successfully created the setting file')
             self.subwin_settings.settings_change_status(False)
@@ -80,7 +113,8 @@ class Main(QMainWindow, Ui_gui):
             self.animation.setDuration(0)
         self.animation.setEasingCurve(
             eval('QEasingCurve.'+self.subwin_settings.cmb_animation.currentText()))
-        match self.tabWidget.currentIndex():
+        # print(self.stackedWidget.currentIndex())
+        match self.stackedWidget.currentIndex():
             case 0:
                 self.animation.setEndValue(QSize(800, 500))
             case 1:
@@ -89,61 +123,69 @@ class Main(QMainWindow, Ui_gui):
                 self.animation.setEndValue(QSize(800, 600))
                 self.subwin_fhc.fhc_table_update_size()
             case 3:
-                self.animation.setEndValue(QSize(500, 75))
+                self.animation.setEndValue(QSize(500, 400))
             case 4:
-                self.animation.setEndValue(QSize(500,400))
+                self.animation.setEndValue(QSize(500, 75))
+            case 5:
+                self.animation.setEndValue(QSize(800, 600))
         self.animation.start()
 
     def dragEnterEvent(self, event):
         drag_path = event.mimeData().urls()[0].toLocalFile()
         ext = os.path.splitext(drag_path)[1]
-        if self.tabWidget.currentIndex() == 0 and ext == '.apk':
+        if self.stackedWidget.currentIndex() == 0 and ext == '.apk':
             event.accept()
-            self.drag_file = drag_path
-        elif self.tabWidget.currentIndex()==1 and os.path.isdir(drag_path):
+        elif self.stackedWidget.currentIndex() == 1 and os.path.isdir(drag_path):
             event.accept()
-            self.drag_file=drag_path
-        elif self.tabWidget.currentIndex() == 2 and os.path.isfile(drag_path):
+        elif self.stackedWidget.currentIndex() == 2 and os.path.isfile(drag_path):
             event.accept()
-            self.drag_file = drag_path
+        # elif not self.subwin_fas.subwin_taskedit.isHidden():
+        #     event.accept()
         else:
             event.ignore()
-            self.drag_file = ''
 
     def dropEvent(self, event):
-        if self.drag_file:
-            if self.tabWidget.currentIndex() == 0:
+        drag_file = event.mimeData().urls()[0].toLocalFile()
+        if drag_file:
+            if self.stackedWidget.currentIndex() == 0:
                 if self.subwin_aam.cmb_device.currentText():
-                    if QMessageBox.question(self, '拖拽安装', f'你确认将\n{self.drag_file}\n安装到 {self.subwin_aam.cmb_device.currentText()} 上吗？') == QMessageBox.Yes:
-                        self.subwin_aam.aam_install(self.drag_file)
+                    if QMessageBox.question(self, '拖拽安装', f'你确认将\n{drag_file}\n安装到 {self.subwin_aam.cmb_device.currentText()} 上吗？') == QMessageBox.Yes:
+                        self.subwin_aam.aam_install(drag_file)
                 else:
                     QMessageBox.warning(self, '警告', '请先连接设备')
 
-            elif self.tabWidget.currentIndex()==1:
+            elif self.stackedWidget.currentIndex() == 1:
                 if self.subwin_csl.lineedit_from.hasFocus():
-                    self.subwin_csl.lineedit_from.setText(self.drag_file)
+                    self.subwin_csl.lineedit_from.setText(drag_file)
                 elif self.subwin_csl.lineedit_to_dir.hasFocus():
-                    self.subwin_csl.lineedit_to_dir.setText(self.drag_file)
+                    self.subwin_csl.lineedit_to_dir.setText(drag_file)
 
-            elif self.tabWidget.currentIndex() == 2:
+            elif self.stackedWidget.currentIndex() == 2:
                 if event.pos().x() <= self.width()//2:
-                    self.subwin_fhc.lineedit_A.setPlainText(f'file:{self.drag_file}')
+                    self.subwin_fhc.lineedit_A.setPlainText(
+                        f'file:{drag_file}')
                 else:
-                    self.subwin_fhc.lineedit_B.setPlainText(f'file:{self.drag_file}')
+                    self.subwin_fhc.lineedit_B.setPlainText(
+                        f'file:{drag_file}')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        match self.tabWidget.currentIndex():
+        match self.stackedWidget.currentIndex():
             case 0:
-                if event.key()in[Qt.Key.Key_Return,Qt.Key.Key_Enter] and self.subwin_aam.lineedit_cmd.hasFocus():
+                if event.key() in [Qt.Key.Key_Return, Qt.Key.Key_Enter] and self.subwin_aam.lineedit_cmd.hasFocus():
                     def aam_cmd():
-                        popen = os.popen(self.subwin_aam.lineedit_cmd.text()).read()
+                        popen = os.popen(
+                            self.subwin_aam.lineedit_cmd.text()).read()
                         self.subwin_aam.textedit_log.append(popen)
                     threading.Thread(target=aam_cmd).start()
+        event.ignore()
+
+    def closeEvent(self, event):
+        app.exit()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    
+
     path = os.path.expandvars(r'%appdata%/Avoconal')
     window = Main()
 

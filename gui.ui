@@ -14,7 +14,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>神龙工具箱 v2.0</string>
+   <string>神龙工具箱 v2.1</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -43,13 +43,14 @@
     <item>
      <widget class="QStackedWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab_1"/>
       <widget class="QWidget" name="tab_2"/>
       <widget class="QWidget" name="tab_3"/>
       <widget class="QWidget" name="tab_4"/>
       <widget class="QWidget" name="tab_5"/>
+      <widget class="QWidget" name="tab_6"/>
      </widget>
     </item>
    </layout>

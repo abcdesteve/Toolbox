@@ -59,6 +59,9 @@ class Ui_gui(object):
         self.tab_5 = QWidget()
         self.tab_5.setObjectName(u"tab_5")
         self.tabWidget.addWidget(self.tab_5)
+        self.tab_6 = QWidget()
+        self.tab_6.setObjectName(u"tab_6")
+        self.tabWidget.addWidget(self.tab_6)
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -66,13 +69,13 @@ class Ui_gui(object):
 
         self.retranslateUi(gui)
 
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(5)
 
 
         QMetaObject.connectSlotsByName(gui)
     # setupUi
 
     def retranslateUi(self, gui):
-        gui.setWindowTitle(QCoreApplication.translate("gui", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.0", None))
+        gui.setWindowTitle(QCoreApplication.translate("gui", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.1", None))
     # retranslateUi
 
