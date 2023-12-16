@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'tab_aam.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -196,7 +196,7 @@ class Ui_aam(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v1.1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v1.2</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u4f5c\u8005\uff1aabcdesteve</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right"
                         ":0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">    _                                   _   ____   ___ ____  _____ </span></p>\n"

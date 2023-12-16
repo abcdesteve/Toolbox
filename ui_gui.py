@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,6 +23,7 @@ class Ui_gui(object):
         if not gui.objectName():
             gui.setObjectName(u"gui")
         gui.resize(800, 500)
+        gui.setAcceptDrops(True)
         self.centralwidget = QWidget(gui)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -35,6 +36,12 @@ class Ui_gui(object):
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
         self.tabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QWidget()
+        self.tab_3.setObjectName(u"tab_3")
+        self.tabWidget.addTab(self.tab_3, "")
+        self.tab_4 = QWidget()
+        self.tab_4.setObjectName(u"tab_4")
+        self.tabWidget.addTab(self.tab_4, "")
 
         self.horizontalLayout.addWidget(self.tabWidget)
 
@@ -52,5 +59,7 @@ class Ui_gui(object):
         gui.setWindowTitle(QCoreApplication.translate("gui", u"\u795e\u9f99\u5de5\u5177\u7bb1", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_1), QCoreApplication.translate("gui", u"\u5b89\u5353\u5e94\u7528\u7ba1\u7406", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("gui", u"\u521b\u5efa\u7b26\u53f7\u94fe\u63a5", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("gui", u"\u54c8\u5e0c\u6821\u9a8c", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("gui", u"\u8bbe\u7f6e", None))
     # retranslateUi
 

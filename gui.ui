@@ -10,6 +10,9 @@
     <height>500</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>神龙工具箱</string>
   </property>
@@ -28,6 +31,16 @@
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>创建符号链接</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>哈希校验</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>设置</string>
        </attribute>
       </widget>
      </widget>
