@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHeaderView,
-    QPlainTextEdit, QPushButton, QSizePolicy, QTableWidget,
-    QTableWidgetItem, QWidget)
+    QSizePolicy, QTableWidgetItem, QWidget)
+
+from qfluentwidgets import (PlainTextEdit, PrimaryPushButton, TableWidget)
 
 class Ui_fhc(object):
     def setupUi(self, fhc):
@@ -33,17 +34,17 @@ class Ui_fhc(object):
 
         self.gridLayout.addWidget(self.line, 0, 1, 2, 1)
 
-        self.lineedit_A = QPlainTextEdit(fhc)
+        self.lineedit_A = PlainTextEdit(fhc)
         self.lineedit_A.setObjectName(u"lineedit_A")
 
         self.gridLayout.addWidget(self.lineedit_A, 1, 0, 1, 1)
 
-        self.btn_A = QPushButton(fhc)
+        self.btn_A = PrimaryPushButton(fhc)
         self.btn_A.setObjectName(u"btn_A")
 
         self.gridLayout.addWidget(self.btn_A, 0, 0, 1, 1)
 
-        self.tablewidget = QTableWidget(fhc)
+        self.tablewidget = TableWidget(fhc)
         if (self.tablewidget.columnCount() < 3):
             self.tablewidget.setColumnCount(3)
         __qtablewidgetitem = QTableWidgetItem()
@@ -78,12 +79,12 @@ class Ui_fhc(object):
 
         self.gridLayout.addWidget(self.tablewidget, 2, 0, 1, 3)
 
-        self.lineedit_B = QPlainTextEdit(fhc)
+        self.lineedit_B = PlainTextEdit(fhc)
         self.lineedit_B.setObjectName(u"lineedit_B")
 
         self.gridLayout.addWidget(self.lineedit_B, 1, 2, 1, 1)
 
-        self.btn_B = QPushButton(fhc)
+        self.btn_B = PrimaryPushButton(fhc)
         self.btn_B.setObjectName(u"btn_B")
 
         self.gridLayout.addWidget(self.btn_B, 0, 2, 1, 1)

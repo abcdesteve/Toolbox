@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'wireless.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.4.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,8 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
-    QMainWindow, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QMainWindow,
+    QSizePolicy, QWidget)
+
+from qfluentwidgets import LineEdit
 
 class Ui_wireless(object):
     def setupUi(self, wireless):
@@ -34,7 +36,7 @@ class Ui_wireless(object):
 
         self.gridLayout.addWidget(self.label_ip, 0, 0, 1, 1)
 
-        self.lineedit_ip = QLineEdit(self.centralwidget)
+        self.lineedit_ip = LineEdit(self.centralwidget)
         self.lineedit_ip.setObjectName(u"lineedit_ip")
         self.lineedit_ip.setClearButtonEnabled(True)
 
@@ -45,7 +47,7 @@ class Ui_wireless(object):
 
         self.gridLayout.addWidget(self.label_port, 1, 0, 1, 1)
 
-        self.lineedit_port = QLineEdit(self.centralwidget)
+        self.lineedit_port = LineEdit(self.centralwidget)
         self.lineedit_port.setObjectName(u"lineedit_port")
         self.lineedit_port.setClearButtonEnabled(True)
 

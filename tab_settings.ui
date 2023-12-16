@@ -7,215 +7,130 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>175</height>
+    <height>150</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_theme">
-     <property name="text">
-      <string>主题：</string>
-     </property>
-    </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_theme">
+       <property name="text">
+        <string>主题：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="RadioButton" name="radio_auto">
+       <property name="text">
+        <string>跟随系统</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btn_group_theme</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="RadioButton" name="radio_light">
+       <property name="text">
+        <string>浅色</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btn_group_theme</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="RadioButton" name="radio_dark">
+       <property name="text">
+        <string>深色</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btn_group_theme</string>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QRadioButton" name="radio_light">
-     <property name="text">
-      <string>浅色（重启生效）</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QRadioButton" name="radio_dark">
-     <property name="text">
-      <string>深色</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QRadioButton" name="radio_colorful">
-     <property name="text">
-      <string>多彩 BETA</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="4">
-    <widget class="QComboBox" name="cmb_theme">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <item>
-      <property name="text">
-       <string>dark_amber</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_blue</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_cyan</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_lightgreen</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_pink</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_purple</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_red</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_teal</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark_yellow</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_amber</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_blue</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_cyan</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_cyan_500</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_lightgreen</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_pink</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_purple</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_red</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_teal</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>light_yellow</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="5">
+   <item>
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_animation">
-     <property name="text">
-      <string>动画：</string>
-     </property>
-    </widget>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_animation">
+       <property name="text">
+        <string>动画：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="CheckBox" name="ckb_enable_animation">
+       <property name="text">
+        <string>开启动画</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ComboBox" name="cmb_animation">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Linear</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutQuad</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutCubic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutSine</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutElastic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutBack</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>InOutBounce</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="ckb_enable_animation">
-     <property name="text">
-      <string>开启动画</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" colspan="3">
-    <widget class="QComboBox" name="cmb_animation">
-     <property name="currentIndex">
-      <number>1</number>
-     </property>
-     <item>
-      <property name="text">
-       <string>Linear</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutQuad</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutCubic</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutSine</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutElastic</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutBack</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>InOutBounce</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="5">
+   <item>
     <widget class="QWidget" name="widget" native="true">
-     <widget class="QToolButton" name="animation_example">
+     <widget class="PrimaryPushButton" name="animation_example">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -232,6 +147,31 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>QToolButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>RadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="btn_group_theme"/>
+ </buttongroups>
 </ui>

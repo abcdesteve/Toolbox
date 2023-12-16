@@ -35,7 +35,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QLineEdit" name="lineedit_ip">
+     <widget class="LineEdit" name="lineedit_ip">
       <property name="text">
        <string>127.0.0.1</string>
       </property>
@@ -52,7 +52,7 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="lineedit_port">
+     <widget class="LineEdit" name="lineedit_port">
       <property name="text">
        <string>5555</string>
       </property>
@@ -64,6 +64,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

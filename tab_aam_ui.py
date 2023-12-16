@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'tab_aam.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.4.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,9 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+
+from qfluentwidgets import (ComboBox, EditableComboBox, LineEdit, PrimaryPushButton,
+    PushButton, TextEdit)
 
 class Ui_aam(object):
     def setupUi(self, aam):
@@ -28,18 +30,18 @@ class Ui_aam(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_1 = QHBoxLayout()
         self.horizontalLayout_1.setObjectName(u"horizontalLayout_1")
-        self.btn_device = QPushButton(aam)
+        self.btn_device = PushButton(aam)
         self.btn_device.setObjectName(u"btn_device")
         self.btn_device.setMaximumSize(QSize(120, 16777215))
 
         self.horizontalLayout_1.addWidget(self.btn_device)
 
-        self.cmb_device = QComboBox(aam)
+        self.cmb_device = ComboBox(aam)
         self.cmb_device.setObjectName(u"cmb_device")
 
         self.horizontalLayout_1.addWidget(self.cmb_device)
 
-        self.btn_wireless = QPushButton(aam)
+        self.btn_wireless = PushButton(aam)
         self.btn_wireless.setObjectName(u"btn_wireless")
         self.btn_wireless.setMaximumSize(QSize(100, 16777215))
 
@@ -56,9 +58,8 @@ class Ui_aam(object):
 
         self.horizontalLayout_2.addWidget(self.label_app)
 
-        self.cmb_app = QComboBox(aam)
+        self.cmb_app = EditableComboBox(aam)
         self.cmb_app.setObjectName(u"cmb_app")
-        self.cmb_app.setEditable(True)
 
         self.horizontalLayout_2.addWidget(self.cmb_app)
 
@@ -67,12 +68,12 @@ class Ui_aam(object):
 
         self.gridLayout_1 = QGridLayout()
         self.gridLayout_1.setObjectName(u"gridLayout_1")
-        self.btn_clear = QPushButton(aam)
+        self.btn_clear = PushButton(aam)
         self.btn_clear.setObjectName(u"btn_clear")
 
         self.gridLayout_1.addWidget(self.btn_clear, 1, 11, 2, 1)
 
-        self.btn_unfreeze = QPushButton(aam)
+        self.btn_unfreeze = PrimaryPushButton(aam)
         self.btn_unfreeze.setObjectName(u"btn_unfreeze")
 
         self.gridLayout_1.addWidget(self.btn_unfreeze, 2, 6, 1, 1)
@@ -81,47 +82,47 @@ class Ui_aam(object):
 
         self.gridLayout_1.addItem(self.horizontalSpacer_1, 1, 9, 2, 1)
 
-        self.btn_install = QPushButton(aam)
+        self.btn_install = PrimaryPushButton(aam)
         self.btn_install.setObjectName(u"btn_install")
 
         self.gridLayout_1.addWidget(self.btn_install, 1, 4, 1, 1)
 
-        self.btn_restore = QPushButton(aam)
+        self.btn_restore = PrimaryPushButton(aam)
         self.btn_restore.setObjectName(u"btn_restore")
 
         self.gridLayout_1.addWidget(self.btn_restore, 2, 7, 1, 1)
 
-        self.btn_backup = QPushButton(aam)
+        self.btn_backup = PrimaryPushButton(aam)
         self.btn_backup.setObjectName(u"btn_backup")
 
         self.gridLayout_1.addWidget(self.btn_backup, 1, 7, 1, 1)
 
-        self.btn_getapp_high = QPushButton(aam)
+        self.btn_getapp_high = PrimaryPushButton(aam)
         self.btn_getapp_high.setObjectName(u"btn_getapp_high")
 
         self.gridLayout_1.addWidget(self.btn_getapp_high, 2, 10, 1, 1)
 
-        self.btn_freeze = QPushButton(aam)
+        self.btn_freeze = PrimaryPushButton(aam)
         self.btn_freeze.setObjectName(u"btn_freeze")
 
         self.gridLayout_1.addWidget(self.btn_freeze, 1, 6, 1, 1)
 
-        self.btn_getapp_low = QPushButton(aam)
+        self.btn_getapp_low = PrimaryPushButton(aam)
         self.btn_getapp_low.setObjectName(u"btn_getapp_low")
 
         self.gridLayout_1.addWidget(self.btn_getapp_low, 1, 10, 1, 1)
 
-        self.btn_uninstall = QPushButton(aam)
+        self.btn_uninstall = PrimaryPushButton(aam)
         self.btn_uninstall.setObjectName(u"btn_uninstall")
 
         self.gridLayout_1.addWidget(self.btn_uninstall, 2, 4, 1, 1)
 
-        self.btn_launch = QPushButton(aam)
+        self.btn_launch = PrimaryPushButton(aam)
         self.btn_launch.setObjectName(u"btn_launch")
 
         self.gridLayout_1.addWidget(self.btn_launch, 1, 0, 1, 1)
 
-        self.btn_extract = QPushButton(aam)
+        self.btn_extract = PrimaryPushButton(aam)
         self.btn_extract.setObjectName(u"btn_extract")
 
         self.gridLayout_1.addWidget(self.btn_extract, 2, 0, 1, 1)
@@ -129,7 +130,7 @@ class Ui_aam(object):
 
         self.verticalLayout.addLayout(self.gridLayout_1)
 
-        self.textedit_log = QTextEdit(aam)
+        self.textedit_log = TextEdit(aam)
         self.textedit_log.setObjectName(u"textedit_log")
         self.textedit_log.setReadOnly(True)
 
@@ -142,7 +143,7 @@ class Ui_aam(object):
 
         self.horizontalLayout_3.addWidget(self.label_cmd)
 
-        self.lineedit_cmd = QLineEdit(aam)
+        self.lineedit_cmd = LineEdit(aam)
         self.lineedit_cmd.setObjectName(u"lineedit_cmd")
         self.lineedit_cmd.setClearButtonEnabled(True)
 
@@ -196,7 +197,7 @@ class Ui_aam(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v1.2</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v1.3</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u4f5c\u8005\uff1aabcdesteve</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right"
                         ":0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">    _                                   _   ____   ___ ____  _____ </span></p>\n"

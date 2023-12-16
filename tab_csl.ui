@@ -15,12 +15,15 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="1">
-    <widget class="QPushButton" name="btn_start">
+    <widget class="PrimaryPushButton" name="btn_start">
      <property name="minimumSize">
       <size>
        <width>100</width>
        <height>0</height>
       </size>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
       <string>创建</string>
@@ -56,12 +59,15 @@
    <item row="1" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="btn_to">
+      <widget class="PushButton" name="btn_to">
        <property name="maximumSize">
         <size>
          <width>120</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>选择目标路径</string>
@@ -69,7 +75,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineedit_to_dir">
+      <widget class="LineEdit" name="lineedit_to_dir">
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
@@ -86,7 +92,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineedit_to_name">
+      <widget class="LineEdit" name="lineedit_to_name">
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
@@ -100,12 +106,15 @@
    <item row="0" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_1">
      <item>
-      <widget class="QPushButton" name="btn_from">
+      <widget class="PushButton" name="btn_from">
        <property name="maximumSize">
         <size>
          <width>120</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>选择本体路径</string>
@@ -113,7 +122,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineedit_from">
+      <widget class="LineEdit" name="lineedit_from">
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
@@ -126,6 +135,23 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>btn_from</tabstop>
   <tabstop>lineedit_from</tabstop>
