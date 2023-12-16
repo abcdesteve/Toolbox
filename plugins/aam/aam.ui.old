@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>aam</class>
+ <widget class="QWidget" name="aam">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_1">
+     <item>
+      <widget class="PushButton" name="btn_device">
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>刷新连接设备</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ComboBox" name="cmb_device"/>
+     </item>
+     <item>
+      <widget class="PushButton" name="btn_wireless">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>无线调试</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_app">
+       <property name="maximumSize">
+        <size>
+         <width>75</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>应用包名：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="EditableComboBox" name="cmb_app"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_app_icon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_app_name">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_1">
+     <item row="1" column="4">
+      <widget class="PrimaryPushButton" name="btn_install">
+       <property name="text">
+        <string>安装</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="PrimaryPushButton" name="btn_extract">
+       <property name="text">
+        <string>提取</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="PrimaryPushButton" name="btn_backup">
+       <property name="text">
+        <string>备份</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="6">
+      <widget class="PrimaryPushButton" name="btn_unfreeze">
+       <property name="text">
+        <string>解冻</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="10">
+      <widget class="PrimaryPushButton" name="btn_getapp_low">
+       <property name="text">
+        <string>获取包名(低版本)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="PrimaryPushButton" name="btn_launch">
+       <property name="text">
+        <string>启动</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="10">
+      <widget class="PrimaryPushButton" name="btn_getapp_high">
+       <property name="text">
+        <string>获取包名(高版本)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="7">
+      <widget class="PrimaryPushButton" name="btn_restore">
+       <property name="text">
+        <string>恢复</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="PrimaryPushButton" name="btn_uninstall">
+       <property name="text">
+        <string>卸载</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="PrimaryPushButton" name="btn_freeze">
+       <property name="text">
+        <string>冻结</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="11" rowspan="2">
+      <widget class="PushButton" name="btn_clear">
+       <property name="text">
+        <string>清空日志</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="9" rowspan="2">
+      <spacer name="horizontalSpacer_1">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="TextEdit" name="textedit_log">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;神龙工具箱 v2.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;作者：abcdesteve&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;    _                                   _   ____   ___ ____  _____ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;   / \__   _____   ___ ___  _ __   __ _| | |___ \ / _ \___ \|___ / &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;  / _ \ \ / / _ \ / __/ _ \| '_ \ / _` | |   __) | | | |__) | |_ \ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt; / ___ \ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/ ___) |&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;/_/   \_\_/ \___/ \___\___/|_| |_|\__,_|_| |_____|\___/_____|____/ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;   _   _ _       _      _   _                                       _ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;  /_\ | | |  _ _(_)__ _| |_| |_ ___  _ _ ___ ___ ___ _ ___ _____ __| |&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt; / _ \| | | | '_| / _` | ' \  _(_-&amp;lt; | '_/ -_|_-&amp;lt;/ -_) '_\ V / -_) _` |&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;/_/ \_\_|_| |_| |_\__, |_||_\__/__/ |_| \___/__/\___|_|  \_/\___\__,_|&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;                  |___/                                               &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_cmd">
+       <property name="text">
+        <string>运行命令：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="LineEdit" name="lineedit_cmd">
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>EditableComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>btn_device</tabstop>
+  <tabstop>cmb_device</tabstop>
+  <tabstop>btn_wireless</tabstop>
+  <tabstop>cmb_app</tabstop>
+  <tabstop>btn_launch</tabstop>
+  <tabstop>btn_extract</tabstop>
+  <tabstop>btn_install</tabstop>
+  <tabstop>btn_uninstall</tabstop>
+  <tabstop>btn_freeze</tabstop>
+  <tabstop>btn_unfreeze</tabstop>
+  <tabstop>btn_backup</tabstop>
+  <tabstop>btn_restore</tabstop>
+  <tabstop>btn_getapp_low</tabstop>
+  <tabstop>btn_getapp_high</tabstop>
+  <tabstop>btn_clear</tabstop>
+  <tabstop>textedit_log</tabstop>
+  <tabstop>lineedit_cmd</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

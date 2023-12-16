@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'tab_settings.ui'
+## Form generated from reading UI file 'settings.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -95,9 +95,9 @@ class Ui_settings(object):
 
         self.widget = QWidget(settings)
         self.widget.setObjectName(u"widget")
-        self.animation_example = PrimaryPushButton(self.widget)
-        self.animation_example.setObjectName(u"animation_example")
-        self.animation_example.setGeometry(QRect(10, 10, 24, 22))
+        self.btn_animation_example = PrimaryPushButton(self.widget)
+        self.btn_animation_example.setObjectName(u"btn_animation_example")
+        self.btn_animation_example.setGeometry(QRect(10, 10, 24, 22))
 
         self.verticalLayout.addWidget(self.widget)
 
@@ -126,6 +126,6 @@ class Ui_settings(object):
         self.cmb_animation.setItemText(5, QCoreApplication.translate("settings", u"InOutBack", None))
         self.cmb_animation.setItemText(6, QCoreApplication.translate("settings", u"InOutBounce", None))
 
-        self.animation_example.setText(QCoreApplication.translate("settings", u"-", None))
+        self.btn_animation_example.setText(QCoreApplication.translate("settings", u"-", None))
     # retranslateUi
 

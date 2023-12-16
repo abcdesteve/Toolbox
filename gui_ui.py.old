@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'gui.ui'
+## Form generated from reading UI file 'gui - 副本.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.3
 ##
@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QListWidgetItem, QMainWindow, QSizePolicy,
     QStackedWidget, QVBoxLayout, QWidget)
 
-from qfluentwidgets import SegmentedWidget
+from qfluentwidgets import Pivot
 
 class Ui_gui(object):
     def setupUi(self, gui):
@@ -30,7 +30,7 @@ class Ui_gui(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.pivot = SegmentedWidget(self.centralwidget)
+        self.pivot = Pivot(self.centralwidget)
         self.pivot.setObjectName(u"pivot")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -73,6 +73,6 @@ class Ui_gui(object):
     # setupUi
 
     def retranslateUi(self, gui):
-        gui.setWindowTitle(QCoreApplication.translate("gui", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.0", None))
+        gui.setWindowTitle(QCoreApplication.translate("gui", u"\u795e\u9f99\u5de5\u5177\u7bb1", None))
     # retranslateUi
 

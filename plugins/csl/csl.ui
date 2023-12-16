@@ -82,6 +82,9 @@
        <property name="placeholderText">
         <string>请先选择目标父路径</string>
        </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -98,6 +101,9 @@
        </property>
        <property name="placeholderText">
         <string>目标名称</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -128,6 +134,9 @@
        </property>
        <property name="placeholderText">
         <string>请先选择本体路径</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

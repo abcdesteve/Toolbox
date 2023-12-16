@@ -130,7 +130,7 @@
    </item>
    <item>
     <widget class="QWidget" name="widget" native="true">
-     <widget class="PrimaryPushButton" name="animation_example">
+     <widget class="PrimaryPushButton" name="btn_animation_example">
       <property name="geometry">
        <rect>
         <x>10</x>

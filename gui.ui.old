@@ -14,12 +14,12 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>神龙工具箱 v2.0</string>
+   <string>神龙工具箱</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="SegmentedWidget" name="pivot">
+     <widget class="Pivot" name="pivot">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -57,7 +57,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SegmentedWidget</class>
+   <class>Pivot</class>
    <extends>QListWidget</extends>
    <header>qfluentwidgets</header>
   </customwidget>

@@ -7,20 +7,34 @@
 |文件软链接|create symbol link|csl|
 |文件校验|file hash check|fhc|
 
-# v1.0
+# 神龙工具箱v2.0
+
+## 依赖项目  
+
+- **PySide6** [*https://doc.qt.io/qtforpython-6/index.html*]
+- **PyQt-Fluent-Widgets** [*https://qfluentwidgets.com*]
+- **python_downloader** [*https://github.com/panmeibing/python_downloader*]
+- **Nuitka** [*https://nuitka.net*]
+- **Pyinstaller** [*https://www.pyinstaller.org*]
+
+## 更新日志
+
+### v1.0
 
 - 安卓应用数据备份
 
 - 文件软链接
 
-# v1.1
+### v1.1
+
 - ~~*安卓应用数据备份*~~ --> 安卓应用管理
 
 - 新增安装、卸载、冻结、解冻、命令行等功能
 
-- 更改了暗黑主题
+- 更改了 ***暗黑主题*** `qdarkstyle`
 
-# v1.2
+### v1.2
+
 - 新增文件校验功能
 
 - 新增设置，支持本地保存
@@ -30,3 +44,19 @@
 - 新增文件拖拽校验
 
 - 新增apk拖拽安装
+
+### v2.0
+
+- 更换设计风格为 `fluent design`
+
+- 修复 [v1.2版本](#v12) 中 [fhc组件](#插件名称对应表) 拖拽文件变为 `file:///` 的bug
+
+- 将各窗口独立为plugins,减少 [main.py](main.py) 中的代码
+
+- [csl组件](#插件名称对应表) 支持拖拽文件夹
+
+- [aam组件](#插件名称对应表) 支持筛选应用类型
+
+- [aam组件](#插件名称对应表) 支持包名自动填充
+
+- [aam组件](#插件名称对应表) 新增应用图标/名称、安卓版本、应用数量统计

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'tab_fhc.ui'
+## Form generated from reading UI file 'fhc.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -36,6 +36,7 @@ class Ui_fhc(object):
 
         self.lineedit_A = PlainTextEdit(fhc)
         self.lineedit_A.setObjectName(u"lineedit_A")
+        self.lineedit_A.setAcceptDrops(False)
 
         self.gridLayout.addWidget(self.lineedit_A, 1, 0, 1, 1)
 
@@ -73,7 +74,6 @@ class Ui_fhc(object):
         self.tablewidget.setVerticalHeaderItem(7, __qtablewidgetitem10)
         self.tablewidget.setObjectName(u"tablewidget")
         self.tablewidget.setColumnCount(3)
-        self.tablewidget.horizontalHeader().setProperty("showSortIndicator", True)
         self.tablewidget.horizontalHeader().setStretchLastSection(True)
         self.tablewidget.verticalHeader().setStretchLastSection(True)
 
@@ -81,6 +81,7 @@ class Ui_fhc(object):
 
         self.lineedit_B = PlainTextEdit(fhc)
         self.lineedit_B.setObjectName(u"lineedit_B")
+        self.lineedit_B.setAcceptDrops(False)
 
         self.gridLayout.addWidget(self.lineedit_B, 1, 2, 1, 1)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'tab_csl.ui'
+## Form generated from reading UI file 'csl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -54,6 +54,7 @@ class Ui_csl(object):
         self.lineedit_to_dir = LineEdit(csl)
         self.lineedit_to_dir.setObjectName(u"lineedit_to_dir")
         self.lineedit_to_dir.setAlignment(Qt.AlignCenter)
+        self.lineedit_to_dir.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.lineedit_to_dir)
 
@@ -65,6 +66,7 @@ class Ui_csl(object):
         self.lineedit_to_name = LineEdit(csl)
         self.lineedit_to_name.setObjectName(u"lineedit_to_name")
         self.lineedit_to_name.setAlignment(Qt.AlignCenter)
+        self.lineedit_to_name.setClearButtonEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.lineedit_to_name)
 
@@ -83,6 +85,7 @@ class Ui_csl(object):
         self.lineedit_from = LineEdit(csl)
         self.lineedit_from.setObjectName(u"lineedit_from")
         self.lineedit_from.setAlignment(Qt.AlignCenter)
+        self.lineedit_from.setClearButtonEnabled(True)
 
         self.horizontalLayout_1.addWidget(self.lineedit_from)
 
