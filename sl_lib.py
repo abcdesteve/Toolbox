@@ -243,6 +243,11 @@ class StatisticsWidget(QWidget):
 
 class MyFluentIcon(FluentIconBase,Enum):
     ToolBox='toolbox'
+    Sheild='shield'
+    Android='android'
+    Frigid='frigid'
+    UnFrigid='unfrigid'
 
     def path(self, theme=Theme.AUTO) -> str:
-        return f'{os.path.dirname(__file__)}icons/{self.value}'
+        return sltk.join_path(os.path.dirname(__file__), 'icons',f'{self.value}_{getIconColor(theme)}.svg')
+        # return f'{os.path.dirname(__file__)}icons/{self.value}'

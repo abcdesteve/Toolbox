@@ -15,24 +15,27 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHeaderView,
-    QSizePolicy, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QSizePolicy,
+    QTableWidgetItem, QWidget)
 
-from qfluentwidgets import (PlainTextEdit, PrimaryPushButton, TableWidget)
+from qfluentwidgets import (PlainTextEdit, PrimaryPushButton, PushButton, TableWidget)
 
 class Ui_fhc(object):
     def setupUi(self, fhc):
         if not fhc.objectName():
             fhc.setObjectName(u"fhc")
-        fhc.resize(400, 300)
+        fhc.resize(451, 297)
         self.gridLayout = QGridLayout(fhc)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.line = QFrame(fhc)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.btn_A = PrimaryPushButton(fhc)
+        self.btn_A.setObjectName(u"btn_A")
 
-        self.gridLayout.addWidget(self.line, 0, 1, 2, 1)
+        self.gridLayout.addWidget(self.btn_A, 0, 0, 1, 1)
+
+        self.btn_B = PrimaryPushButton(fhc)
+        self.btn_B.setObjectName(u"btn_B")
+
+        self.gridLayout.addWidget(self.btn_B, 0, 1, 1, 1)
 
         self.lineedit_A = PlainTextEdit(fhc)
         self.lineedit_A.setObjectName(u"lineedit_A")
@@ -40,10 +43,11 @@ class Ui_fhc(object):
 
         self.gridLayout.addWidget(self.lineedit_A, 1, 0, 1, 1)
 
-        self.btn_A = PrimaryPushButton(fhc)
-        self.btn_A.setObjectName(u"btn_A")
+        self.lineedit_B = PlainTextEdit(fhc)
+        self.lineedit_B.setObjectName(u"lineedit_B")
+        self.lineedit_B.setAcceptDrops(False)
 
-        self.gridLayout.addWidget(self.btn_A, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.lineedit_B, 1, 1, 1, 1)
 
         self.tablewidget = TableWidget(fhc)
         if (self.tablewidget.columnCount() < 3):
@@ -77,18 +81,7 @@ class Ui_fhc(object):
         self.tablewidget.horizontalHeader().setStretchLastSection(True)
         self.tablewidget.verticalHeader().setStretchLastSection(True)
 
-        self.gridLayout.addWidget(self.tablewidget, 2, 0, 1, 3)
-
-        self.lineedit_B = PlainTextEdit(fhc)
-        self.lineedit_B.setObjectName(u"lineedit_B")
-        self.lineedit_B.setAcceptDrops(False)
-
-        self.gridLayout.addWidget(self.lineedit_B, 1, 2, 1, 1)
-
-        self.btn_B = PrimaryPushButton(fhc)
-        self.btn_B.setObjectName(u"btn_B")
-
-        self.gridLayout.addWidget(self.btn_B, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.tablewidget, 2, 0, 1, 2)
 
         QWidget.setTabOrder(self.btn_A, self.lineedit_A)
         QWidget.setTabOrder(self.lineedit_A, self.btn_B)
@@ -103,6 +96,7 @@ class Ui_fhc(object):
     def retranslateUi(self, fhc):
         fhc.setWindowTitle(QCoreApplication.translate("fhc", u"Form", None))
         self.btn_A.setText(QCoreApplication.translate("fhc", u"\u9009\u62e9\u6587\u4ef6", None))
+        self.btn_B.setText(QCoreApplication.translate("fhc", u"\u9009\u62e9\u6587\u4ef6", None))
         ___qtablewidgetitem = self.tablewidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("fhc", u"A\u533a\u54c8\u5e0c\u503c", None));
         ___qtablewidgetitem1 = self.tablewidget.horizontalHeaderItem(1)
@@ -125,6 +119,5 @@ class Ui_fhc(object):
         ___qtablewidgetitem9.setText(QCoreApplication.translate("fhc", u"sha384", None));
         ___qtablewidgetitem10 = self.tablewidget.verticalHeaderItem(7)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("fhc", u"sha512", None));
-        self.btn_B.setText(QCoreApplication.translate("fhc", u"\u9009\u62e9\u6587\u4ef6", None))
     # retranslateUi
 

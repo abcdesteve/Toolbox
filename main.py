@@ -34,13 +34,13 @@ class Main(FluentWindow):
         self.subwin_settings = Settings(app, self)
         self.subwin_about = About(os.path.dirname(__file__))
 
-        self.addSubInterface(self.subwin_aam, FluentIcon.APPLICATION,
+        self.addSubInterface(self.subwin_aam, MyFluentIcon.Android,
                              '安卓应用管理', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_csl, FluentIcon.APPLICATION,
+        self.addSubInterface(self.subwin_csl, FluentIcon.LINK,
                              '创建符号链接', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fhc, FluentIcon.APPLICATION,
+        self.addSubInterface(self.subwin_fhc, FluentIcon.SEARCH,
                              '文件哈希校验', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fas, FluentIcon.APPLICATION,
+        self.addSubInterface(self.subwin_fas, FluentIcon.SYNC,
                              '文件自动同步', NavigationItemPosition.SCROLL)
         self.addSubInterface(
             self.subwin_settings, FluentIcon.SETTING, '设置', NavigationItemPosition.BOTTOM)
@@ -64,8 +64,9 @@ class Main(FluentWindow):
             6:]
         if self.last_theme != current_theme:
             theme_control.apply_theme(app, current_theme)
-            self.setWindowIcon(FluentIcon.icon(
-                FluentIcon.DEVELOPER_TOOLS, theme()))
+            # self.setWindowIcon(FluentIcon.icon(
+            #     FluentIcon.DEVELOPER_TOOLS, theme()))
+            self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
             self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
         self.last_theme = current_theme
     # def update_tab(self,tab_index:int):
