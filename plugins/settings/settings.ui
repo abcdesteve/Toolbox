@@ -15,133 +15,20 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_theme">
-       <property name="text">
-        <string>主题：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="RadioButton" name="radio_auto">
-       <property name="text">
-        <string>跟随系统</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btn_group_theme</string>
-       </attribute>
-      </widget>
-     </item>
-     <item>
-      <widget class="RadioButton" name="radio_light">
-       <property name="text">
-        <string>浅色</string>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btn_group_theme</string>
-       </attribute>
-      </widget>
-     </item>
-     <item>
-      <widget class="RadioButton" name="radio_dark">
-       <property name="text">
-        <string>深色</string>
-       </property>
-       <attribute name="buttonGroup">
-        <string notr="true">btn_group_theme</string>
-       </attribute>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="ScrollArea" name="scrollAreaWidget">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_animation">
-       <property name="text">
-        <string>动画：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="CheckBox" name="ckb_enable_animation">
-       <property name="text">
-        <string>开启动画</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ComboBox" name="cmb_animation">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <item>
-        <property name="text">
-         <string>Linear</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutQuad</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutCubic</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutSine</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutElastic</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutBack</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>InOutBounce</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QWidget" name="widget" native="true">
-     <widget class="PrimaryPushButton" name="btn_animation_example">
+     <widget class="QWidget" name="scrollArea">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>24</width>
-        <height>22</height>
+        <x>0</x>
+        <y>0</y>
+        <width>380</width>
+        <height>130</height>
        </rect>
       </property>
-      <property name="text">
-       <string>-</string>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </widget>
     </widget>
    </item>
@@ -149,29 +36,12 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CheckBox</class>
-   <extends>QCheckBox</extends>
+   <class>ScrollArea</class>
+   <extends>QScrollArea</extends>
    <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>PrimaryPushButton</class>
-   <extends>QToolButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>ComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>RadioButton</class>
-   <extends>QRadioButton</extends>
-   <header>qfluentwidgets</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="btn_group_theme"/>
- </buttongroups>
 </ui>

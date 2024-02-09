@@ -58,8 +58,8 @@ class Ui_fhc(object):
         self.tablewidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.tablewidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        if (self.tablewidget.rowCount() < 8):
-            self.tablewidget.setRowCount(8)
+        if (self.tablewidget.rowCount() < 9):
+            self.tablewidget.setRowCount(9)
         __qtablewidgetitem3 = QTableWidgetItem()
         self.tablewidget.setVerticalHeaderItem(0, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
@@ -76,6 +76,8 @@ class Ui_fhc(object):
         self.tablewidget.setVerticalHeaderItem(6, __qtablewidgetitem9)
         __qtablewidgetitem10 = QTableWidgetItem()
         self.tablewidget.setVerticalHeaderItem(7, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        self.tablewidget.setVerticalHeaderItem(8, __qtablewidgetitem11)
         self.tablewidget.setObjectName(u"tablewidget")
         self.tablewidget.setColumnCount(3)
         self.tablewidget.horizontalHeader().setStretchLastSection(True)
@@ -108,16 +110,18 @@ class Ui_fhc(object):
         ___qtablewidgetitem4 = self.tablewidget.verticalHeaderItem(1)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("fhc", u"\u6587\u4ef6\u5927\u5c0f", None));
         ___qtablewidgetitem5 = self.tablewidget.verticalHeaderItem(2)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("fhc", u"md5", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("fhc", u"CRC32", None));
         ___qtablewidgetitem6 = self.tablewidget.verticalHeaderItem(3)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("fhc", u"sha1", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("fhc", u"md5", None));
         ___qtablewidgetitem7 = self.tablewidget.verticalHeaderItem(4)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("fhc", u"sha224", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("fhc", u"sha1", None));
         ___qtablewidgetitem8 = self.tablewidget.verticalHeaderItem(5)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("fhc", u"sha256", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("fhc", u"sha224", None));
         ___qtablewidgetitem9 = self.tablewidget.verticalHeaderItem(6)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("fhc", u"sha384", None));
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("fhc", u"sha256", None));
         ___qtablewidgetitem10 = self.tablewidget.verticalHeaderItem(7)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("fhc", u"sha512", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("fhc", u"sha384", None));
+        ___qtablewidgetitem11 = self.tablewidget.verticalHeaderItem(8)
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("fhc", u"sha512", None));
     # retranslateUi
 

@@ -23,7 +23,7 @@ def apply_theme(app,goal_theme:str):
     # setThemeColor("#4cc2ff")
     # setThemeColor('#e81123')
     setThemeColor(get_system_color())
-    print(get_system_color())
+    goal_theme=goal_theme.lower()
     if goal_theme=='auto':
         goal_theme=('dark' if darkdetect.isDark() else 'light')
     if goal_theme=='dark':
@@ -35,15 +35,12 @@ def apply_theme(app,goal_theme:str):
 
 
 STYLESHHET_DARK = """
-/*QMainWindow{background-color:#282828;  border-radius:20px}
+QLabel {color:#f0f0f0}
 
-QWidget{background-color:#282828;  border-radius:5px}
-QTabWidget{background-color:#f0f0f0;border-radius:0px}
-QMainWindow[FluentWindow] > QWidget{background-color:#282828}*/
+ScrollArea {border: none;background-color: transparent}
 
-QLabel{color:#f0f0f0}
-QGroupBox{background-color:transparent;color:#f0f0f0}
-QSplitter::handle{background-color:transparent}
+QGroupBox {background-color:transparent;color:#f0f0f0}
+QSplitter::handle {background-color:transparent}
 
 QMessageBox {background-color:#282828;  color:#f0f0f0;  border-radius:5px}
 QMessageBox QLabel {color:#f0f0f0;  }
@@ -53,15 +50,6 @@ QMessageBox QPushButton:pressed {background-color:#444444;  }
 QMessageBox QPushButton#closeButton {background-color:transparent;  color:#f0f0f0;}
 QMessageBox QPushButton#closeButton:hover {color:#ff0000;  }
 QMessageBox QPushButton#closeButton:pressed {color:#cc0000;  }
-
-
-/* QTabWidget {background-color:#444444;  border-radius:5px;  }
-QTabBar::tab {background-color:#444444;  border-radius:5px;  color:#f0f0f0;  padding:8px 12px;  margin-right:4px;  }
-QTabBar::tab:selected {background-color:#4cc2ff;  color:#000000;  }
-QTabBar::tab:!selected:hover {background-color:#585858;  }
-QTabBar::tab:!selected:selected {background-color:#4cc2ff;  }
-QTabWidget::pane {background-color:#585858;  }*/
-
 """
 
 

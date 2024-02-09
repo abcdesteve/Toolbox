@@ -15,20 +15,21 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
+    QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 from qfluentwidgets import (ComboBox, LineEdit, PrimaryPushButton, PushButton,
-    SearchLineEdit, SwitchButton, TextEdit)
+    ScrollArea, SearchLineEdit, SwitchButton, TextEdit)
 
 class Ui_aam(object):
     def setupUi(self, aam):
         if not aam.objectName():
             aam.setObjectName(u"aam")
-        aam.resize(800, 500)
+        aam.resize(800, 433)
         aam.setAcceptDrops(True)
-        self.verticalLayout_2 = QVBoxLayout(aam)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_3 = QVBoxLayout(aam)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout_1 = QHBoxLayout()
         self.horizontalLayout_1.setObjectName(u"horizontalLayout_1")
         self.btn_device = PushButton(aam)
@@ -49,7 +50,7 @@ class Ui_aam(object):
         self.horizontalLayout_1.addWidget(self.btn_wireless)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_1)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_1)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -98,7 +99,7 @@ class Ui_aam(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -114,96 +115,133 @@ class Ui_aam(object):
         self.horizontalLayout_2.addWidget(self.ckb_app_sys)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
-        self.gridLayout = QGridLayout()
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.layout_device_info = QHBoxLayout()
+        self.layout_device_info.setSpacing(2)
+        self.layout_device_info.setObjectName(u"layout_device_info")
+
+        self.horizontalLayout_4.addLayout(self.layout_device_info)
+
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout.addItem(self.horizontalSpacer, 0, 1, 2, 1)
+        self.horizontalLayout_4.addItem(self.horizontalSpacer)
 
-        self.btn_launch = PrimaryPushButton(aam)
+        self.scrollArea = ScrollArea(aam)
+        self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy2)
+        self.scrollArea.setMinimumSize(QSize(0, 70))
+        self.scrollArea.setMaximumSize(QSize(16777215, 70))
+        self.scrollArea.setFrameShape(QFrame.NoFrame)
+        self.scrollArea.setFrameShadow(QFrame.Plain)
+        self.scrollArea.setLineWidth(0)
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 399, 70))
+        self.scrollAreaWidgetContents.setStyleSheet(u"QWidget#scrollAreaWidgetContents{background-color:transparent}")
+        self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.btn_launch = PrimaryPushButton(self.scrollAreaWidgetContents)
         self.btn_launch.setObjectName(u"btn_launch")
 
-        self.gridLayout.addWidget(self.btn_launch, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.btn_launch, 0, 0, 1, 1)
 
-        self.btn_install = PrimaryPushButton(aam)
+        self.btn_install = PrimaryPushButton(self.scrollAreaWidgetContents)
         self.btn_install.setObjectName(u"btn_install")
 
-        self.gridLayout.addWidget(self.btn_install, 0, 3, 1, 1)
+        self.gridLayout.addWidget(self.btn_install, 0, 1, 1, 1)
 
-        self.btn_freeze = PrimaryPushButton(aam)
+        self.btn_freeze = PrimaryPushButton(self.scrollAreaWidgetContents)
         self.btn_freeze.setObjectName(u"btn_freeze")
 
-        self.gridLayout.addWidget(self.btn_freeze, 0, 4, 1, 1)
+        self.gridLayout.addWidget(self.btn_freeze, 0, 2, 1, 1)
 
-        self.btn_backup = PrimaryPushButton(aam)
+        self.btn_backup = PrimaryPushButton(self.scrollAreaWidgetContents)
         self.btn_backup.setObjectName(u"btn_backup")
 
-        self.gridLayout.addWidget(self.btn_backup, 0, 5, 1, 1)
+        self.gridLayout.addWidget(self.btn_backup, 0, 3, 1, 1)
 
-        self.btn_grant_permission = PrimaryPushButton(aam)
+        self.btn_grant_permission = PrimaryPushButton(self.scrollAreaWidgetContents)
         self.btn_grant_permission.setObjectName(u"btn_grant_permission")
 
-        self.gridLayout.addWidget(self.btn_grant_permission, 0, 6, 1, 1)
+        self.gridLayout.addWidget(self.btn_grant_permission, 0, 4, 1, 1)
 
+        self.btn_extract = PrimaryPushButton(self.scrollAreaWidgetContents)
+        self.btn_extract.setObjectName(u"btn_extract")
+
+        self.gridLayout.addWidget(self.btn_extract, 1, 0, 1, 1)
+
+        self.btn_uninstall = PrimaryPushButton(self.scrollAreaWidgetContents)
+        self.btn_uninstall.setObjectName(u"btn_uninstall")
+
+        self.gridLayout.addWidget(self.btn_uninstall, 1, 1, 1, 1)
+
+        self.btn_unfreeze = PrimaryPushButton(self.scrollAreaWidgetContents)
+        self.btn_unfreeze.setObjectName(u"btn_unfreeze")
+
+        self.gridLayout.addWidget(self.btn_unfreeze, 1, 2, 1, 1)
+
+        self.btn_restore = PrimaryPushButton(self.scrollAreaWidgetContents)
+        self.btn_restore.setObjectName(u"btn_restore")
+
+        self.gridLayout.addWidget(self.btn_restore, 1, 3, 1, 1)
+
+        self.btn_revoke_permission = PrimaryPushButton(self.scrollAreaWidgetContents)
+        self.btn_revoke_permission.setObjectName(u"btn_revoke_permission")
+
+        self.gridLayout.addWidget(self.btn_revoke_permission, 1, 4, 1, 1)
+
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        self.horizontalLayout_4.addWidget(self.scrollArea)
+
+        self.horizontalSpacer_1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_1)
+
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.btn_getapp_low = PrimaryPushButton(aam)
         self.btn_getapp_low.setObjectName(u"btn_getapp_low")
 
-        self.gridLayout.addWidget(self.btn_getapp_low, 0, 8, 1, 1)
-
-        self.btn_clear = PushButton(aam)
-        self.btn_clear.setObjectName(u"btn_clear")
-
-        self.gridLayout.addWidget(self.btn_clear, 0, 9, 2, 1)
-
-        self.btn_extract = PrimaryPushButton(aam)
-        self.btn_extract.setObjectName(u"btn_extract")
-
-        self.gridLayout.addWidget(self.btn_extract, 1, 2, 1, 1)
-
-        self.btn_uninstall = PrimaryPushButton(aam)
-        self.btn_uninstall.setObjectName(u"btn_uninstall")
-
-        self.gridLayout.addWidget(self.btn_uninstall, 1, 3, 1, 1)
-
-        self.btn_unfreeze = PrimaryPushButton(aam)
-        self.btn_unfreeze.setObjectName(u"btn_unfreeze")
-
-        self.gridLayout.addWidget(self.btn_unfreeze, 1, 4, 1, 1)
-
-        self.btn_restore = PrimaryPushButton(aam)
-        self.btn_restore.setObjectName(u"btn_restore")
-
-        self.gridLayout.addWidget(self.btn_restore, 1, 5, 1, 1)
-
-        self.btn_revoke_permission = PrimaryPushButton(aam)
-        self.btn_revoke_permission.setObjectName(u"btn_revoke_permission")
-
-        self.gridLayout.addWidget(self.btn_revoke_permission, 1, 6, 1, 1)
+        self.verticalLayout_2.addWidget(self.btn_getapp_low)
 
         self.btn_getapp_high = PrimaryPushButton(aam)
         self.btn_getapp_high.setObjectName(u"btn_getapp_high")
 
-        self.gridLayout.addWidget(self.btn_getapp_high, 1, 8, 1, 1)
-
-        self.horizontalSpacer_1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_1, 0, 7, 2, 1)
-
-        self.layout_device_info = QHBoxLayout()
-        self.layout_device_info.setObjectName(u"layout_device_info")
-
-        self.gridLayout.addLayout(self.layout_device_info, 0, 0, 2, 1)
+        self.verticalLayout_2.addWidget(self.btn_getapp_high)
 
 
-        self.verticalLayout_2.addLayout(self.gridLayout)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_2)
+
+        self.btn_clear = PushButton(aam)
+        self.btn_clear.setObjectName(u"btn_clear")
+
+        self.horizontalLayout_4.addWidget(self.btn_clear)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
         self.textedit_log = TextEdit(aam)
         self.textedit_log.setObjectName(u"textedit_log")
+        font1 = QFont()
+        font1.setFamilies([u"Arial"])
+        font1.setPointSize(10)
+        self.textedit_log.setFont(font1)
         self.textedit_log.setReadOnly(True)
 
-        self.verticalLayout_2.addWidget(self.textedit_log)
+        self.verticalLayout_3.addWidget(self.textedit_log)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -219,7 +257,7 @@ class Ui_aam(object):
         self.horizontalLayout_3.addWidget(self.lineedit_cmd)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
         QWidget.setTabOrder(self.btn_device, self.cmb_device)
         QWidget.setTabOrder(self.cmb_device, self.btn_wireless)
@@ -257,36 +295,72 @@ class Ui_aam(object):
         self.btn_freeze.setText(QCoreApplication.translate("aam", u"\u51bb\u7ed3", None))
         self.btn_backup.setText(QCoreApplication.translate("aam", u"\u5907\u4efd", None))
         self.btn_grant_permission.setText(QCoreApplication.translate("aam", u"\u63d0\u6743", None))
-        self.btn_getapp_low.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u4f4e\u7248\u672c)", None))
-        self.btn_clear.setText(QCoreApplication.translate("aam", u"\u6e05\u7a7a\u65e5\u5fd7", None))
         self.btn_extract.setText(QCoreApplication.translate("aam", u"\u63d0\u53d6", None))
         self.btn_uninstall.setText(QCoreApplication.translate("aam", u"\u5378\u8f7d", None))
         self.btn_unfreeze.setText(QCoreApplication.translate("aam", u"\u89e3\u51bb", None))
         self.btn_restore.setText(QCoreApplication.translate("aam", u"\u6062\u590d", None))
         self.btn_revoke_permission.setText(QCoreApplication.translate("aam", u"\u964d\u6743", None))
+        self.btn_getapp_low.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u4f4e\u7248\u672c)", None))
         self.btn_getapp_high.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u9ad8\u7248\u672c)", None))
+        self.btn_clear.setText(QCoreApplication.translate("aam", u"\u6e05\u7a7a\u65e5\u5fd7", None))
+        self.textedit_log.setMarkdown(QCoreApplication.translate("aam", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.1\n"
+"\n"
+"\u4f5c\u8005\uff1aabcdesteve\n"
+"\n"
+"`     _                                   _   ____   ___ ____  _  _             \n"
+"     `\n"
+"\n"
+"`    / \\__   _____   ___ ___  _ __   __ _| | |___ \\ / _ \\___ \\| || |            \n"
+"     `\n"
+"\n"
+"``   / _ \\ \\ / / _ \\ / __/ _ \\| '_ \\ / _` | |   __) | | | |__) | || |_           \n"
+"     ``\n"
+"\n"
+"`  / ___ \\ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/|__   _|          \n"
+"     `\n"
+"\n"
+"` /_/ _ \\_\\_/_\\___/ \\___\\___/|_| |_|\\__,_|_| |_____|\\___/_____|  |_|            \n"
+"   _ `\n"
+"\n"
+"`    / \\  | | |  _ __(_) __ _| |__ | |_ ___   _ __ ___  ___  ___ _ ____   _____ \n"
+"__| |`\n"
+"\n"
+"``   / _ \\ | | | | '__| |/ _` | '_ \\| __/ __| | '__/ _ \\/ __|/ _ \\ '__\\ \\ / / _\n"
+"\\/ _` |``\n"
+"\n"
+"`  / ___ \\| | | | |  | | (_| | | | | |_\\__ \\ | | |  __/\\__ \\  __/ |   \\ V /  __/\n"
+"(_| |`\n"
+"\n"
+"` /_/   \\_\\_|_| |_|  |_|\\__, |_| |_|\\__|___/ |_|  \\___||___/\\___|_|    \\_/\n"
+"\\___|\\__,_|"
+                        "`\n"
+"\n"
+"`                       |___/                                                   \n"
+"     `\n"
+"\n"
+"", None))
         self.textedit_log.setHtml(QCoreApplication.translate("aam", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v2.0</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u4f5c\u8005\uff1aabcdesteve</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right"
-                        ":0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">    _                                   _   ____   ___ ____  _____ </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">   / \\__   _____   ___ ___  _ __   __ _| | |___ \\ / _ \\___ \\|___ / </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">  / _ \\ \\ / / _ \\ / __/ _ \\| '_ \\ / _` | |   __) | | | |__) | |_ \\ </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\"> / ___ \\ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/ ___) |</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin"
-                        "-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">/_/   \\_\\_/ \\___/ \\___\\___/|_| |_|\\__,_|_| |_____|\\___/_____|____/ </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">   _   _ _       _      _   _                                       _ </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">  /_\\ | | |  _ _(_)__ _| |_| |_ ___  _ _ ___ ___ ___ _ ___ _____ __| |</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\"> / _ \\| | | | '_| / _` | ' \\  _(_-&lt; | '_/ -_|_-&lt;/ -_) '_\\ V / -_) _` |</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; ma"
-                        "rgin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">/_/ \\_\\_|_| |_| |_\\__, |_||_\\__/__/ |_| \\___/__/\\___|_|  \\_/\\___\\__,_|</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">                  |___/                                               </span></p></body></html>", None))
+"</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font'; font-size:9pt;\">\u795e\u9f99\u5de5\u5177\u7bb1 v2.1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font'; font-size:9pt;\">\u4f5c\u8005\uff1aabcdesteve</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:0px; margin-lef"
+                        "t:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">     _                                   _   ____   ___ ____  _  _                   </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">    / \\__   _____   ___ ___  _ __   __ _| | |___ \\ / _ \\___ \\| || |                  </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">   / _ \\ \\ / / _ \\ / __/ _ \\| '_ \\ / _` | |   __) | | | |__) | || |_                 </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">  / ___ \\ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/|__   _|                </span></p>\n"
+"<p style"
+                        "=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\"> /_/ _ \\_\\_/_\\___/ \\___\\___/|_| |_|\\__,_|_| |_____|\\___/_____|  |_|                _ </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">    / \\  | | |  _ __(_) __ _| |__ | |_ ___   _ __ ___  ___  ___ _ ____   _____  __| |</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">   / _ \\ | | | | '__| |/ _` | '_ \\| __/ __| | '__/ _ \\/ __|/ _ \\ '__\\ \\ / / _ \\/ _` |</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">  / ___ \\| | | | |  | | (_| | | | | |_\\__ \\ | | |  _"
+                        "_/\\__ \\  __/ |   \\ V /  __/ (_| |</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\"> /_/   \\_\\_|_| |_|  |_|\\__, |_| |_|\\__|___/ |_|  \\___||___/\\___|_|    \\_/ \\___|\\__,_|</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">                       |___/                                                         </span></p></body></html>", None))
         self.label_cmd.setText(QCoreApplication.translate("aam", u"\u8fd0\u884c\u547d\u4ee4\uff1a", None))
         self.lineedit_cmd.setPlaceholderText(QCoreApplication.translate("aam", u"\u5185\u7f6eadb\u3001fastboot\u5de5\u5177", None))
     # retranslateUi

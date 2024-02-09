@@ -16,22 +16,20 @@ from plugins.about import About
 
 import os
 import sys
-import json
 import threading
 
 
 class Main(FluentWindow):
     def __init__(self):
         super().__init__()
-
-        self.last_theme = ''
         self.setAcceptDrops(True)
+        self.setWindowTitle('神龙工具箱v2.1')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
         self.subwin_csl = CSL()
         self.subwin_fhc = FHC()
         self.subwin_fas = FAS(self)
-        self.subwin_settings = Settings(app, self)
+        self.subwin_settings = Settings(app, self, path)
         self.subwin_about = About(os.path.dirname(__file__))
 
         self.addSubInterface(self.subwin_aam, MyFluentIcon.Android,
@@ -47,89 +45,84 @@ class Main(FluentWindow):
         self.addSubInterface(self.subwin_about, FluentIcon.INFO,
                              '关于', NavigationItemPosition.BOTTOM)
 
-        self.setWindowTitle('神龙工具箱v2.1')
-        self.window_size_change()
         self.stackedWidget.currentChanged.connect(self.window_size_change)
-        self.read_settings()
-
-        self.theme_timer = QTimer()
-        self.theme_timer.start(1000)
-        self.theme_timer.timeout.connect(self.update_theme)
+        self.window_size_change()
+        self.subwin_settings.cfg.theme_style.valueChanged.connect(self.update_theme)
         self.update_theme()
+        self.subwin_settings.cfg.theme_color.valueChanged.connect(lambda:setThemeColor(self.subwin_settings.cfg.theme_color.value))
+        setThemeColor(self.subwin_settings.cfg.theme_color.value)
 
         self.show()
 
     def update_theme(self):
-        current_theme = self.subwin_settings.btn_group_theme.checkedButton().objectName()[
-            6:]
-        if self.last_theme != current_theme:
-            theme_control.apply_theme(app, current_theme)
-            # self.setWindowIcon(FluentIcon.icon(
-            #     FluentIcon.DEVELOPER_TOOLS, theme()))
-            self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
-            self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
-        self.last_theme = current_theme
+        theme_control.apply_theme(app, self.subwin_settings.cfg.get(self.subwin_settings.cfg.theme_style))
+        # self.setWindowIcon(FluentIcon.icon(
+        #     FluentIcon.DEVELOPER_TOOLS, theme()))
+        self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
+        self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
     # def update_tab(self,tab_index:int):
     #     self.stackedWidget.setCurrentIndex(tab_index)
 
-    def read_settings(self):
-        if os.path.isfile(os.path.join(path, '神龙工具箱', 'settings.json')):
-            with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'r')as file:
-                data = json.load(file)
-            try:
-                {'Auto': self.subwin_settings.radio_auto, 'Light': self.subwin_settings.radio_light,
-                    'Dark': self.subwin_settings.radio_dark}[data['theme']].setChecked(True)
-                self.subwin_settings.ckb_enable_animation.setChecked(
-                    data['animation'][0])
-                self.subwin_settings.cmb_animation.setCurrentText(
-                    data['animation'][1])
-                self.subwin_settings.settings_change_status(False)
-            except:
-                print('配置文件异常，重置所有设置')
-                self.subwin_settings.settings_change_status(False)
-        else:
-            try:
-                os.mkdir(path)
-            except:
-                pass
-            try:
-                os.mkdir(os.path.join(path, '神龙工具箱'))
-            except:
-                pass
-            with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
-                print('Successfully created the setting file')
-            self.subwin_settings.settings_change_status(False)
+    # def read_settings(self):
+    #     if os.path.isfile(os.path.join(path, '神龙工具箱', 'settings.json')):
+    #         with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'r')as file:
+    #             data = json.load(file)
+    #         try:
+    #             {'Auto': self.subwin_settings.radio_auto, 'Light': self.subwin_settings.radio_light,
+    #                 'Dark': self.subwin_settings.radio_dark}[data['theme']].setChecked(True)
+    #             self.subwin_settings.ckb_enable_animation.setChecked(
+    #                 data['animation'][0])
+    #             self.subwin_settings.cmb_animation.setCurrentText(
+    #                 data['animation'][1])
+    #             self.subwin_settings.settings_change_status(False)
+    #         except:
+    #             print('配置文件异常，重置所有设置')
+    #             self.subwin_settings.settings_change_status(False)
+    #     else:
+    #         try:
+    #             os.mkdir(path)
+    #         except:
+    #             pass
+    #         try:
+    #             os.mkdir(os.path.join(path, '神龙工具箱'))
+    #         except:
+    #             pass
+    #         with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
+    #             print('Successfully created the setting file')
+    #         self.subwin_settings.settings_change_status(False)
 
-    def save_settings(self):
-        data = {'theme': self.subwin_settings.btn_group_theme.checkedButton().objectName()[6:].capitalize(),
-                'animation': [self.subwin_settings.ckb_enable_animation.isChecked(), self.subwin_settings.cmb_animation.currentText()]}
-        with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
-            json.dump(data, file)
+    # def save_settings(self):
+    #     data = {'theme': self.subwin_settings.btn_group_theme.checkedButton().objectName()[6:].capitalize(),
+    #             'animation': [self.subwin_settings.ckb_enable_animation.isChecked(), self.subwin_settings.cmb_animation.currentText()]}
+    #     with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
+    #         json.dump(data, file)
 
     def window_size_change(self):
-        self.animation = QPropertyAnimation(self, b'size')
-        if self.subwin_settings.ckb_enable_animation.isChecked():
-            self.animation.setDuration(500)
-        else:
-            self.animation.setDuration(0)
-        self.animation.setEasingCurve(
-            eval('QEasingCurve.'+self.subwin_settings.cmb_animation.currentText()))
-        # print(self.stackedWidget.currentIndex())
-        match self.stackedWidget.currentIndex():
-            case 0:
-                self.animation.setEndValue(QSize(800, 500))
-            case 1:
-                self.animation.setEndValue(QSize(600, 50))
-            case 2:
-                self.animation.setEndValue(QSize(800, 600))
-                self.subwin_fhc.fhc_table_update_size()
-            case 3:
-                self.animation.setEndValue(QSize(500, 400))
-            case 4:
-                self.animation.setEndValue(QSize(500, 75))
-            case 5:
-                self.animation.setEndValue(QSize(800, 600))
-        self.animation.start()
+        if not self.isMaximized():
+            self.animation = QPropertyAnimation(self, b'size')
+            # if self.subwin_settings.ckb_enable_animation.isChecked():
+            if self.subwin_settings.cfg.get(self.subwin_settings.cfg.animation_switch):
+                self.animation.setDuration(500)
+            else:
+                self.animation.setDuration(0)
+            self.animation.setEasingCurve(
+                eval('QEasingCurve.'+self.subwin_settings.cfg.get(self.subwin_settings.cfg.animation_type)))
+            # print(self.stackedWidget.currentIndex())
+            match self.stackedWidget.currentIndex():
+                case 0:
+                    self.animation.setEndValue(QSize(800, 500))
+                case 1:
+                    self.animation.setEndValue(QSize(600, 50))
+                case 2:
+                    self.animation.setEndValue(QSize(800, 600))
+                    self.subwin_fhc.table_update_size()
+                case 3:
+                    self.animation.setEndValue(QSize(500, 400))
+                case 4:
+                    self.animation.setEndValue(QSize(500, 75))
+                case 5:
+                    self.animation.setEndValue(QSize(800, 600))
+            self.animation.start()
 
     def dragEnterEvent(self, event):
         drag_path = event.mimeData().urls()[0].toLocalFile()
@@ -186,6 +179,9 @@ class Main(FluentWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(
+        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
     path = os.path.expandvars(r'%appdata%/Avoconal')
     window = Main()

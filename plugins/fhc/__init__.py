@@ -7,7 +7,7 @@ from .fhc_ui import Ui_fhc
 import os
 import sys
 import math
-import hashlib
+import hashlib,binascii
 
 
 class FHC(QWidget, Ui_fhc):
@@ -19,13 +19,13 @@ class FHC(QWidget, Ui_fhc):
         self.signal_connect()
 
     def signal_connect(self):
-        self.btn_A.clicked.connect(self.fhc_select)
-        self.btn_B.clicked.connect(self.fhc_select)
-        self.lineedit_A.textChanged.connect(self.fhc_table_update_data)
-        self.lineedit_B.textChanged.connect(self.fhc_table_update_data)
-        self.tablewidget.currentItemChanged.connect(self.fhc_table_update_data)
+        self.btn_A.clicked.connect(self.select_file)
+        self.btn_B.clicked.connect(self.select_file)
+        self.lineedit_A.textChanged.connect(self.table_update_data)
+        self.lineedit_B.textChanged.connect(self.table_update_data)
+        self.tablewidget.currentItemChanged.connect(self.table_update_data)
 
-    def fhc_select(self):
+    def select_file(self):
         section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
         path = QFileDialog.getOpenFileName(self, '请选择文件')[0]
         if path:
@@ -35,47 +35,72 @@ class FHC(QWidget, Ui_fhc):
         else:
             QMessageBox.warning(self, '警告', '路径无效')
 
-    def fhc_get_hash(self, method: str, txt: str):
-        if method+':' in txt:
-            return [i[len(method)+1:] for i in txt.split('\n') if method+':' in i][0]
-        elif 'file:' in txt and os.path.isfile([i[5:] for i in txt.split('\n') if 'file:' in i][0]):
-            with open(txt[5:].split('\n')[0], 'rb')as file:
-                txt = file.read()
-        else:
-            txt = txt.encode()
+    def get_result(self, method: str, txt: str):
+        STEP=1024000
+        if method+':' in txt.lower():
+            return [i[len(method)+1:].upper() for i in txt.splitlines() if method+':' in i.lower()][0]
+        
+        # 文件
+        elif 'file:' in txt and os.path.isfile([i[5:] for i in txt.splitlines() if 'file:' in i][0]):
+            filename=txt.split('file:')[1].split('\n')[0]
+            with open(filename, 'rb')as file:
+                match method:
+                    case '字符数':
+                        count = 0
+                        while True:
+                            data = file.read(STEP)
+                            if not data:
+                                break
+                            count += len(data)
+                        return str(count)
+                    case '文件大小':
+                        size = os.path.getsize(filename)
+                        unit=math.floor(math.log(size, 1024))
+                        try:
+                            return f"{round(size/1024**unit,2)} {['B','KiB','MiB','GiB','TiB','PiB','EiB','ZiB'][unit]}"
+                        except KeyError:
+                            return f"{size} B"
+                    case 'crc32':
+                        temp=0
+                        while True:
+                            data = file.read(STEP)
+                            if not data:
+                                break
+                            temp=binascii.crc32(data,temp)
+                        return hex(temp).upper()[2:]
+                    case _:
+                        temp=hashlib.new(method)
+                        while True:
+                            data = file.read(STEP)
+                            if not data:
+                                break
+                            temp.update(data)
+                        return temp.hexdigest().upper()
+        # 文本
+        else: 
+            match method:
+                case '字符数':
+                    try:
+                        return str(len(txt))
+                            
+                    except:
+                        return str(len(txt))+' 未解码'
+                case '文件大小':
+                    size = sys.getsizeof(txt)
+                    unit=math.floor(math.log(size, 1024))
+                    try:
+                        return f"{round(size/1024**unit,2)} {['B','KiB','MiB','GiB','TiB','PiB','EiB','ZiB'][unit]}"
+                    except KeyError:
+                        return f"{size} B"
+                case 'crc32':
+                    return hex(binascii.crc32(txt.encode('utf-8'))).upper()[2:]
+                case _:
+                    temp=hashlib.new(method)
+                    temp.update(txt.encode('utf-8'))
+                    return temp.hexdigest().upper()
+                
 
-        if method == '字符数':
-            try:
-                return str(len(txt.decode()))
-            except:
-                return str(len(txt))+' 未解码'
-        elif method == '文件大小':
-            num = sys.getsizeof(txt)
-            match math.floor(math.log(num, 1024)):
-                case 0:
-                    return f'{num} B'
-                case 1:
-                    return f'{round(num/1024,2)} KiB'
-                case 2:
-                    return f'{round(num/1024**2,2)} MiB'
-                case 3:
-                    return f'{round(num/1024**3,2)} GiB'
-                case 4:
-                    return f'{round(num/1024**3,2)} TiB'
-        elif method == 'md5':
-            return hashlib.md5(txt).hexdigest()
-        elif method == 'sha1':
-            return hashlib.sha1(txt).hexdigest()
-        elif method == 'sha224':
-            return hashlib.sha224(txt).hexdigest()
-        elif method == 'sha256':
-            return hashlib.sha256(txt).hexdigest()
-        elif method == 'sha384':
-            return hashlib.sha384(txt).hexdigest()
-        elif method == 'sha512':
-            return hashlib.sha512(txt).hexdigest()
-
-    def fhc_table_update_size(self):
+    def table_update_size(self):
         self.tablewidget.setColumnWidth(
             0, self.tablewidget.width()*0.4)
         self.tablewidget.setColumnWidth(
@@ -83,17 +108,17 @@ class FHC(QWidget, Ui_fhc):
         self.tablewidget.setColumnWidth(
             2, self.tablewidget.width()*0.4)
 
-    def fhc_table_update_data(self):
+    def table_update_data(self):
         self.tablewidget.clearContents()
-        self.fhc_table_update_size()
+        self.table_update_size()
         for i in range(self.tablewidget.rowCount()):
 
             if self.lineedit_A.toPlainText():
-                self.tablewidget.setItem(i, 0, QTableWidgetItem(self.fhc_get_hash(
-                    self.tablewidget.verticalHeaderItem(i).text(), self.lineedit_A.toPlainText())))
+                self.tablewidget.setItem(i, 0, QTableWidgetItem(self.get_result(
+                    self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_A.toPlainText())))
             if self.lineedit_B.toPlainText():
-                self.tablewidget.setItem(i, 2, QTableWidgetItem(self.fhc_get_hash(
-                    self.tablewidget.verticalHeaderItem(i).text(), self.lineedit_B.toPlainText())))
+                self.tablewidget.setItem(i, 2, QTableWidgetItem(self.get_result(
+                    self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_B.toPlainText())))
 
             if self.tablewidget.item(i, 0) != None and self.tablewidget.item(i, 2) != None:
                 if self.tablewidget.item(i, 0).text() == self.tablewidget.item(i, 2).text():

@@ -65,6 +65,11 @@
      </row>
      <row>
       <property name="text">
+       <string>CRC32</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
        <string>md5</string>
       </property>
      </row>
