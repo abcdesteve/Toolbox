@@ -1,5 +1,7 @@
 .vscode
 .github
+app_extract_icon
+extract_apks
 
 # Byte-compiled / optimized / DLL files
 __pycache__

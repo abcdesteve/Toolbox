@@ -11,12 +11,12 @@ class Settings(ScrollArea):
         super().__init__()
         self.setObjectName('settings')
         self.container=QWidget()
+        self.container.setObjectName('container')
         self.container.setStyleSheet('QWidget#container{background-color:transparent}')
         self.expendLayout = ExpandLayout(self.container)
 
         self.cfg=AppConfig()
         qconfig.load(sltk.join_path(path,'神龙工具箱','config.json'),self.cfg)
-        print(sltk.join_path(path,'神龙工具箱','config.json'))
         self.scGroup_theme=SettingCardGroup('主题',self.container)
         self.sc_theme_style=ComboBoxSettingCard(self.cfg.theme_style,FluentIcon.PALETTE,'主题','设置主题',['AUTO','LIGHT','DARK'])
         self.sc_theme_color=CustomColorSettingCard(self.cfg.theme_color,FluentIcon.PALETTE,'主题颜色','设置主题颜色')
@@ -50,30 +50,22 @@ class Settings(ScrollArea):
 
     def settings_change_status(self, do_perform_animation=True):
         '''保存设置修改，同时刷新主题'''
-        # update status
-        # self.mainwindow.update_theme()
-        # if self.ckb_enable_animation.isChecked():
-        #     self.cmb_animation.setEnabled(True)
-        # else:
-        #     self.cmb_animation.setEnabled(False)
-
-        # self.mainwindow.save_settings()
         if do_perform_animation:
             self.settings_perform_animation()
 
-    def settings_perform_animation(self):
-        self.animation_example = QPropertyAnimation(
-            self.btn_animation_example, b'pos')
-        if self.ckb_enable_animation.isChecked():
-            self.animation_example.setDuration(2000)
-        else:
-            self.animation_example.setDuration(0)
-        self.animation_example.setStartValue(QPoint(10, 10))
-        self.animation_example.setEndValue(
-            QPoint(self.widget.width()-30, 10))
-        self.animation_example.setEasingCurve(
-            eval('QEasingCurve.'+self.cmb_animation.currentText()))
-        self.animation_example.start()
+    # def settings_perform_animation(self):
+    #     self.animation_example = QPropertyAnimation(
+    #         self.btn_animation_example, b'pos')
+    #     if self.ckb_enable_animation.isChecked():
+    #         self.animation_example.setDuration(2000)
+    #     else:
+    #         self.animation_example.setDuration(0)
+    #     self.animation_example.setStartValue(QPoint(10, 10))
+    #     self.animation_example.setEndValue(
+    #         QPoint(self.widget.width()-30, 10))
+    #     self.animation_example.setEasingCurve(
+    #         eval('QEasingCurve.'+self.cmb_animation.currentText()))
+    #     self.animation_example.start()
 
 class AppConfig(QConfig):
     "应用配置"

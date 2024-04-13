@@ -236,10 +236,10 @@ class StatisticsWidget(QWidget):
         self.titleLabel.setTextColor(QColor(96, 96, 96), QColor(206, 206, 206))
 
     def setTitle(self, title: str = ''):
-        self.titleLabel.setText(title)
+        self.titleLabel.setText(str(title))
 
     def setValue(self, value: str = '未知'):
-        self.valueLabel.setText(value)
+        self.valueLabel.setText(str(value))
 
 class MyFluentIcon(FluentIconBase,Enum):
     ToolBox='toolbox'

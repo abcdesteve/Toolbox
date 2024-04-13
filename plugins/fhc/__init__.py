@@ -80,13 +80,9 @@ class FHC(QWidget, Ui_fhc):
         else: 
             match method:
                 case '字符数':
-                    try:
-                        return str(len(txt))
-                            
-                    except:
-                        return str(len(txt))+' 未解码'
+                    return str(len(txt))
                 case '文件大小':
-                    size = sys.getsizeof(txt)
+                    size = sys.getsizeof(txt.encode())
                     unit=math.floor(math.log(size, 1024))
                     try:
                         return f"{round(size/1024**unit,2)} {['B','KiB','MiB','GiB','TiB','PiB','EiB','ZiB'][unit]}"
@@ -122,10 +118,12 @@ class FHC(QWidget, Ui_fhc):
 
             if self.tablewidget.item(i, 0) != None and self.tablewidget.item(i, 2) != None:
                 if self.tablewidget.item(i, 0).text() == self.tablewidget.item(i, 2).text():
-                    self.tablewidget.setItem(i, 1, QTableWidgetItem('True'))
-                    self.tablewidget.item(i, 1).setBackground(QColor('green'))
+                    item=QTableWidgetItem('True')
+                    item.setBackground(QColor('green'))
                 else:
-                    self.tablewidget.setItem(i, 1, QTableWidgetItem('False'))
-                    self.tablewidget.item(i, 1).setBackground(QColor('red'))
+                    item=QTableWidgetItem('False')
+                    item.setBackground(QColor('red'))
+                item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
+                self.tablewidget.setItem(i, 1, item)
             else:
                 self.tablewidget.setItem(i, 1, QTableWidgetItem())

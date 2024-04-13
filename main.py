@@ -6,7 +6,6 @@ from qfluentwidgets import *
 from sl_lib import *
 import theme_control
 
-from gui_ui import Ui_gui
 from plugins.aam import AAM
 from plugins.csl import CSL
 from plugins.fhc import FHC
@@ -170,6 +169,7 @@ class Main(FluentWindow):
                         popen = os.popen(
                             self.subwin_aam.lineedit_cmd.text()).read()
                         self.subwin_aam.textedit_log.append(popen)
+                        self.subwin_aam.textedit_log.moveCursor(QTextCursor.MoveOperation.End)
                     threading.Thread(target=aam_cmd).start()
         event.ignore()
 
@@ -179,8 +179,10 @@ class Main(FluentWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    QApplication.setHighDpiScaleFactorRoundingPolicy(
-        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    fluent_translator=FluentTranslator()
+    app.installTranslator(fluent_translator)
+    
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
     path = os.path.expandvars(r'%appdata%/Avoconal')
