@@ -59,42 +59,6 @@ class Main(FluentWindow):
         #     FluentIcon.DEVELOPER_TOOLS, theme()))
         self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
-    # def update_tab(self,tab_index:int):
-    #     self.stackedWidget.setCurrentIndex(tab_index)
-
-    # def read_settings(self):
-    #     if os.path.isfile(os.path.join(path, '神龙工具箱', 'settings.json')):
-    #         with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'r')as file:
-    #             data = json.load(file)
-    #         try:
-    #             {'Auto': self.subwin_settings.radio_auto, 'Light': self.subwin_settings.radio_light,
-    #                 'Dark': self.subwin_settings.radio_dark}[data['theme']].setChecked(True)
-    #             self.subwin_settings.ckb_enable_animation.setChecked(
-    #                 data['animation'][0])
-    #             self.subwin_settings.cmb_animation.setCurrentText(
-    #                 data['animation'][1])
-    #             self.subwin_settings.settings_change_status(False)
-    #         except:
-    #             print('配置文件异常，重置所有设置')
-    #             self.subwin_settings.settings_change_status(False)
-    #     else:
-    #         try:
-    #             os.mkdir(path)
-    #         except:
-    #             pass
-    #         try:
-    #             os.mkdir(os.path.join(path, '神龙工具箱'))
-    #         except:
-    #             pass
-    #         with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
-    #             print('Successfully created the setting file')
-    #         self.subwin_settings.settings_change_status(False)
-
-    # def save_settings(self):
-    #     data = {'theme': self.subwin_settings.btn_group_theme.checkedButton().objectName()[6:].capitalize(),
-    #             'animation': [self.subwin_settings.ckb_enable_animation.isChecked(), self.subwin_settings.cmb_animation.currentText()]}
-    #     with open(os.path.join(path, '神龙工具箱', 'settings.json'), 'w')as file:
-    #         json.dump(data, file)
 
     def window_size_change(self):
         if not self.isMaximized():
@@ -181,9 +145,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     fluent_translator=FluentTranslator()
     app.installTranslator(fluent_translator)
-    
-    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
     path = os.path.expandvars(r'%appdata%/Avoconal')
     window = Main()

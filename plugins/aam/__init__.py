@@ -50,8 +50,7 @@ class AAM(QWidget, Ui_aam):
     def init_icon(self):
         self.btn_device.setIcon(FluentIcon.SYNC)
         self.btn_wireless.setIcon(FluentIcon.DEVELOPER_TOOLS)
-        self.btn_getapp_low.setIcon(FluentIcon.SEARCH)
-        self.btn_getapp_high.setIcon(FluentIcon.SEARCH)
+        self.btn_get_app.setIcon(FluentIcon.SEARCH)
         self.btn_clear.setIcon(FluentIcon.BROOM)
 
         self.btn_launch.setIcon(FluentIcon.PLAY)
@@ -62,8 +61,8 @@ class AAM(QWidget, Ui_aam):
         self.btn_unfreeze.setIcon(MyFluentIcon.UnFrigid)
         self.btn_backup.setIcon(FluentIcon.HISTORY)
         self.btn_restore.setIcon(FluentIcon.HISTORY)
-        # self.btn_grant_permission.setIcon(FluentIcon.VPN)
-        # self.btn_revoke_permission.setIcon(FluentIcon.VPN)
+        self.btn_grant_permission.setIcon(FluentIcon.VPN)
+        self.btn_revoke_permission.setIcon(FluentIcon.VPN)
         self.btn_grant_permission.setIcon(MyFluentIcon.Sheild)
         self.btn_revoke_permission.setIcon(MyFluentIcon.Sheild)
         
@@ -71,8 +70,7 @@ class AAM(QWidget, Ui_aam):
     def init_signal(self):
         self.btn_wireless.clicked.connect(self.subwin_wireless.show)
         self.btn_device.clicked.connect(self.update_device_connection)
-        self.btn_getapp_high.clicked.connect(self.aam_getapp_high)
-        self.btn_getapp_low.clicked.connect(self.aam_getapp_low)
+        self.btn_get_app.clicked.connect(self.aam_get_focused_app)
         self.btn_clear.clicked.connect(self.textedit_log.clear)
         self.btn_launch.clicked.connect(self.aam_launch)
         self.btn_extract.clicked.connect(self.aam_extract)
@@ -97,8 +95,7 @@ class AAM(QWidget, Ui_aam):
             #     QMessageBox.warning(self.mainwindow, "警告", "未能成功连接")
         except:
             pass
-        QMetaObject.invokeMethod(
-            self, "update_device_connection", Qt.QueuedConnection)
+        QMetaObject.invokeMethod(self, "update_device_connection", Qt.QueuedConnection)
 
     @Slot()
     def update_device_connection(self):
@@ -137,13 +134,20 @@ class AAM(QWidget, Ui_aam):
                     f'''{self.adb_path(True)} shell pm list package {filter}''').read()
                 # self.textedit_log.append(log)
 
-                self.cmb_app.lis: list[str] = [i[8:]
-                                               for i in log.split("\n") if i]
-                temp = QCompleter(self.cmb_app.lis, self.cmb_app)
-                temp.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-                self.cmb_app.setCompleter(temp)
-                if self.cmb_app.text() not in self.cmb_app.lis:
-                    self.cmb_app.setText(self.cmb_app.lis[0])
+                # self.cmb_app.lis: list[str] = [i[8:]
+                #                                for i in log.split("\n") if i]
+                # temp = QCompleter(self.cmb_app.lis, self.cmb_app)
+                # temp.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                # self.cmb_app.setCompleter(temp)
+                # if self.cmb_app.text() not in self.cmb_app.lis:
+                #     self.cmb_app.setText(self.cmb_app.lis[0])
+                temp=[i[8:]for i in log.splitlines()]
+                txt=self.cmb_app.text()
+                sltk.unique_set_items(self.cmb_app,temp,format_item=False)
+                self.cmb_app.setCompleter(QCompleter(temp))
+                print('未完成，暂时无法自动填充首字母不匹配的项')
+                        
+
             self.update_device_info()
         else:
             QMessageBox.warning(self.mainwindow, "警告", "无法获取应用列表，请先连接设备")
@@ -187,7 +191,7 @@ class AAM(QWidget, Ui_aam):
             #     f'''{sltk.join_path(self.INSIDE_DIR,'aapt.exe')} dump badging {zip_path} | findstr "versionName"''',stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',shell=True).stdout.split('versionName=')[1][1:-2])
 
 
-        if self.cmb_device.currentText() and self.cmb_app.text() in self.cmb_app.lis:
+        if self.cmb_device.currentText() and self.cmb_app.text() in self.cmb_app.items:
             self.label_app_name.clear()
             self.label_app_icon.clear()
             self.app_ver.setValue()
@@ -202,27 +206,22 @@ class AAM(QWidget, Ui_aam):
                 threading.Thread(target=version, name='get_app_version',args=[i.split('versionName=')[1][1:-1] for i in result if 'versionName'in i][0:1]).start()
             except:pass
 
-    def aam_getapp_high(self):
+    def aam_get_focused_app(self):
+        '''
+        Android 7.0(Nougat)以前用 `mFocusedActivity`\n
+        Android 8.0(Oreo)以后用 `mResumedActivity`\n
+        Android 10(API级别29)及更高版本出现多窗口，上述命令会返回多个应用\n
+        用`mCurrentFocus`获取焦点(不是前台)应用
+        '''
         log = os.popen(
-            f'''{self.adb_path(True)} shell dumpsys activity |findstr "mResumedActivity"'''
+            f'''{self.adb_path(True)} shell dumpsys activity |findstr "mCurrentFocus"'''
         ).read()
         if "ActivityRecord" in log:
             self.textedit_log.append(log)
             log = log.split(" ")[7].split("/")[0]
-            self.cmb_app.setCurrentText(log)
+            self.cmb_app.setText(log)
         else:
-            QMessageBox.warning(self.mainwindow, "警告", "无法获取包名，确保手机处于亮屏状态")
-
-    def aam_getapp_low(self):
-        log = os.popen(
-            f'''{self.adb_path(True)} shell dumpsys activity |findstr "mFocusedActivity"'''
-        ).read()
-        if "ActivityRecord" in log:
-            self.textedit_log.append(log)
-            log = log.split(" ")[7].split("/")[0]
-            self.cmb_app.setCurrentText(log)
-        else:
-            QMessageBox.warning(self.mainwindow, "警告", "无法获取包名，确保手机处于亮屏状态")
+            QMessageBox.warning(self.mainwindow, "警告", "无法获取焦点应用包名，请确保手机处于亮屏状态")
 
     def aam_launch(self):
         if self.cmb_app.text():
@@ -246,7 +245,7 @@ class AAM(QWidget, Ui_aam):
             if apk_path:
                 if not os.path.exists(apk_path):
                     os.mkdir(apk_path)
-                os.chdir(apk_path)
+                # os.chdir(apk_path)
                 apk_file_name = os.popen(
                     f'''{self.adb_path(True)} shell pm path {self.cmb_app.text()}''').readline().lstrip('package:').rstrip()
                 log = os.popen(

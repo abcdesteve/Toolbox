@@ -116,20 +116,26 @@ class sltk:
         `TableWidget` -> list[list[str]]\n
         `TreeWidget` -> list[str]
         '''
-        if type(widget) in [QComboBox, ComboBox]:
+        # if type(widget) in [QComboBox, ComboBox]:
+        if isinstance(widget, (QComboBox, ComboBox, EditableComboBox)):
             return [widget.itemText(i) for i in range(widget.count())]
 
-        elif type(widget) in [QListWidget, ListWidget]:
+        # elif type(widget) in [QListWidget, ListWidget]:
+        elif isinstance(widget, (QListWidget, ListWidget)):
             return [widget.item(i)for i in range(widget.count())]
 
-        elif type(widget) in [QTableWidget, TableWidget,]:
+        # elif type(widget) in [QTableWidget, TableWidget,]:
+        elif isinstance(widget, (QTableWidget, TableWidget)):
             return [
                 [widget.item(row, col).text()
                  for col in range(widget.columnCount())]
                 for row in range(widget.rowCount())]
 
-        elif type(widget) in [QTreeWidget, TreeWidget]:
+        # elif type(widget) in [QTreeWidget, TreeWidget]:
+        elif isinstance(widget, (QTreeWidget, TreeWidget)):
             return [widget.topLevelItem(i).text(0) for i in range(widget.topLevelItemCount())]
+        else:
+            raise TypeError(f'Unsupported widget type: {type(widget)}')
 
 
 class QMessageBox:

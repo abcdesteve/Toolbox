@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (ComboBox, LineEdit, PrimaryPushButton, PushButton,
-    ScrollArea, SearchLineEdit, SwitchButton, TextEdit)
+from qfluentwidgets import (ComboBox, EditableComboBox, LineEdit, PrimaryPushButton,
+    PushButton, ScrollArea, SwitchButton, TextEdit)
 
 class Ui_aam(object):
     def setupUi(self, aam):
@@ -60,7 +60,7 @@ class Ui_aam(object):
 
         self.horizontalLayout.addWidget(self.label_app)
 
-        self.cmb_app = SearchLineEdit(aam)
+        self.cmb_app = EditableComboBox(aam)
         self.cmb_app.setObjectName(u"cmb_app")
 
         self.horizontalLayout.addWidget(self.cmb_app)
@@ -120,7 +120,7 @@ class Ui_aam(object):
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.layout_device_info = QHBoxLayout()
-        self.layout_device_info.setSpacing(2)
+        self.layout_device_info.setSpacing(0)
         self.layout_device_info.setObjectName(u"layout_device_info")
 
         self.horizontalLayout_4.addLayout(self.layout_device_info)
@@ -210,25 +210,19 @@ class Ui_aam(object):
         self.horizontalLayout_4.addItem(self.horizontalSpacer_1)
 
         self.verticalLayout_2 = QVBoxLayout()
-        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.btn_getapp_low = PrimaryPushButton(aam)
-        self.btn_getapp_low.setObjectName(u"btn_getapp_low")
+        self.btn_get_app = PushButton(aam)
+        self.btn_get_app.setObjectName(u"btn_get_app")
 
-        self.verticalLayout_2.addWidget(self.btn_getapp_low)
-
-        self.btn_getapp_high = PrimaryPushButton(aam)
-        self.btn_getapp_high.setObjectName(u"btn_getapp_high")
-
-        self.verticalLayout_2.addWidget(self.btn_getapp_high)
-
-
-        self.horizontalLayout_4.addLayout(self.verticalLayout_2)
+        self.verticalLayout_2.addWidget(self.btn_get_app)
 
         self.btn_clear = PushButton(aam)
         self.btn_clear.setObjectName(u"btn_clear")
 
-        self.horizontalLayout_4.addWidget(self.btn_clear)
+        self.verticalLayout_2.addWidget(self.btn_clear)
+
+
+        self.horizontalLayout_4.addLayout(self.verticalLayout_2)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
@@ -270,9 +264,7 @@ class Ui_aam(object):
         QWidget.setTabOrder(self.btn_freeze, self.btn_unfreeze)
         QWidget.setTabOrder(self.btn_unfreeze, self.btn_backup)
         QWidget.setTabOrder(self.btn_backup, self.btn_restore)
-        QWidget.setTabOrder(self.btn_restore, self.btn_getapp_low)
-        QWidget.setTabOrder(self.btn_getapp_low, self.btn_getapp_high)
-        QWidget.setTabOrder(self.btn_getapp_high, self.btn_clear)
+        QWidget.setTabOrder(self.btn_restore, self.btn_clear)
         QWidget.setTabOrder(self.btn_clear, self.textedit_log)
         QWidget.setTabOrder(self.textedit_log, self.lineedit_cmd)
 
@@ -300,8 +292,7 @@ class Ui_aam(object):
         self.btn_unfreeze.setText(QCoreApplication.translate("aam", u"\u89e3\u51bb", None))
         self.btn_restore.setText(QCoreApplication.translate("aam", u"\u6062\u590d", None))
         self.btn_revoke_permission.setText(QCoreApplication.translate("aam", u"\u964d\u6743", None))
-        self.btn_getapp_low.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u4f4e\u7248\u672c)", None))
-        self.btn_getapp_high.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d(\u9ad8\u7248\u672c)", None))
+        self.btn_get_app.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d", None))
         self.btn_clear.setText(QCoreApplication.translate("aam", u"\u6e05\u7a7a\u65e5\u5fd7", None))
         self.textedit_log.setMarkdown(QCoreApplication.translate("aam", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.1\n"
 "\n"

@@ -66,7 +66,7 @@
       </widget>
      </item>
      <item>
-      <widget class="SearchLineEdit" name="cmb_app"/>
+      <widget class="EditableComboBox" name="cmb_app"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -147,7 +147,7 @@
      <item>
       <layout class="QHBoxLayout" name="layout_device_info">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
       </layout>
      </item>
@@ -316,31 +316,21 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
        <item>
-        <widget class="PrimaryPushButton" name="btn_getapp_low">
+        <widget class="PushButton" name="btn_get_app">
          <property name="text">
-          <string>获取包名(低版本)</string>
+          <string>获取包名</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="PrimaryPushButton" name="btn_getapp_high">
+        <widget class="PushButton" name="btn_clear">
          <property name="text">
-          <string>获取包名(高版本)</string>
+          <string>清空日志</string>
          </property>
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="PushButton" name="btn_clear">
-       <property name="text">
-        <string>清空日志</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
@@ -465,11 +455,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>SearchLineEdit</class>
-   <extends>QComboBox</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>SwitchButton</class>
    <extends>QCheckBox</extends>
    <header>qfluentwidgets</header>
@@ -479,6 +464,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <extends>QScrollArea</extends>
    <header>qfluentwidgets</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EditableComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -494,8 +484,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <tabstop>btn_unfreeze</tabstop>
   <tabstop>btn_backup</tabstop>
   <tabstop>btn_restore</tabstop>
-  <tabstop>btn_getapp_low</tabstop>
-  <tabstop>btn_getapp_high</tabstop>
   <tabstop>btn_clear</tabstop>
   <tabstop>textedit_log</tabstop>
   <tabstop>lineedit_cmd</tabstop>
