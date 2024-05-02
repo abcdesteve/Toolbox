@@ -1,3 +1,4 @@
+from PySide6.QtCore import QObject
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -14,10 +15,10 @@ import sys
 import zipfile
 import threading,subprocess
 
+        
 
 class AAM(QWidget, Ui_aam):
     """Android application manager"""
-
     def __init__(self, mainwindow: QMainWindow, parent_dir: str):
         super().__init__()
         self.setupUi(self)
@@ -40,12 +41,13 @@ class AAM(QWidget, Ui_aam):
         'using `__file__` of parent which will direct to the dir *inside* the program'
         self.NEAR_DIR = os.path.dirname(sys.argv[0])
         'using `sys.argv[0]` which will direct to the dir *near* the program'
-        self.adb_path = lambda flag=False: sltk.join_path(
-            self.INSIDE_DIR, 'adb.exe')+(f' -s {self.cmb_device.currentText()}' if flag else '')
+        self.adb_path = lambda specific=False: sltk.join_path(
+            self.INSIDE_DIR, 'adb.exe')+(f' -s {self.cmb_device.currentText()}' if specific else '')
         'when `flag` is `True`, a specific device is returned'
 
         self.init_icon()
         self.init_signal()
+        self.runner=[]
 
     def init_icon(self):
         self.btn_device.setIcon(FluentIcon.SYNC)
@@ -80,6 +82,8 @@ class AAM(QWidget, Ui_aam):
         self.btn_unfreeze.clicked.connect(self.aam_unfreeze)
         self.btn_backup.clicked.connect(self.aam_backup)
         self.btn_restore.clicked.connect(self.aam_restore)
+        self.btn_grant_permission.clicked.connect(self.aam_grant_permission)
+        self.btn_revoke_permission.clicked.connect(self.aam_revoke_permission)
 
         self.ckb_app_user.checkedChanged.connect(self.update_device_app)
         self.ckb_app_sys.checkedChanged.connect(self.update_device_app)
@@ -91,6 +95,7 @@ class AAM(QWidget, Ui_aam):
         try:
             log = os.popen(f'''{self.adb_path()} connect {ip}:{port}''').read()
             self.textedit_log.append(log)
+
             # if self.cmb_device.findText(f"{ip}:{port}") == -1:
             #     QMessageBox.warning(self.mainwindow, "警告", "未能成功连接")
         except:
@@ -120,7 +125,7 @@ class AAM(QWidget, Ui_aam):
         except:
             self.device_sys_ver.setValue()
         try:
-            self.device_app_cout.setValue(str(len(self.cmb_app.lis)))
+            self.device_app_cout.setValue(str(len(self.cmb_app.items)))
         except:
             self.device_app_cout.setValue()
 
@@ -216,9 +221,10 @@ class AAM(QWidget, Ui_aam):
         log = os.popen(
             f'''{self.adb_path(True)} shell dumpsys activity |findstr "mCurrentFocus"'''
         ).read()
-        if "ActivityRecord" in log:
-            self.textedit_log.append(log)
-            log = log.split(" ")[7].split("/")[0]
+        if "Window" in log:
+            log=log.strip()
+            # self.textedit_log.append(log)
+            log = log.split(" ")[2].split("/")[0]
             self.cmb_app.setText(log)
         else:
             QMessageBox.warning(self.mainwindow, "警告", "无法获取焦点应用包名，请确保手机处于亮屏状态")
@@ -335,6 +341,26 @@ class AAM(QWidget, Ui_aam):
                 QMessageBox.warning(self.mainwindow, "警告", "路径无效")
         else:
             QMessageBox.warning(self.mainwindow, "警告", "请先填写备份文件路径")
+    
+    def aam_grant_permission(self):
+        if self.cmb_app.text():
+            option=InputDialog().run(self.mainwindow,'选择权限','请选择要修改的权限',['android.permission.READ_LOGS','android.permission.WRITE_SECURE_SETTINGS'])
+            log = os.popen(
+                f'''{self.adb_path(True)} shell pm grant {self.cmb_app.text()} {option}'''
+            ).read()
+            self.textedit_log.append(log)
+        else:
+            QMessageBox.warning(self.mainwindow, "警告", "请先填写应用包名")
+
+    def aam_revoke_permission(self):
+        if self.cmb_app.text():
+            option=InputDialog().run(self.mainwindow,'选择权限','请选择要修改的权限',['android.permission.READ_LOGS','android.permission.WRITE_SECURE_SETTINGS'])
+            log = os.popen(
+                f'''{self.adb_path(True)} shell pm revoke {self.cmb_app.text()} {option}'''
+            ).read()
+            self.textedit_log.append(log)
+        else:
+            QMessageBox.warning(self.mainwindow, "警告", "请先填写应用包名")
 
     # def keyPressEvent(self, event):
     #     if self.lineedit_cmd.hasFocus():

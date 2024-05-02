@@ -4,6 +4,8 @@ from PySide6.QtGui import *
 
 from .fhc_ui import Ui_fhc
 
+from sl_lib import QMessageBox
+
 import os
 import sys
 import math
@@ -13,10 +15,13 @@ import hashlib,binascii
 class FHC(QWidget, Ui_fhc):
     '''file hash check'''
 
-    def __init__(self):
+    def __init__(self,mainwindow):
         super().__init__()
+        self.mainwindow=mainwindow
         self.setupUi(self)
         self.signal_connect()
+        self.tablewidget.setBorderVisible(True)
+        self.tablewidget.setBorderRadius(10)
 
     def signal_connect(self):
         self.btn_A.clicked.connect(self.select_file)
@@ -33,7 +38,7 @@ class FHC(QWidget, Ui_fhc):
             #     section.setPlainText(str(file.read()))
             section.setPlainText('file:'+path)
         else:
-            QMessageBox.warning(self, '警告', '路径无效')
+            QMessageBox.warning(self.mainwindow, '警告', '路径无效')
 
     def get_result(self, method: str, txt: str):
         STEP=1024000

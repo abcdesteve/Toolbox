@@ -1,5 +1,4 @@
 from PySide6.QtGui import *
-import PySide6.QtGui
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
@@ -19,7 +18,7 @@ class FAS(QWidget, Ui_fas):
         self.setupUi(self)
 
         self.subwin_taskedit = TaskEdit(mainwindow)
-        self.mainwindow=mainwindow
+        self.mainwindow = mainwindow
 
         self.signal_connect()
         self.init_icon()
@@ -39,9 +38,7 @@ class FAS(QWidget, Ui_fas):
                                                  Qt.ItemIsEditable | Qt.ItemIsDropEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             self.tableWidget.item(i, 2).setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled |
                                                  Qt.ItemIsDropEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-    
-        
-        
+
 
 class TaskEdit(FluentWindow, Ui_task_edit):
     '''task edit'''
@@ -69,8 +66,9 @@ class TaskEdit(FluentWindow, Ui_task_edit):
     def signal_connect(self):
         self.btn_save.clicked.connect(self.hide)
         self.btn_cancel.clicked.connect(self.hide)
-        self.btn_src_del.clicked.connect(lambda:self.listwidget_src.removeItemWidget(self.listwidget_src.selectedItems()[0]))
-        
+        self.btn_src_del.clicked.connect(lambda: self.listwidget_src.removeItemWidget(
+            self.listwidget_src.selectedItems()[0]))
+
     def init_widget(self):
         self.ckb_include_later.setOnText('包含之后增加的文件')
         self.ckb_include_later.setOffText('包含之后增加的文件')
@@ -87,9 +85,8 @@ class TaskEdit(FluentWindow, Ui_task_edit):
         event.accept()
 
     def dropEvent(self, event: QDropEvent):
-        files=[i.toLocalFile() for i in event.mimeData().urls()]
-        sltk.unique_add_items(self.listwidget_src,files)
-        ListWidget.remove
+        files = [i.toLocalFile() for i in event.mimeData().urls()]
+        sltk.unique_add_items(self.listwidget_src, files)
 
     def dragMoveEvent(self, event: QDragMoveEvent) -> None:
         event.accept()
@@ -97,8 +94,7 @@ class TaskEdit(FluentWindow, Ui_task_edit):
     def hideEvent(self, event):
         self.mainwindow.show()
         super().hide()
-        
+
     def closeEvent(self, event):
         self.hide()
-        
         event.ignore()

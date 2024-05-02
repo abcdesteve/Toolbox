@@ -1,11 +1,13 @@
 import os
 import logging
 import zipfile
+
 from qfluentwidgets import *
+from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-from qfluentwidgets.common.config import Theme
+
 
 from input_dialog_ui import Ui_Input_dialog
 
@@ -62,7 +64,8 @@ class sltk:
 
     def unique_add_items(widget: QComboBox | ComboBox | QListWidget | ListWidget, *items: str | list[str], format_item: bool = True):
         '''为ComboBox不重复地添加一个或多个item，同时格式化路径（如果可以）'''
-        previous_items = [(widget.itemText(i) if type(widget)in[QComboBox,ComboBox]else widget.item(i).text()) for i in range(widget.count())]
+        previous_items = [(widget.itemText(i) if type(widget) in [
+                           QComboBox, ComboBox]else widget.item(i).text()) for i in range(widget.count())]
         if type(items[0]) == list:
             items = items[0]
         for i in items:
@@ -194,7 +197,8 @@ class QMessageBox:
 
         return QMessageBox.Yes if widget.exec() else QMessageBox.No
 
-class InputDialog(QDialog, Ui_Input_dialog):
+
+class InputDialog(MaskDialogBase, Ui_Input_dialog):
     def __init__(self):
         pass
 
@@ -204,22 +208,37 @@ class InputDialog(QDialog, Ui_Input_dialog):
         Return input txt
         '''
         super().__init__(parent)
-        self.setupUi(self)
+        self.setupUi(self.widget)
+        self.widget.setFixedSize(360, 220)
+        FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
-        self.setWindowTitle(title)
-        self.label.setText(content)
+
+        self.btn_cancel.setShortcut('Alt+N')
+        self.btn_ok.setShortcut('Alt+Y')
+        self.btn_cancel.clicked.connect(self.cancel)
+        self.btn_ok.clicked.connect(self.ok)
+        self.title.setText(title)
+        self.content.setText(content)
         sltk.unique_add_items(self.comboBox, options, format_item=False)
         self.comboBox.setReadOnly(not editable)
-        self.show()
+        # self.show()
         self.exec()
-        return self.comboBox.currentText()
+        return self.comboBox.currentText() if self.status else None
 
-    def closeEvent(self, arg: QCloseEvent):
-        self.done(1)
+    def cancel(self):
+        self.status = False
+        self.close()
 
-    def keyPressEvent(self, event: QKeyEvent):
-        if event.key() in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
-            self.close()
+    def ok(self):
+        self.status = True
+        self.close()
+
+    # def closeEvent(self, arg: QCloseEvent):
+    #     self.done(1)
+
+    # def keyPressEvent(self, event: QKeyEvent):
+    #     if event.key() in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
+    #         self.close()
 
 
 class StatisticsWidget(QWidget):
@@ -247,13 +266,14 @@ class StatisticsWidget(QWidget):
     def setValue(self, value: str = '未知'):
         self.valueLabel.setText(str(value))
 
-class MyFluentIcon(FluentIconBase,Enum):
-    ToolBox='toolbox'
-    Sheild='shield'
-    Android='android'
-    Frigid='frigid'
-    UnFrigid='unfrigid'
+
+class MyFluentIcon(FluentIconBase, Enum):
+    ToolBox = 'toolbox'
+    Sheild = 'shield'
+    Android = 'android'
+    Frigid = 'frigid'
+    UnFrigid = 'unfrigid'
 
     def path(self, theme=Theme.AUTO) -> str:
-        return sltk.join_path(os.path.dirname(__file__), 'icons',f'{self.value}_{getIconColor(theme)}.svg')
+        return sltk.join_path(os.path.dirname(__file__), 'icons', f'{self.value}_{getIconColor(theme)}.svg')
         # return f'{os.path.dirname(__file__)}icons/{self.value}'

@@ -17,11 +17,14 @@ class About(QWidget,Ui_about):
         self.setupUi(self)
         self.btn_github.setIcon(FluentIcon.GITHUB)
         # self.btn_bilibili.setIcon(FluentIcon.HOME)
-        self.btn_bilibili.setIcon(QIcon(os.path.join(os.path.dirname(__name__),'icons/bilibili.svg')))
+        self.btn_bilibili.setIcon(QIcon(sltk.join_path(parent_dir,'icons','bilibili.svg')))
         self.btn_tour.setIcon(FluentIcon.MOVIE)
         self.signal_connect()
-        with open(sltk.join_path(parent_dir,'update.md'),'r',encoding='utf-8')as file:
-            self.textEdit.setMarkdown('\n'.join(file.readlines()[9:]))
+        try:
+            with open(sltk.join_path(parent_dir,'update.md'),'r',encoding='utf-8')as file:
+                self.textEdit.setMarkdown('\n'.join(file.readlines()[9:]))
+        except:
+            pass
 
     def signal_connect(self):
         self.btn_github.clicked.connect(lambda:webbrowser.open('https://www.github.com/abcdesteve'))

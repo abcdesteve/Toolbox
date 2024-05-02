@@ -25,8 +25,8 @@ class Main(FluentWindow):
         self.setWindowTitle('神龙工具箱v2.1')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
-        self.subwin_csl = CSL()
-        self.subwin_fhc = FHC()
+        self.subwin_csl = CSL(self)
+        self.subwin_fhc = FHC(self)
         self.subwin_fas = FAS(self)
         self.subwin_settings = Settings(app, self, path)
         self.subwin_about = About(os.path.dirname(__file__))
@@ -49,14 +49,11 @@ class Main(FluentWindow):
         self.subwin_settings.cfg.theme_style.valueChanged.connect(self.update_theme)
         self.update_theme()
         self.subwin_settings.cfg.theme_color.valueChanged.connect(lambda:setThemeColor(self.subwin_settings.cfg.theme_color.value))
-        setThemeColor(self.subwin_settings.cfg.theme_color.value)
 
         self.show()
 
     def update_theme(self):
         theme_control.apply_theme(app, self.subwin_settings.cfg.get(self.subwin_settings.cfg.theme_style))
-        # self.setWindowIcon(FluentIcon.icon(
-        #     FluentIcon.DEVELOPER_TOOLS, theme()))
         self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
 
@@ -82,9 +79,9 @@ class Main(FluentWindow):
                 case 3:
                     self.animation.setEndValue(QSize(500, 400))
                 case 4:
-                    self.animation.setEndValue(QSize(500, 75))
+                    self.animation.setEndValue(QSize(600, 100))
                 case 5:
-                    self.animation.setEndValue(QSize(800, 600))
+                    self.animation.setEndValue(QSize(600, 500))
             self.animation.start()
 
     def dragEnterEvent(self, event):

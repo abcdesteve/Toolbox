@@ -1,4 +1,4 @@
-__version__ = 20231119
+__version__ = 20240511
 
 import winreg
 import darkdetect
@@ -36,11 +36,9 @@ def apply_theme(app,goal_theme:str):
 
 STYLESHHET_DARK = """
 QLabel {color:#f0f0f0}
-
 ScrollArea {border: none;background-color: transparent}
-
-QGroupBox {background-color:transparent;color:#f0f0f0}
 QSplitter::handle {background-color:transparent}
+QGroupBox::title {color:#f0f0f0}
 
 QMessageBox {background-color:#282828;  color:#f0f0f0;  border-radius:5px}
 QMessageBox QLabel {color:#f0f0f0;  }
@@ -54,13 +52,10 @@ QMessageBox QPushButton#closeButton:pressed {color:#cc0000;  }
 
 
 STYLESHHET_LIGHT ='''
-/*QMainWindow{background-color:#f0f0f0;  border-radius:20px}
-
-QWidget{background-color:#f0f0f0;  border-radius:5px}
-QTabWidget{background-color:#ffffff;border-radius:0px}*/
-
-QLabel{color:#000000}
-QGroupBox{background-color:transparent;color:#000000}
+QLabel {color: #000000}
+ScrollArea {border: none;background-color: transparent}
+QSplitter::handle {background-color:transparent}
+QGroupBox::title {color:#000000}
 
 QMessageBox {background-color:#f0f0f0;  color:#000000;  border-radius:5px}
 QMessageBox QLabel {color:#000000;  }
@@ -70,11 +65,4 @@ QMessageBox QPushButton:pressed {background-color:#444444;  }
 QMessageBox QPushButton#closeButton {background-color:transparent;  color:#000000;}
 QMessageBox QPushButton#closeButton:hover {color:#ff0000;  }
 QMessageBox QPushButton#closeButton:pressed {color:#cc0000;  }
-
-/*QTabWidget {background-color:#ffffff;  border-radius:5px;  }
-QTabBar::tab {background-color:#ffffff;  border-radius:5px;  color:#000000;  padding:8px 12px;  margin-right:4px;  }
-QTabBar::tab:selected {background-color:#4cc2ff;  color:#ffffff;  }
-QTabBar::tab:!selected:hover {background-color:#585858;  }
-QTabBar::tab:!selected:selected {background-color:#4cc2ff;  }
-QTabWidget::pane {background-color:#585858;  }*/
 '''
