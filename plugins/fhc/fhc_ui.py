@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'fhc.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,6 +25,7 @@ class Ui_fhc(object):
         if not fhc.objectName():
             fhc.setObjectName(u"fhc")
         fhc.resize(451, 297)
+        fhc.setAcceptDrops(True)
         self.gridLayout = QGridLayout(fhc)
         self.gridLayout.setObjectName(u"gridLayout")
         self.btn_A = PrimaryPushButton(fhc)

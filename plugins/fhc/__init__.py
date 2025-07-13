@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 
 from .fhc_ui import Ui_fhc
 
-from sl_lib import QMessageBox
+from sl_lib import QMessageBox,sltk
 
 import os
 import sys
@@ -26,9 +26,8 @@ class FHC(QWidget, Ui_fhc):
     def signal_connect(self):
         self.btn_A.clicked.connect(self.select_file)
         self.btn_B.clicked.connect(self.select_file)
-        self.lineedit_A.textChanged.connect(self.table_update_data)
-        self.lineedit_B.textChanged.connect(self.table_update_data)
-        self.tablewidget.currentItemChanged.connect(self.table_update_data)
+        self.lineedit_A.textChanged.connect(lambda:self.table_update_data('a'))
+        self.lineedit_B.textChanged.connect(lambda:self.table_update_data('b'))
 
     def select_file(self):
         section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
@@ -60,11 +59,7 @@ class FHC(QWidget, Ui_fhc):
                         return str(count)
                     case '文件大小':
                         size = os.path.getsize(filename)
-                        unit=math.floor(math.log(size, 1024))
-                        try:
-                            return f"{round(size/1024**unit,2)} {['B','KiB','MiB','GiB','TiB','PiB','EiB','ZiB'][unit]}"
-                        except KeyError:
-                            return f"{size} B"
+                        return sltk.bit2size(size)
                     case 'crc32':
                         temp=0
                         while True:
@@ -88,11 +83,7 @@ class FHC(QWidget, Ui_fhc):
                     return str(len(txt))
                 case '文件大小':
                     size = sys.getsizeof(txt.encode())
-                    unit=math.floor(math.log(size, 1024))
-                    try:
-                        return f"{round(size/1024**unit,2)} {['B','KiB','MiB','GiB','TiB','PiB','EiB','ZiB'][unit]}"
-                    except KeyError:
-                        return f"{size} B"
+                    return sltk.bit2size(size)
                 case 'crc32':
                     return hex(binascii.crc32(txt.encode('utf-8'))).upper()[2:]
                 case _:
@@ -109,15 +100,15 @@ class FHC(QWidget, Ui_fhc):
         self.tablewidget.setColumnWidth(
             2, self.tablewidget.width()*0.4)
 
-    def table_update_data(self):
-        self.tablewidget.clearContents()
+    def table_update_data(self,area:str):
+        # self.tablewidget.clearContents()
         self.table_update_size()
         for i in range(self.tablewidget.rowCount()):
 
-            if self.lineedit_A.toPlainText():
+            if self.lineedit_A.toPlainText() and area=='a':
                 self.tablewidget.setItem(i, 0, QTableWidgetItem(self.get_result(
                     self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_A.toPlainText())))
-            if self.lineedit_B.toPlainText():
+            if self.lineedit_B.toPlainText() and area=='b':
                 self.tablewidget.setItem(i, 2, QTableWidgetItem(self.get_result(
                     self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_B.toPlainText())))
 
@@ -132,3 +123,17 @@ class FHC(QWidget, Ui_fhc):
                 self.tablewidget.setItem(i, 1, item)
             else:
                 self.tablewidget.setItem(i, 1, QTableWidgetItem())
+
+    def dragEnterEvent(self, event):
+        event.accept()
+        return super().dragEnterEvent(event)
+    
+    def dropEvent(self, event:QEvent):
+        if event.mimeData().hasUrls():
+            path=event.mimeData().urls()[0].toLocalFile()
+            if event.position().x()<self.width()//2:
+                self.lineedit_A.setPlainText('file:'+path)
+            else:
+                self.lineedit_B.setPlainText('file:'+path)
+            event.accept()
+        return super().dropEvent(event)

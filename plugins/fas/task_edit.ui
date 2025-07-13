@@ -78,8 +78,18 @@
         <item row="0" column="0" colspan="2">
          <widget class="ListWidget" name="listwidget_src"/>
         </item>
+        <item row="1" column="1">
+         <widget class="PrimaryPushButton" name="btn_src_add">
+          <property name="text">
+           <string>添加</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="PushButton" name="btn_src_del">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>删除</string>
           </property>
@@ -93,12 +103,22 @@ PushButton:hover{background-color:#e63342;}</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="PrimaryPushButton" name="btn_src_add">
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="grpbox_dst_2">
+       <property name="title">
+        <string>源路径</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="PushButton" name="btn_select_dst_path_2">
           <property name="text">
-           <string>添加</string>
+           <string>选择路径</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="LineEdit" name="lineedit_dst_path_2"/>
         </item>
        </layout>
       </widget>
@@ -278,11 +298,11 @@ PushButton:hover{background-color:#e63342;}</string>
          </widget>
         </item>
         <item row="2" column="0" colspan="2">
-         <widget class="SwitchButton" name="ckb_include_later">
+         <widget class="SwitchButton" name="ckb_include_later" native="true">
           <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text">
+          <property name="text" stdset="0">
            <string>包含之后增加的文件</string>
           </property>
          </widget>
@@ -355,8 +375,8 @@ PushButton:hover{background-color:#e63342;}</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btngp_show_result"/>
   <buttongroup name="btngp_repeat_file"/>
   <buttongroup name="btngp_sync_type"/>
+  <buttongroup name="btngp_show_result"/>
  </buttongroups>
 </ui>

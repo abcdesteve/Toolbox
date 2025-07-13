@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'input_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,7 +24,12 @@ class Ui_Input_dialog(object):
     def setupUi(self, Input_dialog):
         if not Input_dialog.objectName():
             Input_dialog.setObjectName(u"Input_dialog")
-        Input_dialog.resize(350, 249)
+        Input_dialog.resize(350, 250)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Input_dialog.sizePolicy().hasHeightForWidth())
+        Input_dialog.setSizePolicy(sizePolicy)
         self.verticalLayout = QVBoxLayout(Input_dialog)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")

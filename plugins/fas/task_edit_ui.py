@@ -74,17 +74,33 @@ class Ui_task_edit(object):
 
         self.gridLayout.addWidget(self.listwidget_src, 0, 0, 1, 2)
 
-        self.btn_src_del = PushButton(self.grpbox_src)
-        self.btn_src_del.setObjectName(u"btn_src_del")
-
-        self.gridLayout.addWidget(self.btn_src_del, 1, 0, 1, 1)
-
         self.btn_src_add = PrimaryPushButton(self.grpbox_src)
         self.btn_src_add.setObjectName(u"btn_src_add")
 
         self.gridLayout.addWidget(self.btn_src_add, 1, 1, 1, 1)
 
+        self.btn_src_del = PushButton(self.grpbox_src)
+        self.btn_src_del.setObjectName(u"btn_src_del")
+        self.btn_src_del.setEnabled(False)
+
+        self.gridLayout.addWidget(self.btn_src_del, 1, 0, 1, 1)
+
         self.splitter_2.addWidget(self.grpbox_src)
+        self.grpbox_dst_2 = QGroupBox(self.splitter_2)
+        self.grpbox_dst_2.setObjectName(u"grpbox_dst_2")
+        self.horizontalLayout_3 = QHBoxLayout(self.grpbox_dst_2)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.btn_select_dst_path_2 = PushButton(self.grpbox_dst_2)
+        self.btn_select_dst_path_2.setObjectName(u"btn_select_dst_path_2")
+
+        self.horizontalLayout_3.addWidget(self.btn_select_dst_path_2)
+
+        self.lineedit_dst_path_2 = LineEdit(self.grpbox_dst_2)
+        self.lineedit_dst_path_2.setObjectName(u"lineedit_dst_path_2")
+
+        self.horizontalLayout_3.addWidget(self.lineedit_dst_path_2)
+
+        self.splitter_2.addWidget(self.grpbox_dst_2)
         self.grpbox_dst = QGroupBox(self.splitter_2)
         self.grpbox_dst.setObjectName(u"grpbox_dst")
         self.horizontalLayout_2 = QHBoxLayout(self.grpbox_dst)
@@ -254,12 +270,14 @@ class Ui_task_edit(object):
         self.radio_type_single.setText(QCoreApplication.translate("task_edit", u"\u5355\u5411", None))
         self.radio_type_double.setText(QCoreApplication.translate("task_edit", u"\u53cc\u5411", None))
         self.grpbox_src.setTitle(QCoreApplication.translate("task_edit", u"\u6587\u4ef6\u6e90", None))
+        self.btn_src_add.setText(QCoreApplication.translate("task_edit", u"\u6dfb\u52a0", None))
         self.btn_src_del.setText(QCoreApplication.translate("task_edit", u"\u5220\u9664", None))
         self.btn_src_del.setProperty("lightCustomQss", QCoreApplication.translate("task_edit", u"PushButton{background-color:#e81123;}\n"
 "PushButton:hover{background-color:#e63342;}", None))
         self.btn_src_del.setProperty("darkCustomQss", QCoreApplication.translate("task_edit", u"PushButton{background-color:#e81123;}\n"
 "PushButton:hover{background-color:#e63342;}", None))
-        self.btn_src_add.setText(QCoreApplication.translate("task_edit", u"\u6dfb\u52a0", None))
+        self.grpbox_dst_2.setTitle(QCoreApplication.translate("task_edit", u"\u6e90\u8def\u5f84", None))
+        self.btn_select_dst_path_2.setText(QCoreApplication.translate("task_edit", u"\u9009\u62e9\u8def\u5f84", None))
         self.grpbox_dst.setTitle(QCoreApplication.translate("task_edit", u"\u76ee\u6807\u8def\u5f84", None))
         self.btn_select_dst_path.setText(QCoreApplication.translate("task_edit", u"\u9009\u62e9\u8def\u5f84", None))
         self.grpbox_task.setTitle(QCoreApplication.translate("task_edit", u"\u4efb\u52a1\u5c5e\u6027", None))
@@ -276,7 +294,7 @@ class Ui_task_edit(object):
         self.label_file_count_value.setText(QCoreApplication.translate("task_edit", u"\u672a\u77e5", None))
         self.label_size_count.setText(QCoreApplication.translate("task_edit", u"\u6587\u4ef6\u603b\u5927\u5c0f\uff1a", None))
         self.label_size_count_value.setText(QCoreApplication.translate("task_edit", u"\u672a\u77e5", None))
-        self.ckb_include_later.setText(QCoreApplication.translate("task_edit", u"\u5305\u542b\u4e4b\u540e\u589e\u52a0\u7684\u6587\u4ef6", None))
+        self.ckb_include_later.setProperty("text", QCoreApplication.translate("task_edit", u"\u5305\u542b\u4e4b\u540e\u589e\u52a0\u7684\u6587\u4ef6", None))
         self.btn_cancel.setText(QCoreApplication.translate("task_edit", u"\u53d6\u6d88", None))
         self.btn_save.setText(QCoreApplication.translate("task_edit", u"\u4fdd\u5b58", None))
     # retranslateUi

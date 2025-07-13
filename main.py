@@ -7,6 +7,7 @@ from sl_lib import *
 import theme_control
 
 from plugins.aam import AAM
+from plugins.wam import WAM, Utility
 from plugins.csl import CSL
 from plugins.fhc import FHC
 from plugins.fas import FAS
@@ -25,17 +26,20 @@ class Main(FluentWindow):
         self.setWindowTitle('神龙工具箱v2.1')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
+        self.subwin_wam = WAM(self, path)
         self.subwin_csl = CSL(self)
         self.subwin_fhc = FHC(self)
         self.subwin_fas = FAS(self)
-        self.subwin_settings = Settings(app, self, path)
+        self.subwin_settings = Settings(self, path)
         self.subwin_about = About(os.path.dirname(__file__))
 
         self.addSubInterface(self.subwin_aam, MyFluentIcon.Android,
                              '安卓应用管理', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_wam, FluentIcon.APPLICATION,
+                             'Windows应用管理', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_csl, FluentIcon.LINK,
                              '创建符号链接', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fhc, FluentIcon.SEARCH,
+        self.addSubInterface(self.subwin_fhc, FluentIcon.PIE_SINGLE,
                              '文件哈希校验', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fas, FluentIcon.SYNC,
                              '文件自动同步', NavigationItemPosition.SCROLL)
@@ -46,14 +50,17 @@ class Main(FluentWindow):
 
         self.stackedWidget.currentChanged.connect(self.window_size_change)
         self.window_size_change()
-        self.subwin_settings.cfg.theme_style.valueChanged.connect(self.update_theme)
+        self.subwin_settings.cfg.theme_style.valueChanged.connect(
+            self.update_theme)
         self.update_theme()
-        self.subwin_settings.cfg.theme_color.valueChanged.connect(lambda:setThemeColor(self.subwin_settings.cfg.theme_color.value))
+        self.subwin_settings.cfg.theme_color.valueChanged.connect(
+            lambda: setThemeColor(self.subwin_settings.cfg.theme_color.value))
 
         self.show()
 
     def update_theme(self):
-        theme_control.apply_theme(app, self.subwin_settings.cfg.get(self.subwin_settings.cfg.theme_style))
+        theme_control.apply_theme(app, self.subwin_settings.cfg.get(
+            self.subwin_settings.cfg.theme_style))
         self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
 
@@ -130,7 +137,8 @@ class Main(FluentWindow):
                         popen = os.popen(
                             self.subwin_aam.lineedit_cmd.text()).read()
                         self.subwin_aam.textedit_log.append(popen)
-                        self.subwin_aam.textedit_log.moveCursor(QTextCursor.MoveOperation.End)
+                        self.subwin_aam.textedit_log.moveCursor(
+                            QTextCursor.MoveOperation.End)
                     threading.Thread(target=aam_cmd).start()
         event.ignore()
 
@@ -140,10 +148,10 @@ class Main(FluentWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    fluent_translator=FluentTranslator()
+    fluent_translator = FluentTranslator()
     app.installTranslator(fluent_translator)
 
-    path = os.path.expandvars(r'%appdata%/Avoconal')
+    path = sltk.join_path(os.path.expandvars(r'%appdata%'), 'Avoconal', '神龙工具箱')
     window = Main()
 
     sys.exit(app.exec())

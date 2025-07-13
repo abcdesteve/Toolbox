@@ -345,20 +345,22 @@ class AAM(QWidget, Ui_aam):
     def aam_grant_permission(self):
         if self.cmb_app.text():
             option=InputDialog().run(self.mainwindow,'选择权限','请选择要修改的权限',['android.permission.READ_LOGS','android.permission.WRITE_SECURE_SETTINGS'])
-            log = os.popen(
-                f'''{self.adb_path(True)} shell pm grant {self.cmb_app.text()} {option}'''
-            ).read()
-            self.textedit_log.append(log)
+            if option:
+                log = os.popen(
+                    f'''{self.adb_path(True)} shell pm grant {self.cmb_app.text()} {option}'''
+                ).read()
+                self.textedit_log.append(log)
         else:
             QMessageBox.warning(self.mainwindow, "警告", "请先填写应用包名")
 
     def aam_revoke_permission(self):
         if self.cmb_app.text():
             option=InputDialog().run(self.mainwindow,'选择权限','请选择要修改的权限',['android.permission.READ_LOGS','android.permission.WRITE_SECURE_SETTINGS'])
-            log = os.popen(
-                f'''{self.adb_path(True)} shell pm revoke {self.cmb_app.text()} {option}'''
-            ).read()
-            self.textedit_log.append(log)
+            if option:
+                log = os.popen(
+                    f'''{self.adb_path(True)} shell pm revoke {self.cmb_app.text()} {option}'''
+                ).read()
+                self.textedit_log.append(log)
         else:
             QMessageBox.warning(self.mainwindow, "警告", "请先填写应用包名")
 

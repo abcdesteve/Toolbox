@@ -15,7 +15,7 @@ from input_dialog_ui import Ui_Input_dialog
 class sltk:
     "神龙工具集"
 
-    def scan_file(dir_name: str, goal: str, depth: int, black_list: list[str] = ['C:\\Windows', 'C:\\$RECYCLE.BIN', 'C:\\Recovery', 'C:\\System Volume Information', 'D:\\$RECYCLE.BIN', 'D:\\System Volume Information']) -> list[str]:
+    def scan_file(dir_name: str, goal: str, depth: int, strict:bool=True, black_list: list[str] = ['C:\\Windows', 'C:\\$RECYCLE.BIN', 'C:\\Recovery', 'C:\\System Volume Information', 'D:\\$RECYCLE.BIN', 'D:\\System Volume Information']) -> list[str]:
         """
         Find the goal in the given dir.
         Return mutiple results if found.
@@ -24,6 +24,7 @@ class sltk:
             dir: The location to scan.
             goal: The file to be found.
             depth: Decide how many folders to be scan.  1 means no child folder is scaned
+            strict: If True, only return the exact match.
             black_list: Jump through to save time
 
         e.g. scan_file('C:\\ ','python.exe',5)
@@ -33,16 +34,15 @@ class sltk:
         if os.path.isdir(dir_name) and depth > 0 and dir_name not in black_list:
             try:
                 lis = os.listdir(dir_name)
-                if goal in lis:
-                    results.append(sltk.join_path(dir_name, goal))
-                temp = [
-                    results.extend(
-                        sltk.scan_file(sltk.join_path(
-                            dir_name, i), goal, depth - 1)
-                    )
-                    for i in lis
-                    if os.path.isdir(sltk.join_path(dir_name, i))
-                ]
+                if strict:
+                    if goal in lis:
+                        results.append(sltk.join_path(dir_name, goal))
+                else:
+                    for i in lis:
+                        if goal in i:
+                            results.append(sltk.join_path(dir_name, i))
+                temp = [results.extend(sltk.scan_file(sltk.join_path(dir_name, i), goal, depth - 1, strict, black_list))
+                    for i in lis if os.path.isdir(sltk.join_path(dir_name, i))]
                 # print(f'temp:{temp}')
                 return results
             except PermissionError:
@@ -140,6 +140,13 @@ class sltk:
         else:
             raise TypeError(f'Unsupported widget type: {type(widget)}')
 
+    def bit2size(bit: int | str) -> str:
+        '为字节自动匹配单位'
+        bit = int(bit)
+        for unit in ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB']:
+            if bit < 1024:
+                return f"{bit:.2f} {unit}"
+            bit /= 1024.0
 
 class QMessageBox:
     """
@@ -209,7 +216,7 @@ class InputDialog(MaskDialogBase, Ui_Input_dialog):
         '''
         super().__init__(parent)
         self.setupUi(self.widget)
-        self.widget.setFixedSize(360, 220)
+        # self.widget.setFixedSize(360, 220)
         FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
