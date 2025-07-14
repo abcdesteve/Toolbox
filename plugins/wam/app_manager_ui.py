@@ -90,7 +90,7 @@ class Ui_app_manager(object):
         self.table_app_info.setHorizontalHeaderItem(6, __qtablewidgetitem6)
         self.table_app_info.setObjectName(u"table_app_info")
         self.table_app_info.setDragEnabled(True)
-        self.table_app_info.setHorizontalScrollMode(QAbstractItemView.ScrollPerItem)
+        self.table_app_info.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.table_app_info.setSortingEnabled(True)
         self.table_app_info.horizontalHeader().setCascadingSectionResizes(True)
         self.table_app_info.horizontalHeader().setStretchLastSection(True)

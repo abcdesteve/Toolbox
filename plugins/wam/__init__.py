@@ -159,6 +159,7 @@ class WAM(QWidget, Ui_app_manager):
 
     def refresh_app_info(self):
         self.table_app_info.clearContents()
+        self.table_update_size()
         self.table_app_info.setRowCount(len(self.app_info))
         for i in range(len(self.app_info)):
             app_name, app_info=list(self.app_info.items())[i]
@@ -180,7 +181,7 @@ class WAM(QWidget, Ui_app_manager):
             self.table_app_info.setItem(i,1,QTableWidgetItem(app_version))
             self.table_app_info.setItem(i,2,QTableWidgetItem(main_file))
             self.table_app_info.setItem(i,3,QTableWidgetItem(app_install_date))
-            self.table_app_info.setItem(i,4,QTableWidgetItem(sltk.bit2size(os.path.getsize(main_file)) if main_file else ''))
+            self.table_app_info.setItem(i,4,QTableWidgetItem(sltk.bit2size(os.path.getsize(os.path.split(main_file)[0])) if main_file else ''))
             self.table_app_info.setItem(i,5,QTableWidgetItem(app_type))
             self.table_app_info.setItem(i,6,QTableWidgetItem(app_status))
 
@@ -188,7 +189,17 @@ class WAM(QWidget, Ui_app_manager):
         with open(sltk.join_path(self.path,'wam.json'),'w',encoding='utf-8') as f:
             data={'sources':sltk.expend_children_text(self.cmb_folder),'app_info':self.app_info}
             json.dump(data,f)
-            
+
+    def table_update_size(self):
+        print(self.width())
+        self.table_app_info.setColumnWidth(0, self.width()*0.3)
+        self.table_app_info.setColumnWidth(1, self.width()*0.1)
+        self.table_app_info.setColumnWidth(2, self.width()*0.4)
+        self.table_app_info.setColumnWidth(3, self.width()*0.1)
+        self.table_app_info.setColumnWidth(4, self.width()*0.1)
+        self.table_app_info.setColumnWidth(5, self.width()*0.1)
+        self.table_app_info.setColumnWidth(6, self.width()*0.1)
+        
 
 class Utility(QWidget):
     def __init__(self):
