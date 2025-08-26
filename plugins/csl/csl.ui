@@ -57,7 +57,7 @@
     </spacer>
    </item>
    <item row="1" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_to">
      <item>
       <widget class="PushButton" name="btn_to">
        <property name="maximumSize">
@@ -110,7 +110,7 @@
     </layout>
    </item>
    <item row="0" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_1">
+    <layout class="QHBoxLayout" name="horizontalLayout_from">
      <item>
       <widget class="PushButton" name="btn_from">
        <property name="maximumSize">
@@ -152,7 +152,7 @@
   </customwidget>
   <customwidget>
    <class>PrimaryPushButton</class>
-   <extends>QPushButton</extends>
+   <extends>PushButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'csl.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -34,63 +34,63 @@ class Ui_csl(object):
 
         self.gridLayout.addWidget(self.btn_start, 2, 1, 1, 1)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer, 2, 0, 1, 1)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer_2, 2, 2, 1, 1)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_to = QHBoxLayout()
+        self.horizontalLayout_to.setObjectName(u"horizontalLayout_to")
         self.btn_to = PushButton(csl)
         self.btn_to.setObjectName(u"btn_to")
         self.btn_to.setMaximumSize(QSize(120, 16777215))
         self.btn_to.setFocusPolicy(Qt.NoFocus)
 
-        self.horizontalLayout_2.addWidget(self.btn_to)
+        self.horizontalLayout_to.addWidget(self.btn_to)
 
         self.lineedit_to_dir = LineEdit(csl)
         self.lineedit_to_dir.setObjectName(u"lineedit_to_dir")
         self.lineedit_to_dir.setAlignment(Qt.AlignCenter)
         self.lineedit_to_dir.setClearButtonEnabled(True)
 
-        self.horizontalLayout_2.addWidget(self.lineedit_to_dir)
+        self.horizontalLayout_to.addWidget(self.lineedit_to_dir)
 
         self.label_sep = QLabel(csl)
         self.label_sep.setObjectName(u"label_sep")
 
-        self.horizontalLayout_2.addWidget(self.label_sep)
+        self.horizontalLayout_to.addWidget(self.label_sep)
 
         self.lineedit_to_name = LineEdit(csl)
         self.lineedit_to_name.setObjectName(u"lineedit_to_name")
         self.lineedit_to_name.setAlignment(Qt.AlignCenter)
         self.lineedit_to_name.setClearButtonEnabled(True)
 
-        self.horizontalLayout_2.addWidget(self.lineedit_to_name)
+        self.horizontalLayout_to.addWidget(self.lineedit_to_name)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 3)
+        self.gridLayout.addLayout(self.horizontalLayout_to, 1, 0, 1, 3)
 
-        self.horizontalLayout_1 = QHBoxLayout()
-        self.horizontalLayout_1.setObjectName(u"horizontalLayout_1")
+        self.horizontalLayout_from = QHBoxLayout()
+        self.horizontalLayout_from.setObjectName(u"horizontalLayout_from")
         self.btn_from = PushButton(csl)
         self.btn_from.setObjectName(u"btn_from")
         self.btn_from.setMaximumSize(QSize(120, 16777215))
         self.btn_from.setFocusPolicy(Qt.NoFocus)
 
-        self.horizontalLayout_1.addWidget(self.btn_from)
+        self.horizontalLayout_from.addWidget(self.btn_from)
 
         self.lineedit_from = LineEdit(csl)
         self.lineedit_from.setObjectName(u"lineedit_from")
         self.lineedit_from.setAlignment(Qt.AlignCenter)
         self.lineedit_from.setClearButtonEnabled(True)
 
-        self.horizontalLayout_1.addWidget(self.lineedit_from)
+        self.horizontalLayout_from.addWidget(self.lineedit_from)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_1, 0, 0, 1, 3)
+        self.gridLayout.addLayout(self.horizontalLayout_from, 0, 0, 1, 3)
 
         QWidget.setTabOrder(self.btn_from, self.lineedit_from)
         QWidget.setTabOrder(self.lineedit_from, self.btn_to)

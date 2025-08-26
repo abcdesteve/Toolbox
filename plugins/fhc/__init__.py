@@ -124,16 +124,3 @@ class FHC(QWidget, Ui_fhc):
             else:
                 self.tablewidget.setItem(i, 1, QTableWidgetItem())
 
-    def dragEnterEvent(self, event):
-        event.accept()
-        return super().dragEnterEvent(event)
-    
-    def dropEvent(self, event:QEvent):
-        if event.mimeData().hasUrls():
-            path=event.mimeData().urls()[0].toLocalFile()
-            if event.position().x()<self.width()//2:
-                self.lineedit_A.setPlainText('file:'+path)
-            else:
-                self.lineedit_B.setPlainText('file:'+path)
-            event.accept()
-        return super().dropEvent(event)

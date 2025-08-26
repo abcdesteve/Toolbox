@@ -82,33 +82,33 @@ class Main(FluentWindow):
                     self.animation.setEndValue(QSize(700, 400))
                     self.subwin_wam.table_update_size()
                 case 2:
-                    self.animation.setEndValue(QSize(400, 200))
+                    self.animation.setEndValue(QSize(500, 200))
                 case 3:
                     self.animation.setEndValue(QSize(500, 200))
                     self.subwin_fhc.table_update_size()
                 case 4:
-                    self.animation.setEndValue(QSize(500, 400))
+                    self.animation.setEndValue(QSize(700, 300))
                 case 5:
                     self.animation.setEndValue(QSize(600, 100))
                 case 6:
                     self.animation.setEndValue(QSize(600, 500))
             self.animation.start()
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent):
         drag_path = event.mimeData().urls()[0].toLocalFile()
         ext = os.path.splitext(drag_path)[1]
         if self.stackedWidget.currentIndex() == 0 and ext == '.apk':
             event.accept()
-        elif self.stackedWidget.currentIndex() == 1 and os.path.isdir(drag_path):
+        elif self.stackedWidget.currentIndex() == 2 and os.path.isdir(drag_path):
             event.accept()
-        elif self.stackedWidget.currentIndex() == 2 and os.path.isfile(drag_path):
+        elif self.stackedWidget.currentIndex() == 3 and os.path.isfile(drag_path):
             event.accept()
         # elif not self.subwin_fas.subwin_taskedit.isHidden():
         #     event.accept()
         else:
             event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent):
         drag_file = event.mimeData().urls()[0].toLocalFile()
         if drag_file:
             if self.stackedWidget.currentIndex() == 0:
@@ -118,14 +118,19 @@ class Main(FluentWindow):
                 else:
                     QMessageBox.warning(self, '警告', '请先连接设备')
 
-            elif self.stackedWidget.currentIndex() == 1:
-                if self.subwin_csl.lineedit_from.hasFocus():
+            elif self.stackedWidget.currentIndex() == 2:
+                # if self.subwin_csl.lineedit_from.hasFocus():
+                print(event.position().x(),event.position().y(),self.stackedWidget.height()//3)
+                if self.subwin_csl.horizontalLayout_from.contentsRect().contains(self.subwin_csl.mapFrom(self,event.position()).toPoint()):
                     self.subwin_csl.lineedit_from.setText(drag_file)
-                elif self.subwin_csl.lineedit_to_dir.hasFocus():
+                # elif self.subwin_csl.lineedit_to_dir.hasFocus():
+                elif self.subwin_csl.horizontalLayout_to.contentsRect().contains(self.subwin_csl.mapFrom(self,event.position()).toPoint()):
                     self.subwin_csl.lineedit_to_dir.setText(drag_file)
 
-            elif self.stackedWidget.currentIndex() == 2:
-                if event.pos().x() <= self.width()//2:
+            elif self.stackedWidget.currentIndex() == 3:
+                # event.pos()返回的是相对触发widget的坐标，被官方弃用
+                # event.position()返回的是相对屏幕的坐标
+                if event.position().x() <= self.width()//2:
                     self.subwin_fhc.lineedit_A.setPlainText(
                         f'file:{drag_file}')
                 else:
@@ -145,7 +150,7 @@ class Main(FluentWindow):
                     threading.Thread(target=aam_cmd).start()
         event.ignore()
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         app.exit()
 
 
@@ -154,7 +159,8 @@ if __name__ == '__main__':
     fluent_translator = FluentTranslator()
     app.installTranslator(fluent_translator)
 
-    path = sltk.join_path(os.path.expandvars(r'%appdata%'), 'Avoconal', '神龙工具箱')
+    path = sltk.join_path(os.path.expandvars(
+        r'%appdata%'), 'Avoconal', '神龙工具箱')
     window = Main()
 
     sys.exit(app.exec())
