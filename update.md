@@ -1,5 +1,5 @@
 # 神龙工具箱v2.1
-
+## ！！！后续此更新日志将不定期更新，实时修改请参考推送日志！！！
 ## 插件名称对应表
 
 |中文名|英文全称|缩写|
@@ -9,6 +9,7 @@
 |文件软链接|create symbol link|csl|
 |文件校验|file hash check|fhc|
 |文件实时同步|file auto sync|fas|
+|Windows应用管理|Windows application manage|wam|
 
 ## 依赖项目  
 
@@ -16,7 +17,7 @@
 - **PyQt-Fluent-Widgets** [*https://qfluentwidgets.com*]
 - **python_downloader** [*https://github.com/panmeibing/python_downloader*]
 - **Nuitka** [*https://nuitka.net*]
-- **Pyinstaller** [*https://www.pyinstaller.org*]
+- ~~**Pyinstaller** [*https://www.pyinstaller.org*]~~
 
 ## 更新日志
 
