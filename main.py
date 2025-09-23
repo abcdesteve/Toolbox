@@ -80,7 +80,6 @@ class Main(FluentWindow):
                     self.animation.setEndValue(QSize(800, 500))
                 case 1:
                     self.animation.setEndValue(QSize(700, 400))
-                    self.subwin_wam.table_update_size()
                 case 2:
                     self.animation.setEndValue(QSize(500, 200))
                 case 3:
