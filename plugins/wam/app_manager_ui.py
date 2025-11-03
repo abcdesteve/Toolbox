@@ -48,7 +48,6 @@ class Ui_app_manager(object):
 
         self.btn_refresh = ToolButton(app_manager)
         self.btn_refresh.setObjectName(u"btn_refresh")
-        self.btn_refresh.setEnabled(False)
 
         self.horizontalLayout.addWidget(self.btn_refresh)
 
@@ -72,8 +71,8 @@ class Ui_app_manager(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.table_app_info = TableWidget(app_manager)
-        if (self.table_app_info.columnCount() < 7):
-            self.table_app_info.setColumnCount(7)
+        if (self.table_app_info.columnCount() < 9):
+            self.table_app_info.setColumnCount(9)
         __qtablewidgetitem = QTableWidgetItem()
         self.table_app_info.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -88,6 +87,10 @@ class Ui_app_manager(object):
         self.table_app_info.setHorizontalHeaderItem(5, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
         self.table_app_info.setHorizontalHeaderItem(6, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        self.table_app_info.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.table_app_info.setHorizontalHeaderItem(8, __qtablewidgetitem8)
         self.table_app_info.setObjectName(u"table_app_info")
         self.table_app_info.setDragEnabled(True)
         self.table_app_info.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
@@ -117,7 +120,6 @@ class Ui_app_manager(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.btn_backup = PrimaryPushButton(app_manager)
         self.btn_backup.setObjectName(u"btn_backup")
-        self.btn_backup.setEnabled(False)
 
         self.horizontalLayout_3.addWidget(self.btn_backup)
 
@@ -152,6 +154,10 @@ class Ui_app_manager(object):
         ___qtablewidgetitem5.setText(QCoreApplication.translate("app_manager", u"\u5b89\u88c5\u7c7b\u578b", None));
         ___qtablewidgetitem6 = self.table_app_info.horizontalHeaderItem(6)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("app_manager", u"\u72b6\u6001", None));
+        ___qtablewidgetitem7 = self.table_app_info.horizontalHeaderItem(7)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("app_manager", u"\u4e3b\u7a0b\u5e8f", None));
+        ___qtablewidgetitem8 = self.table_app_info.horizontalHeaderItem(8)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("app_manager", u"\u5378\u8f7d\u7a0b\u5e8f", None));
         self.btn_open_folder.setText(QCoreApplication.translate("app_manager", u"\u6253\u5f00\u8f6f\u4ef6\u76ee\u5f55", None))
         self.btn_open_reg.setProperty(u"text_", QCoreApplication.translate("app_manager", u"\u6253\u5f00\u5168\u5c40\u5e94\u7528\u6ce8\u518c\u8868", None))
         self.btn_backup.setText(QCoreApplication.translate("app_manager", u"\u5907\u4efd", None))

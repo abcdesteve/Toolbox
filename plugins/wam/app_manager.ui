@@ -34,11 +34,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ToolButton" name="btn_refresh">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="ToolButton" name="btn_refresh"/>
      </item>
      <item>
       <widget class="ToolButton" name="btn_add_folder"/>
@@ -107,6 +103,16 @@
        <string>状态</string>
       </property>
      </column>
+     <column>
+      <property name="text">
+       <string>主程序</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>卸载程序</string>
+      </property>
+     </column>
     </widget>
    </item>
    <item>
@@ -134,9 +140,6 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="PrimaryPushButton" name="btn_backup">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="text">
         <string>备份</string>
        </property>

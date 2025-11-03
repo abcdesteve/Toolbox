@@ -6,11 +6,11 @@ from qfluentwidgets import *
 
 import threading
 from multiprocessing.pool import ThreadPool,Pool
-from multiprocessing import cpu_count
+from multiprocessing import cpu_count,Process
 
 import winreg
 import re
-import time
+import time,logging
 
 from .app_manager_ui import Ui_app_manager
 
@@ -57,6 +57,9 @@ class WAM(QWidget, Ui_app_manager):
         action_user_reg.triggered.connect(lambda: self.open_reg('user'))
         self.menu_reg.addAction(action_user_reg)
 
+        self.cmb_folder.addItem('全部位置')
+        self.cmb_folder.addItem('仅注册表')
+
         self.app_info: dict[str, dict[str, str]] = {}
         '''
         e.g. {
@@ -66,7 +69,7 @@ class WAM(QWidget, Ui_app_manager):
             'uninst':'D://Everything//uninst.exe',
             'version':'1.4.1.932',
             'install_date':'2023-01-01',
-            'type':'global',
+            'type':'global/user',
             'status':'both/reg/folder/ignore'}
         }
         '''
@@ -77,10 +80,11 @@ class WAM(QWidget, Ui_app_manager):
 
     def init_signal(self):
         self.btn_add_folder.clicked.connect(self.add_folder)
-        self.btn_add_folder.clicked.connect(self.folders_count_changed)
+        self.btn_add_folder.clicked.connect(self.change_btn_statues)
         self.btn_del_folder.clicked.connect(
             lambda: self.cmb_folder.removeItem(self.cmb_folder.currentIndex()))
-        self.btn_del_folder.clicked.connect(self.folders_count_changed)
+        self.btn_del_folder.clicked.connect(self.change_btn_statues)
+        self.cmb_folder.currentTextChanged.connect(self.change_btn_statues)
 
         self.btn_open_reg.clicked.connect(self.open_reg)
         self.btn_open_reg.dropButton.clicked.connect(lambda: self.menu_reg.popup(
@@ -94,10 +98,9 @@ class WAM(QWidget, Ui_app_manager):
         else:
             QMessageBox.warning(self, '提示', '文件夹无效')
 
-    def folders_count_changed(self):
-        self.btn_del_folder.setEnabled(self.cmb_folder.count() > 0)
-        self.btn_backup.setEnabled(self.cmb_folder.count() > 0)
-        self.btn_refresh.setEnabled(self.cmb_folder.count() > 0)
+    def change_btn_statues(self):
+        flag=self.cmb_folder.count()>2 and self.cmb_folder.currentIndex()>1
+        self.btn_del_folder.setEnabled(flag)
 
     def open_reg(self, reg_type: Literal["global", "user"] = 'global'):
         if reg_type == 'global':
@@ -114,10 +117,10 @@ class WAM(QWidget, Ui_app_manager):
                 result: str = winreg.QueryValueEx(reg_key, value_name)[0]
                 return result.replace('"', '')
         except FileNotFoundError:
-            # print(f"注册表项 {sub_key} 或值 {value_name} 不存在")
+            logging.error(f"注册表项 {sub_key} 或值 {value_name} 不存在")
             pass
         except PermissionError:
-            # print(f"没有权限访问注册表项 {sub_key}")
+            logging.error(f"没有权限访问注册表项 {sub_key}")
             pass
         except Exception as e:
             print(f"发生错误: {e}")
@@ -176,7 +179,8 @@ class WAM(QWidget, Ui_app_manager):
                     app_main_file = app_main_file if app_main_file.endswith(
                         '.exe') else ''
                     app_uninst_file = self.try_query_reg(
-                        reg_type, reg_path+'\\'+app, 'UninstallString')
+                        reg_type, reg_path+'\\'+app, 'UninstallString').strip()
+                    # app_uninst_file = [i for i in app_uninst_file.split('\"') if i][0]
                     app_uninst_file = (app_uninst_file.split('\"')+[''])[1]
 
                     # 从应用名中删除版本号
@@ -230,7 +234,10 @@ class WAM(QWidget, Ui_app_manager):
                                                'install_date': app_install_date,
                                                'type': 'global'if reg_type == winreg.HKEY_LOCAL_MACHINE else 'user',
                                                'status': 'reg'}
-        self.app_info.update(scan_data)
+        # 原有数据保持不变，合入新增数据
+        for i in scan_data.keys():
+            if i not in self.app_info:
+                self.app_info[i]=scan_data[i]
         self.refresh_app_info()
 
     def refresh_app_info(self):
@@ -257,6 +264,7 @@ class WAM(QWidget, Ui_app_manager):
             self.table_app_info.horizontalHeader().setSectionResizeMode(
                 QHeaderView.ResizeMode.ResizeToContents)
         threading.Thread(target=self.calc_app_size).start()
+        # Process(target=self.calc_app_size).start()
 
 
     def calc_app_size(self):
@@ -266,6 +274,7 @@ class WAM(QWidget, Ui_app_manager):
         with Pool(max(cpu_count()//2,1)) as pool:
             for row, size in pool.imap(calc_handler, temp):
                 self.table_app_info.setItem(row, 4, QTableWidgetItem(size))
+                self.update()
         self.btn_refresh.setEnabled(True)
 
     def save_app_info(self):
