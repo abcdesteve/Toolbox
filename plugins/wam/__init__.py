@@ -17,13 +17,13 @@ from .app_manager_ui import Ui_app_manager
 from sl_lib import *
 
 # 池中批量处理的函数必须是全局函数，不得依赖其他类
-def calc_handler(info: tuple[int, str]):
-    row, path = info
+def calc_handler(info: tuple[str, str])-> tuple[str, str]:
+    dir, path = info
     try:
         temp = sltk.bit2size(calc_size(path))
-        return row, temp
+        return dir, temp
     except:
-        return row, '无法计算'
+        return dir, '无法计算'
 
 
 def calc_size(path):
@@ -73,9 +73,15 @@ class WAM(QWidget, Ui_app_manager):
             'status':'both/reg/folder/ignore'}
         }
         '''
+        self.app_size_cache:dict[str,str]={}
+
+        self.timer_app_size = QTimer()
+        self.timer_app_size.timeout.connect(self.refresh_app_info)
+        self.timer_app_size.setInterval(2000)
 
         self.table_app_info.horizontalHeader().setSectionsMovable(True)
         self.init_signal()
+        self.load_app_info()
 
 
     def init_signal(self):
@@ -238,11 +244,20 @@ class WAM(QWidget, Ui_app_manager):
         for i in scan_data.keys():
             if i not in self.app_info:
                 self.app_info[i]=scan_data[i]
-        self.refresh_app_info()
+
+        self.save_app_info()
+
+        threading.Thread(target=self.calc_app_size).start()
+        # Process(target=self.calc_app_size).start()
+
+        self.timer_app_size.start()
 
     def refresh_app_info(self):
+        # ResizeToContents不要长期打开，第二次刷新时会直接卡死
+        self.table_app_info.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.table_app_info.clearContents()
         self.table_app_info.setRowCount(len(self.app_info))
+        flag_size_done=True
         for i in range(len(self.app_info)):
             app_name, app_info = list(self.app_info.items())[i]
             app_icon, app_main_file, app_uninst_file, app_version, app_install_date, app_type, app_status = app_info['icon'], app_info[
@@ -258,29 +273,46 @@ class WAM(QWidget, Ui_app_manager):
             self.table_app_info.setItem(i, 2, QTableWidgetItem(app_main_file))
             self.table_app_info.setItem(
                 i, 3, QTableWidgetItem(app_install_date))
-            self.table_app_info.setItem(i, 4, QTableWidgetItem('计算中……'))
+            self.table_app_info.setItem(i, 4, QTableWidgetItem(self.app_size_cache.get(app_name, '计算中……')))
+            if app_name not in self.app_size_cache:
+                flag_size_done=False
             self.table_app_info.setItem(i, 5, QTableWidgetItem(app_type))
             self.table_app_info.setItem(i, 6, QTableWidgetItem(app_status))
-            self.table_app_info.horizontalHeader().setSectionResizeMode(
-                QHeaderView.ResizeMode.ResizeToContents)
-        threading.Thread(target=self.calc_app_size).start()
-        # Process(target=self.calc_app_size).start()
-
+            
+        if flag_size_done:
+            self.timer_app_size.stop()
+            self.table_app_info.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
 
     def calc_app_size(self):
-        temp = [(i, os.path.dirname(list(self.app_info.values())[i]['main']))
-                for i in range(self.table_app_info.rowCount())]
+        task_list=[]
+        for i in list(self.app_info.keys()):
+            if i not in self.app_size_cache:
+                task_list.append((i,os.path.dirname(self.app_info[i]['main'])))
+
         # 单线程27s，多线程23s，多进程17s
         with Pool(max(cpu_count()//2,1)) as pool:
-            for row, size in pool.imap(calc_handler, temp):
-                self.table_app_info.setItem(row, 4, QTableWidgetItem(size))
-                self.update()
+            for app_name, size in pool.imap(calc_handler, task_list):
+                self.app_size_cache[app_name] = size
+                # self.table_app_info.setItem(app_name, 4, QTableWidgetItem(size))
+                # self.update()
+                # time.sleep(0.1) # 旧方案：同步刷新时引入延迟以等待界面更新，防止扫盘长时间吃满CPU
         self.btn_refresh.setEnabled(True)
 
+    def load_app_info(self):
+        try:
+            with open(sltk.join_path(self.path, 'wam.json'), 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                sltk.unique_add_items(self.cmb_folder, data['sources'], False)
+                self.app_info = data['app_info']
+            threading.Thread(target=self.calc_app_size).start()
+
+            self.timer_app_size.start()
+        except:pass
+            
     def save_app_info(self):
         with open(sltk.join_path(self.path, 'wam.json'), 'w', encoding='utf-8') as f:
             data = {'sources': sltk.expend_children_text(
-                self.cmb_folder), 'app_info': self.app_info}
+                self.cmb_folder)[2:], 'app_info': self.app_info}
             json.dump(data, f)
 
 
