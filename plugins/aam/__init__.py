@@ -18,12 +18,12 @@ import threading,subprocess
         
 
 class AAM(QWidget, Ui_aam):
-    """Android application manager"""
+    """安卓应用管理\nAndroid application manage"""
     def __init__(self, mainwindow: QMainWindow, parent_dir: str):
         super().__init__()
         self.setupUi(self)
+        self.setStyleSheet('QWidget#scrollAreaWidgetContents {background-color:transparent}')
         self.mainwindow = mainwindow
-        self.subwin_wireless = Wireless(self)
 
         self.ckb_app_user.setOnText('用户应用')
         self.ckb_app_user.setOffText('用户应用')
@@ -70,7 +70,10 @@ class AAM(QWidget, Ui_aam):
         
 
     def init_signal(self):
-        self.btn_wireless.clicked.connect(self.subwin_wireless.show)
+        def create_subwin_wireless():
+            self.subwin_wireless = Wireless()
+            self.subwin_wireless.run(self.mainwindow)
+        self.btn_wireless.clicked.connect(create_subwin_wireless)
         self.btn_device.clicked.connect(self.update_device_connection)
         self.btn_get_app.clicked.connect(self.aam_get_focused_app)
         self.btn_clear.clicked.connect(self.textedit_log.clear)
@@ -371,18 +374,33 @@ class AAM(QWidget, Ui_aam):
     #             self.textedit_log.append(popen)
 
 
-class Wireless(QMainWindow, Ui_wireless):
-    def __init__(self, parent: AAM):
-        super().__init__()
-        self.setupUi(self)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.parent_window = parent
+class Wireless(MaskDialogBase, Ui_wireless):
+    '''MaskDialogBase所有widget需要设置到self.widget之中，在init时就会显示，在exec后才会刷新尺寸，只能当作一次性来用'''
+    def __init__(self):
+        pass
+
+    def run(self,mainwindow):
+        self.mainwindow=mainwindow
+        super().__init__(mainwindow)
+        self.setupUi(self.widget)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        FluentStyleSheet.DIALOG.apply(self)
+        # 继承FluentWindow则用以下设置
+        # self.titleBar.hide()
+        # FluentStyleSheet.FLUENT_WINDOW.apply(self)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.btn_cancel.clicked.connect(self.close)
+        self.btn_connect.clicked.connect(self.connect)
+        self.setFocus() # 抢夺焦点以便监听按键
+        self.exec()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() in [Qt.Key.Key_Return, Qt.Key.Key_Enter]:
-            self.hide()
+            self.connect()
+        elif event.key() == Qt.Key.Key_Escape:
+            self.close()
 
-    def hideEvent(self, event):
-        # self.hide()
-        threading.Thread(target=self.parent_window.update_wireless_connect, args=[
+    def connect(self):
+        threading.Thread(target=self.mainwindow.subwin_aam.update_wireless_connect, args=[
                          self.lineedit_ip.text(), self.lineedit_port.text()]).start()
+        self.close()

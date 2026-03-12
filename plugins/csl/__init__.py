@@ -8,7 +8,7 @@ from sl_lib import QMessageBox
 import os
 
 class CSL(QWidget,Ui_csl):
-    '''create symbol link'''
+    '''创建符号链接\ncreate symbol link'''
     def __init__(self,mainwindow):
         super().__init__()
         self.mainwindow = mainwindow

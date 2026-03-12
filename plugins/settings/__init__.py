@@ -14,8 +14,8 @@ class Settings(ScrollArea):
         self.setObjectName('settings')
         self.container = QWidget()
         self.container.setObjectName('container')
-        self.container.setStyleSheet(
-            'QWidget#container{background-color:transparent}')
+        self.setStyleSheet('QWidget#container {background-color:transparent}\n ScrollArea {background-color:transparent}')
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.expendLayout = ExpandLayout(self.container)
 
         self.cfg = AppConfig()

@@ -11,7 +11,7 @@ from .task_edit_ui import Ui_task_edit
 
 
 class FAS(QWidget, Ui_fas):
-    '''file auto sync'''
+    '''文件自动同步\nfile auto sync'''
 
     def __init__(self, mainwindow):
         super().__init__()

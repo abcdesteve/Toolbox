@@ -36,9 +36,9 @@ def apply_theme(app,goal_theme:str):
 
 STYLESHHET_DARK = """
 QLabel {color:#f0f0f0}
-ScrollArea {border: none;background-color: transparent}
 QSplitter::handle {background-color:transparent}
 QGroupBox::title {color:#f0f0f0}
+QFrame[accessibleDescription="dialog_lower_frame"] {background-color:#202020}
 
 QMessageBox {background-color:#282828;  color:#f0f0f0;  border-radius:5px}
 QMessageBox QLabel {color:#f0f0f0;  }
@@ -52,10 +52,10 @@ QMessageBox QPushButton#closeButton:pressed {color:#cc0000;  }
 
 
 STYLESHHET_LIGHT ='''
-QLabel {color: #000000}
-ScrollArea {border: none;background-color: transparent}
+QLabel {color:#000000}
 QSplitter::handle {background-color:transparent}
 QGroupBox::title {color:#000000}
+QFrame[accessibleDescription="dialog_lower_frame"] {background-color:#f3f3f3}
 
 QMessageBox {background-color:#f0f0f0;  color:#000000;  border-radius:5px}
 QMessageBox QLabel {color:#000000;  }

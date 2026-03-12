@@ -8,26 +8,27 @@ from sl_lib import QMessageBox,sltk
 
 import os
 import sys
-import math
-import hashlib,binascii
+import hashlib,binascii,blake3
+from concurrent.futures import ThreadPoolExecutor
 
 
 class FHC(QWidget, Ui_fhc):
-    '''file hash check'''
+    '''文件哈希校验\nfile hash check'''
 
     def __init__(self,mainwindow):
         super().__init__()
         self.mainwindow=mainwindow
         self.setupUi(self)
         self.signal_connect()
-        self.tablewidget.setBorderVisible(True)
-        self.tablewidget.setBorderRadius(10)
+        # self.tablewidget.setBorderVisible(True)
+        # self.tablewidget.setBorderRadius(10)
 
     def signal_connect(self):
         self.btn_A.clicked.connect(self.select_file)
         self.btn_B.clicked.connect(self.select_file)
-        self.lineedit_A.textChanged.connect(lambda:self.table_update_data('a'))
-        self.lineedit_B.textChanged.connect(lambda:self.table_update_data('b'))
+        self.lineedit_A.textChanged.connect(lambda:self.update_table_data('a'))
+        self.lineedit_B.textChanged.connect(lambda:self.update_table_data('b'))
+        self.tablewidget.currentCellChanged.connect(self.update_table_compare)
 
     def select_file(self):
         section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
@@ -68,6 +69,14 @@ class FHC(QWidget, Ui_fhc):
                                 break
                             temp=binascii.crc32(data,temp)
                         return hex(temp).upper()[2:]
+                    case 'blake3':
+                        temp=blake3.blake3()
+                        while True:
+                            data = file.read(STEP)
+                            if not data:
+                                break
+                            temp.update(data)
+                        return temp.hexdigest().upper()
                     case _:
                         temp=hashlib.new(method)
                         while True:
@@ -82,17 +91,20 @@ class FHC(QWidget, Ui_fhc):
                 case '字符数':
                     return str(len(txt))
                 case '文件大小':
-                    size = sys.getsizeof(txt.encode())
+                    # sys.getsizeof()函数返回的是对象的大小
+                    size = len(txt.encode("utf-8"))
                     return sltk.bit2size(size)
                 case 'crc32':
                     return hex(binascii.crc32(txt.encode('utf-8'))).upper()[2:]
+                case 'blake3':
+                    return blake3.blake3(txt.encode('utf-8')).hexdigest().upper()
                 case _:
                     temp=hashlib.new(method)
                     temp.update(txt.encode('utf-8'))
                     return temp.hexdigest().upper()
                 
 
-    def table_update_size(self):
+    def update_table_size(self):
         self.tablewidget.setColumnWidth(
             0, self.tablewidget.width()*0.4)
         self.tablewidget.setColumnWidth(
@@ -100,20 +112,20 @@ class FHC(QWidget, Ui_fhc):
         self.tablewidget.setColumnWidth(
             2, self.tablewidget.width()*0.4)
 
-    def table_update_data(self,area:str):
-        # self.tablewidget.clearContents()
-        self.table_update_size()
+    def update_table_data(self,area:str):
         for i in range(self.tablewidget.rowCount()):
-
             if self.lineedit_A.toPlainText() and area=='a':
                 self.tablewidget.setItem(i, 0, QTableWidgetItem(self.get_result(
                     self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_A.toPlainText())))
             if self.lineedit_B.toPlainText() and area=='b':
                 self.tablewidget.setItem(i, 2, QTableWidgetItem(self.get_result(
                     self.tablewidget.verticalHeaderItem(i).text().lower(), self.lineedit_B.toPlainText())))
+        self.update_table_compare()
 
+    def update_table_compare(self):
+        for i in range(self.tablewidget.rowCount()):
             if self.tablewidget.item(i, 0) != None and self.tablewidget.item(i, 2) != None:
-                if self.tablewidget.item(i, 0).text() == self.tablewidget.item(i, 2).text():
+                if self.tablewidget.item(i, 0).text().lower() == self.tablewidget.item(i, 2).text().lower():
                     item=QTableWidgetItem('True')
                     item.setBackground(QColor('green'))
                 else:
@@ -123,4 +135,4 @@ class FHC(QWidget, Ui_fhc):
                 self.tablewidget.setItem(i, 1, item)
             else:
                 self.tablewidget.setItem(i, 1, QTableWidgetItem())
-
+        self.update_table_size()

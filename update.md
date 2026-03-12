@@ -10,6 +10,7 @@
 |文件校验|file hash check|fhc|
 |文件实时同步|file auto sync|fas|
 |Windows应用管理|Windows application manage|wam|
+|文件快照归档|file snapshot archive|fsa|
 
 ## 依赖项目  
 

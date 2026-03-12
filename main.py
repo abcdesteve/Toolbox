@@ -11,6 +11,7 @@ from plugins.wam import WAM, Utility
 from plugins.csl import CSL
 from plugins.fhc import FHC
 from plugins.fas import FAS
+from plugins.fsa import FSA
 from plugins.settings import Settings
 from plugins.about import About
 
@@ -23,15 +24,17 @@ class Main(FluentWindow):
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
-        self.setWindowTitle('神龙工具箱v2.1')
+        self.setWindowTitle('神龙工具箱v2.2')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
         self.subwin_wam = WAM(self, path)
         self.subwin_csl = CSL(self)
         self.subwin_fhc = FHC(self)
         self.subwin_fas = FAS(self)
+        self.subwin_fsa = FSA(self)
         self.subwin_settings = Settings(self, path)
         self.subwin_about = About(os.path.dirname(__file__))
+
 
         self.addSubInterface(self.subwin_aam, MyFluentIcon.Android,
                              '安卓应用管理', NavigationItemPosition.SCROLL)
@@ -39,10 +42,11 @@ class Main(FluentWindow):
                              'Windows应用管理', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_csl, FluentIcon.LINK,
                              '创建符号链接', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fhc, FluentIcon.PIE_SINGLE,
+        self.addSubInterface(self.subwin_fhc, FluentIcon.FINGERPRINT,
                              '文件哈希校验', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fas, FluentIcon.SYNC,
                              '文件自动同步', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_fsa, FluentIcon.HISTORY,'文件快照归档',NavigationItemPosition.SCROLL)
         self.addSubInterface(
             self.subwin_settings, FluentIcon.SETTING, '设置', NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.subwin_about, FluentIcon.INFO,
@@ -65,6 +69,7 @@ class Main(FluentWindow):
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
 
     def window_size_change(self):
+        
         if not self.isMaximized():
             self.animation = QPropertyAnimation(self, b'size')
             # if self.subwin_settings.ckb_enable_animation.isChecked():
@@ -83,14 +88,16 @@ class Main(FluentWindow):
                 case 2:
                     self.animation.setEndValue(QSize(500, 200))
                 case 3:
-                    self.animation.setEndValue(QSize(500, 200))
-                    self.subwin_fhc.table_update_size()
+                    self.animation.setEndValue(QSize(500, 400))
+                    self.subwin_fhc.update_table_size()
                 case 4:
-                    self.animation.setEndValue(QSize(700, 300))
+                    self.animation.setEndValue(QSize(600, 300))
                 case 5:
-                    self.animation.setEndValue(QSize(600, 100))
+                    self.animation.setEndValue(QSize(600, 400))
                 case 6:
-                    self.animation.setEndValue(QSize(600, 500))
+                    self.animation.setEndValue(QSize(600, 400))
+                case 7:
+                    self.animation.setEndValue(QSize(600, 400))
             self.animation.start()
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -119,11 +126,12 @@ class Main(FluentWindow):
 
             elif self.stackedWidget.currentIndex() == 2:
                 # if self.subwin_csl.lineedit_from.hasFocus():
-                print(event.position().x(),event.position().y(),self.stackedWidget.height()//3)
-                if self.subwin_csl.horizontalLayout_from.contentsRect().contains(self.subwin_csl.mapFrom(self,event.position()).toPoint()):
+                print(event.position().x(), event.position().y(),
+                      self.stackedWidget.height()//3)
+                if self.subwin_csl.horizontalLayout_from.contentsRect().contains(self.subwin_csl.mapFrom(self, event.position()).toPoint()):
                     self.subwin_csl.lineedit_from.setText(drag_file)
                 # elif self.subwin_csl.lineedit_to_dir.hasFocus():
-                elif self.subwin_csl.horizontalLayout_to.contentsRect().contains(self.subwin_csl.mapFrom(self,event.position()).toPoint()):
+                elif self.subwin_csl.horizontalLayout_to.contentsRect().contains(self.subwin_csl.mapFrom(self, event.position()).toPoint()):
                     self.subwin_csl.lineedit_to_dir.setText(drag_file)
 
             elif self.stackedWidget.currentIndex() == 3:

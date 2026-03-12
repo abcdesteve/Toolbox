@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>651</width>
     <height>433</height>
    </rect>
   </property>
@@ -17,6 +17,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>4</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_1">
      <item>
@@ -125,20 +128,13 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="SwitchButton" name="ckb_app_user">
-       <property name="text">
-        <string>用户应用</string>
-       </property>
        <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="SwitchButton" name="ckb_app_sys">
-       <property name="text">
-        <string>系统应用</string>
-       </property>
-      </widget>
+      <widget class="SwitchButton" name="ckb_app_sys"/>
      </item>
     </layout>
    </item>
@@ -158,8 +154,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>10</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
@@ -207,12 +203,9 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>399</width>
+          <width>278</width>
           <height>70</height>
          </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QWidget#scrollAreaWidgetContents{background-color:transparent}</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <property name="leftMargin">
@@ -226,6 +219,9 @@
          </property>
          <property name="bottomMargin">
           <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>2</number>
          </property>
          <item row="0" column="0">
           <widget class="PrimaryPushButton" name="btn_launch">
@@ -308,8 +304,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
@@ -336,6 +332,12 @@
    </item>
    <item>
     <widget class="TextEdit" name="textedit_log">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <family>Arial</family>
@@ -346,39 +348,51 @@
       <bool>true</bool>
      </property>
      <property name="markdown">
-      <string>神龙工具箱 v2.1
+      <string>神龙工具箱 v2.2
 
 作者：abcdesteve
 
-`     _                                   _   ____   ___ ____  _  _             
-     `
+` █████╗ ██╗   ██╗ ██████╗  ██████╗ ██████╗ ███╗   ██╗ █████╗ ██╗        
+██████╗  ██████╗ ██████╗  ██████╗                                    `
 
-`    / \__   _____   ___ ___  _ __   __ _| | |___ \ / _ \___ \| || |            
-     `
+`██╔══██╗██║   ██║██╔═══██╗██╔════╝██╔═══██╗████╗  ██║██╔══██╗██║        
+╚════██╗██╔═████╗╚════██╗██╔════╝                                    `
 
-``   / _ \ \ / / _ \ / __/ _ \| '_ \ / _` | |   __) | | | |__) | || |_           
-     ``
+`███████║██║   ██║██║   ██║██║     ██║   ██║██╔██╗ ██║███████║██║         
+█████╔╝██║██╔██║ █████╔╝███████╗                                    `
 
-`  / ___ \ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/|__   _|          
-     `
+`██╔══██║╚██╗ ██╔╝██║   ██║██║     ██║   ██║██║╚██╗██║██╔══██║██║        
+██╔═══╝ ████╔╝██║██╔═══╝ ██╔═══██╗                                   `
 
-` /_/ _ \_\_/_\___/ \___\___/|_| |_|\__,_|_| |_____|\___/_____|  |_|            
-   _ `
+`██║  ██║ ╚████╔╝ ╚██████╔╝╚██████╗╚██████╔╝██║ ╚████║██║  ██║███████╗   
+███████╗╚██████╔╝███████╗╚██████╔╝                                   `
 
-`    / \  | | |  _ __(_) __ _| |__ | |_ ___   _ __ ___  ___  ___ _ ____   _____ 
-__| |`
+`╚═╝  ╚═╝  ╚═══╝   ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝   
+╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝                                    `
 
-``   / _ \ | | | | '__| |/ _` | '_ \| __/ __| | '__/ _ \/ __|/ _ \ '__\ \ / / _
-\/ _` |``
+`                                                                               
+                                                              `
 
-`  / ___ \| | | | |  | | (_| | | | | |_\__ \ | | |  __/\__ \  __/ |   \ V /  __/
-(_| |`
+` █████╗ ██╗     ██╗         ██████╗ ██╗ ██████╗ ██╗  ██╗████████╗███████╗   
+██████╗ ███████╗███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ `
 
-` /_/   \_\_|_| |_|  |_|\__, |_| |_|\__|___/ |_|  \___||___/\___|_|    \_/
-\___|\__,_|`
+`██╔══██╗██║     ██║         ██╔══██╗██║██╔════╝ ██║  ██║╚══██╔══╝██╔════╝   
+██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗`
 
-`                       |___/                                                   
-     `
+`███████║██║     ██║         ██████╔╝██║██║  ███╗███████║   ██║   ███████╗   
+██████╔╝█████╗  ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██║  ██║`
+
+`██╔══██║██║     ██║         ██╔══██╗██║██║   ██║██╔══██║   ██║   ╚════██║   
+██╔══██╗██╔══╝  ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██║  ██║`
+
+`██║  ██║███████╗███████╗    ██║  ██║██║╚██████╔╝██║  ██║   ██║   ███████║   
+██║  ██║███████╗███████║███████╗██║  ██║ ╚████╔╝ ███████╗██████╔╝`
+
+`╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝   
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═════╝ `
+
+`                                                                               
+                                                              `
 
 </string>
      </property>
@@ -390,18 +404,24 @@ hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font'; font-size:9pt;&quot;&gt;神龙工具箱 v2.1&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font'; font-size:9pt;&quot;&gt;作者：abcdesteve&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;     _                                   _   ____   ___ ____  _  _                   &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;    / \__   _____   ___ ___  _ __   __ _| | |___ \ / _ \___ \| || |                  &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;   / _ \ \ / / _ \ / __/ _ \| '_ \ / _` | |   __) | | | |__) | || |_                 &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;  / ___ \ V / (_) | (_| (_) | | | | (_| | |  / __/| |_| / __/|__   _|                &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt; /_/ _ \_\_/_\___/ \___\___/|_| |_|\__,_|_| |_____|\___/_____|  |_|                _ &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;    / \  | | |  _ __(_) __ _| |__ | |_ ___   _ __ ___  ___  ___ _ ____   _____  __| |&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;   / _ \ | | | | '__| |/ _` | '_ \| __/ __| | '__/ _ \/ __|/ _ \ '__\ \ / / _ \/ _` |&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;  / ___ \| | | | |  | | (_| | | | | |_\__ \ | | |  __/\__ \  __/ |   \ V /  __/ (_| |&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt; /_/   \_\_|_| |_|  |_|\__, |_| |_|\__|___/ |_|  \___||___/\___|_|    \_/ \___|\__,_|&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;                       |___/                                                         &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;神龙工具箱 v2.2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'FiraCode Nerd Font';&quot;&gt;作者：abcdesteve&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt; █████╗ ██╗   ██╗ ██████╗  ██████╗ ██████╗ ███╗   ██╗ █████╗ ██╗         ██████╗  ██████╗ ██████╗  ██████╗                                    &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██╔══██╗██║   ██║██╔═══██╗██╔════╝██╔═══██╗████╗  ██║██╔══██╗██║         ╚════██╗██╔═████╗╚════██╗██╔════╝                                    &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;███████║██║   ██║██║   ██║██║     ██║   ██║██╔██╗ ██║███████║██║          █████╔╝██║██╔██║ █████╔╝███████╗                                    &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██╔══██║╚██╗ ██╔╝██║   ██║██║     ██║   ██║██║╚██╗██║██╔══██║██║         ██╔═══╝ ████╔╝██║██╔═══╝ ██╔═══██╗                                   &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██║  ██║ ╚████╔╝ ╚██████╔╝╚██████╗╚██████╔╝██║ ╚████║██║  ██║███████╗    ███████╗╚██████╔╝███████╗╚██████╔╝                                   &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;╚═╝  ╚═╝  ╚═══╝   ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝    ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝                                    &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;                                                                                                                                              &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt; █████╗ ██╗     ██╗         ██████╗ ██╗ ██████╗ ██╗  ██╗████████╗███████╗    ██████╗ ███████╗███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██╔══██╗██║     ██║         ██╔══██╗██║██╔════╝ ██║  ██║╚══██╔══╝██╔════╝    ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;███████║██║     ██║         ██████╔╝██║██║  ███╗███████║   ██║   ███████╗    ██████╔╝█████╗  ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██║  ██║&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██╔══██║██║     ██║         ██╔══██╗██║██║   ██║██╔══██║   ██║   ╚════██║    ██╔══██╗██╔══╝  ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██║  ██║&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;██║  ██║███████╗███████╗    ██║  ██║██║╚██████╔╝██║  ██║   ██║   ███████║    ██║  ██║███████╗███████║███████╗██║  ██║ ╚████╔╝ ███████╗██████╔╝&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═════╝ &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;                                                                                                                                              &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','Liberation Mono','Courier New','monospace'; font-size:6pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -430,8 +450,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PrimaryPushButton</class>
+   <class>ComboBox</class>
    <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>EditableComboBox</class>
+   <extends>LineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
@@ -440,23 +465,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>ComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>TextEdit</class>
-   <extends>QTextEdit</extends>
+   <class>PrimaryPushButton</class>
+   <extends>PushButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
    <class>SwitchButton</class>
-   <extends>QCheckBox</extends>
+   <extends>QWidget</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
@@ -466,8 +481,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>EditableComboBox</class>
-   <extends>QComboBox</extends>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TextEdit</class>
+   <extends>QTextEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

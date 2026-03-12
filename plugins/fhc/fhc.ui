@@ -19,6 +19,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="PrimaryPushButton" name="btn_A">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>选择文件</string>
      </property>
@@ -26,6 +29,9 @@
    </item>
    <item row="0" column="1">
     <widget class="PrimaryPushButton" name="btn_B">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>选择文件</string>
      </property>
@@ -47,6 +53,9 @@
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="TableWidget" name="tablewidget">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="styleSheet">
       <string notr="true">QTableView {
     background: transparent;
@@ -201,32 +210,37 @@ QTableCornerButton::section:pressed {
      </row>
      <row>
       <property name="text">
-       <string>md5</string>
+       <string>MD5</string>
       </property>
      </row>
      <row>
       <property name="text">
-       <string>sha1</string>
+       <string>BLAKE3</string>
       </property>
      </row>
      <row>
       <property name="text">
-       <string>sha224</string>
+       <string>SHA1</string>
       </property>
      </row>
      <row>
       <property name="text">
-       <string>sha256</string>
+       <string>SHA224</string>
       </property>
      </row>
      <row>
       <property name="text">
-       <string>sha384</string>
+       <string>SHA256</string>
       </property>
      </row>
      <row>
       <property name="text">
-       <string>sha512</string>
+       <string>SHA384</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>SHA512</string>
       </property>
      </row>
      <column>

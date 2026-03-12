@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'fhc.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -30,11 +30,13 @@ class Ui_fhc(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.btn_A = PrimaryPushButton(fhc)
         self.btn_A.setObjectName(u"btn_A")
+        self.btn_A.setFocusPolicy(Qt.NoFocus)
 
         self.gridLayout.addWidget(self.btn_A, 0, 0, 1, 1)
 
         self.btn_B = PrimaryPushButton(fhc)
         self.btn_B.setObjectName(u"btn_B")
+        self.btn_B.setFocusPolicy(Qt.NoFocus)
 
         self.gridLayout.addWidget(self.btn_B, 0, 1, 1, 1)
 
@@ -59,8 +61,8 @@ class Ui_fhc(object):
         self.tablewidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.tablewidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        if (self.tablewidget.rowCount() < 9):
-            self.tablewidget.setRowCount(9)
+        if (self.tablewidget.rowCount() < 10):
+            self.tablewidget.setRowCount(10)
         __qtablewidgetitem3 = QTableWidgetItem()
         self.tablewidget.setVerticalHeaderItem(0, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
@@ -79,7 +81,10 @@ class Ui_fhc(object):
         self.tablewidget.setVerticalHeaderItem(7, __qtablewidgetitem10)
         __qtablewidgetitem11 = QTableWidgetItem()
         self.tablewidget.setVerticalHeaderItem(8, __qtablewidgetitem11)
+        __qtablewidgetitem12 = QTableWidgetItem()
+        self.tablewidget.setVerticalHeaderItem(9, __qtablewidgetitem12)
         self.tablewidget.setObjectName(u"tablewidget")
+        self.tablewidget.setFocusPolicy(Qt.NoFocus)
         self.tablewidget.setStyleSheet(u"QTableView {\n"
 "    background: transparent;\n"
 "    outline: none;\n"
@@ -242,16 +247,18 @@ class Ui_fhc(object):
         ___qtablewidgetitem5 = self.tablewidget.verticalHeaderItem(2)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("fhc", u"CRC32", None));
         ___qtablewidgetitem6 = self.tablewidget.verticalHeaderItem(3)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("fhc", u"md5", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("fhc", u"MD5", None));
         ___qtablewidgetitem7 = self.tablewidget.verticalHeaderItem(4)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("fhc", u"sha1", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("fhc", u"BLAKE3", None));
         ___qtablewidgetitem8 = self.tablewidget.verticalHeaderItem(5)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("fhc", u"sha224", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("fhc", u"SHA1", None));
         ___qtablewidgetitem9 = self.tablewidget.verticalHeaderItem(6)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("fhc", u"sha256", None));
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("fhc", u"SHA224", None));
         ___qtablewidgetitem10 = self.tablewidget.verticalHeaderItem(7)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("fhc", u"sha384", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("fhc", u"SHA256", None));
         ___qtablewidgetitem11 = self.tablewidget.verticalHeaderItem(8)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("fhc", u"sha512", None));
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("fhc", u"SHA384", None));
+        ___qtablewidgetitem12 = self.tablewidget.verticalHeaderItem(9)
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("fhc", u"SHA512", None));
     # retranslateUi
 

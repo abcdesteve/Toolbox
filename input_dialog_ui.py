@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'input_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -30,14 +30,16 @@ class Ui_Input_dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Input_dialog.sizePolicy().hasHeightForWidth())
         Input_dialog.setSizePolicy(sizePolicy)
+        Input_dialog.setMinimumSize(QSize(300, 200))
         self.verticalLayout = QVBoxLayout(Input_dialog)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.frame_2 = QFrame(Input_dialog)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setFrameShape(QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.frame_2.setFrameShape(QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QFrame.Plain)
+        self.frame_2.setLineWidth(0)
         self.verticalLayout_3 = QVBoxLayout(self.frame_2)
         self.verticalLayout_3.setSpacing(10)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -64,9 +66,9 @@ class Ui_Input_dialog(object):
 
         self.frame = QFrame(Input_dialog)
         self.frame.setObjectName(u"frame")
-        self.frame.setStyleSheet(u"QFrame{background-color:#202020}")
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setFrameShape(QFrame.NoFrame)
+        self.frame.setFrameShadow(QFrame.Plain)
+        self.frame.setLineWidth(0)
         self.verticalLayout_2 = QVBoxLayout(self.frame)
         self.verticalLayout_2.setSpacing(15)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
@@ -102,6 +104,9 @@ class Ui_Input_dialog(object):
 
     def retranslateUi(self, Input_dialog):
         Input_dialog.setWindowTitle(QCoreApplication.translate("Input_dialog", u"Form", None))
+#if QT_CONFIG(accessibility)
+        self.frame.setAccessibleDescription(QCoreApplication.translate("Input_dialog", u"dialog_lower_frame", None))
+#endif // QT_CONFIG(accessibility)
         self.btn_cancel.setText(QCoreApplication.translate("Input_dialog", u"\u53d6\u6d88", None))
         self.btn_ok.setText(QCoreApplication.translate("Input_dialog", u"\u786e\u5b9a", None))
     # retranslateUi

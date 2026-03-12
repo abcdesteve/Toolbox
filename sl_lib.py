@@ -216,7 +216,6 @@ class InputDialog(MaskDialogBase, Ui_Input_dialog):
         '''
         super().__init__(parent)
         self.setupUi(self.widget)
-        # self.widget.setFixedSize(360, 220)
         FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
@@ -260,7 +259,7 @@ class StatisticsWidget(QWidget):
         self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.valueLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.vBoxLayout.setContentsMargins(16, 0, 16, 0)
+        self.vBoxLayout.setContentsMargins(5, 0, 5, 0)
         self.vBoxLayout.addWidget(self.valueLabel, 0, Qt.AlignTop)
         self.vBoxLayout.addWidget(self.titleLabel, 0, Qt.AlignBottom)
 

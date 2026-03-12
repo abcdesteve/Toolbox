@@ -37,6 +37,7 @@ def calc_size(path):
     return size
 
 class WAM(QWidget, Ui_app_manager):
+    """Windows应用管理\nWindows application manage"""
     def __init__(self, mainwindow, path: str):
         super().__init__()
         self.setupUi(self)
