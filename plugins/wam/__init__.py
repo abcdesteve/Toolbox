@@ -82,7 +82,7 @@ class WAM(QWidget, Ui_app_manager):
 
         self.table_app_info.horizontalHeader().setSectionsMovable(True)
         self.init_signal()
-        self.load_app_info()
+        # self.load_app_info()
 
 
     def init_signal(self):
@@ -311,6 +311,7 @@ class WAM(QWidget, Ui_app_manager):
         except:pass
             
     def save_app_info(self):
+        os.makedirs(self.path, exist_ok=True)
         with open(sltk.join_path(self.path, 'wam.json'), 'w', encoding='utf-8') as f:
             data = {'sources': sltk.expend_children_text(
                 self.cmb_folder)[2:], 'app_info': self.app_info}

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'csl.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -29,6 +29,7 @@ class Ui_csl(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.btn_start = PrimaryPushButton(csl)
         self.btn_start.setObjectName(u"btn_start")
+        self.btn_start.setEnabled(False)
         self.btn_start.setMinimumSize(QSize(100, 0))
         self.btn_start.setFocusPolicy(Qt.NoFocus)
 
@@ -107,10 +108,10 @@ class Ui_csl(object):
         csl.setWindowTitle(QCoreApplication.translate("csl", u"Form", None))
         self.btn_start.setText(QCoreApplication.translate("csl", u"\u521b\u5efa", None))
         self.btn_to.setText(QCoreApplication.translate("csl", u"\u9009\u62e9\u76ee\u6807\u8def\u5f84", None))
-        self.lineedit_to_dir.setPlaceholderText(QCoreApplication.translate("csl", u"\u8bf7\u5148\u9009\u62e9\u76ee\u6807\u7236\u8def\u5f84", None))
+        self.lineedit_to_dir.setPlaceholderText(QCoreApplication.translate("csl", u"\u62d6\u62fd\u76ee\u6807\u8def\u5f84\u5230\u6b64\u5904\uff08\u4e0d\u542b\u6700\u540e\u4e00\u5c42\uff09", None))
         self.label_sep.setText(QCoreApplication.translate("csl", u"\\", None))
-        self.lineedit_to_name.setPlaceholderText(QCoreApplication.translate("csl", u"\u76ee\u6807\u540d\u79f0", None))
-        self.btn_from.setText(QCoreApplication.translate("csl", u"\u9009\u62e9\u672c\u4f53\u8def\u5f84", None))
-        self.lineedit_from.setPlaceholderText(QCoreApplication.translate("csl", u"\u8bf7\u5148\u9009\u62e9\u672c\u4f53\u8def\u5f84", None))
+        self.lineedit_to_name.setPlaceholderText(QCoreApplication.translate("csl", u"\u6620\u5c04\u6587\u4ef6\u5939\u540d", None))
+        self.btn_from.setText(QCoreApplication.translate("csl", u"\u9009\u62e9\u6e90\u6587\u4ef6\u5939", None))
+        self.lineedit_from.setPlaceholderText(QCoreApplication.translate("csl", u"\u62d6\u62fd\u6e90\u6587\u4ef6\u5939\u5230\u6b64\u5904", None))
     # retranslateUi
 

@@ -27,12 +27,12 @@ class Main(FluentWindow):
         self.setWindowTitle('神龙工具箱v2.2')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
-        self.subwin_wam = WAM(self, path)
+        self.subwin_wam = WAM(self, SETTINGS_PATH)
         self.subwin_csl = CSL(self)
         self.subwin_fhc = FHC(self)
         self.subwin_fas = FAS(self)
-        self.subwin_fsa = FSA(self)
-        self.subwin_settings = Settings(self, path)
+        self.subwin_fsa = FSA(self, SETTINGS_PATH)
+        self.subwin_settings = Settings(self, SETTINGS_PATH)
         self.subwin_about = About(os.path.dirname(__file__))
 
 
@@ -67,6 +67,7 @@ class Main(FluentWindow):
             self.subwin_settings.cfg.theme_style))
         self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
+        self.subwin_fsa.subwin_snapshot_wizard.setWindowIcon(self.windowIcon())
 
     def window_size_change(self):
         
@@ -85,6 +86,7 @@ class Main(FluentWindow):
                     self.animation.setEndValue(QSize(800, 500))
                 case 1:
                     self.animation.setEndValue(QSize(700, 400))
+                    self.subwin_wam.load_app_info()
                 case 2:
                     self.animation.setEndValue(QSize(500, 200))
                 case 3:
@@ -126,11 +128,10 @@ class Main(FluentWindow):
 
             elif self.stackedWidget.currentIndex() == 2:
                 # if self.subwin_csl.lineedit_from.hasFocus():
-                print(event.position().x(), event.position().y(),
-                      self.stackedWidget.height()//3)
                 if self.subwin_csl.horizontalLayout_from.contentsRect().contains(self.subwin_csl.mapFrom(self, event.position()).toPoint()):
                     self.subwin_csl.lineedit_from.setText(drag_file)
-                # elif self.subwin_csl.lineedit_to_dir.hasFocus():
+                    # if not self.subwin_csl.lineedit_to_name.text():
+                    self.subwin_csl.lineedit_to_name.setText(os.path.basename(drag_file))
                 elif self.subwin_csl.horizontalLayout_to.contentsRect().contains(self.subwin_csl.mapFrom(self, event.position()).toPoint()):
                     self.subwin_csl.lineedit_to_dir.setText(drag_file)
 
@@ -166,7 +167,7 @@ if __name__ == '__main__':
     fluent_translator = FluentTranslator()
     app.installTranslator(fluent_translator)
 
-    path = sltk.join_path(os.path.expandvars(
+    SETTINGS_PATH = sltk.join_path(os.path.expandvars(
         r'%appdata%'), 'Avoconal', '神龙工具箱')
     window = Main()
 

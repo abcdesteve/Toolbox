@@ -24,14 +24,15 @@ class FHC(QWidget, Ui_fhc):
         # self.tablewidget.setBorderRadius(10)
 
     def signal_connect(self):
-        self.btn_A.clicked.connect(self.select_file)
-        self.btn_B.clicked.connect(self.select_file)
+        self.btn_A.clicked.connect(lambda:self.select_file(self.lineedit_A))
+        self.btn_B.clicked.connect(lambda:self.select_file(self.lineedit_B))
         self.lineedit_A.textChanged.connect(lambda:self.update_table_data('a'))
         self.lineedit_B.textChanged.connect(lambda:self.update_table_data('b'))
         self.tablewidget.currentCellChanged.connect(self.update_table_compare)
 
-    def select_file(self):
-        section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
+    def select_file(self,section: QLineEdit):
+        # 为了键盘tab体验移除了按钮的焦点，现在不能靠焦点判断
+        # section = self.lineedit_A if self.btn_A.hasFocus() else self.lineedit_B
         path = QFileDialog.getOpenFileName(self, '请选择文件')[0]
         if path:
             # with open(path, 'br')as file:

@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label_achieve_folder">
        <property name="text">
-        <string>快照存档位置：</string>
+        <string>快照存档库：</string>
        </property>
       </widget>
      </item>
@@ -106,15 +106,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_parent_data">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
+          <widget class="HyperlinkLabel" name="label_parent_data">
            <property name="text">
             <string/>
+           </property>
+           <property name="underlineVisible">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -363,17 +360,26 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="PrimaryPushButton" name="btn_del_snap">
+      <widget class="PushButton" name="btn_del_snap">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="text">
         <string>删除快照</string>
        </property>
+       <property name="lightCustomQss" stdset="0">
+        <string>PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}</string>
+       </property>
+       <property name="darkCustomQss" stdset="0">
+        <string>PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="PrimaryPushButton" name="btn_crt_snap">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>创建快照</string>
        </property>
@@ -414,6 +420,11 @@
    <extends>QScrollArea</extends>
    <header>qfluentwidgets</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HyperlinkLabel</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
    <class>ProgressBar</class>

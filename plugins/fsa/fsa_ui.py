@@ -19,9 +19,9 @@ from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QFrame, QHBoxL
     QHeaderView, QLabel, QSizePolicy, QSplitter,
     QTableWidgetItem, QVBoxLayout, QWidget)
 
-from qfluentwidgets import (ComboBox, PrimaryPushButton, ProgressBar, ProgressRing,
-    PushButton, ScrollArea, TableWidget, ToolButton,
-    VerticalSeparator)
+from qfluentwidgets import (ComboBox, HyperlinkLabel, PrimaryPushButton, ProgressBar,
+    ProgressRing, PushButton, ScrollArea, TableWidget,
+    ToolButton, VerticalSeparator)
 
 class Ui_fsa(object):
     def setupUi(self, fsa):
@@ -101,9 +101,9 @@ class Ui_fsa(object):
 
         self.horizontalLayout_7.addWidget(self.label_parent)
 
-        self.label_parent_data = QLabel(self.layoutWidget)
+        self.label_parent_data = HyperlinkLabel(self.layoutWidget)
         self.label_parent_data.setObjectName(u"label_parent_data")
-        self.label_parent_data.setFont(font)
+        self.label_parent_data.setUnderlineVisible(True)
 
         self.horizontalLayout_7.addWidget(self.label_parent_data)
 
@@ -247,7 +247,7 @@ class Ui_fsa(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.btn_del_snap = PrimaryPushButton(fsa)
+        self.btn_del_snap = PushButton(fsa)
         self.btn_del_snap.setObjectName(u"btn_del_snap")
         self.btn_del_snap.setEnabled(False)
 
@@ -255,6 +255,7 @@ class Ui_fsa(object):
 
         self.btn_crt_snap = PrimaryPushButton(fsa)
         self.btn_crt_snap.setObjectName(u"btn_crt_snap")
+        self.btn_crt_snap.setEnabled(False)
 
         self.horizontalLayout_2.addWidget(self.btn_crt_snap)
 
@@ -269,7 +270,7 @@ class Ui_fsa(object):
 
     def retranslateUi(self, fsa):
         fsa.setWindowTitle(QCoreApplication.translate("fsa", u"Form", None))
-        self.label_achieve_folder.setText(QCoreApplication.translate("fsa", u"\u5feb\u7167\u5b58\u6863\u4f4d\u7f6e\uff1a", None))
+        self.label_achieve_folder.setText(QCoreApplication.translate("fsa", u"\u5feb\u7167\u5b58\u6863\u5e93\uff1a", None))
         ___qtablewidgetitem = self.TableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("fsa", u"\u5feb\u7167\u65f6\u95f4", None));
         ___qtablewidgetitem1 = self.TableWidget.horizontalHeaderItem(1)
@@ -292,6 +293,8 @@ class Ui_fsa(object):
         self.label_del_data.setText(QCoreApplication.translate("fsa", u"0", None))
         self.btn_export_snap.setText(QCoreApplication.translate("fsa", u"\u5bfc\u51fa\u5feb\u7167", None))
         self.btn_del_snap.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\u5feb\u7167", None))
+        self.btn_del_snap.setProperty(u"lightCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}", None))
+        self.btn_del_snap.setProperty(u"darkCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}", None))
         self.btn_crt_snap.setText(QCoreApplication.translate("fsa", u"\u521b\u5efa\u5feb\u7167", None))
     # retranslateUi
 

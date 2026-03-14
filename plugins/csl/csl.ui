@@ -16,6 +16,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="1">
     <widget class="PrimaryPushButton" name="btn_start">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -80,7 +83,7 @@
         <set>Qt::AlignCenter</set>
        </property>
        <property name="placeholderText">
-        <string>请先选择目标父路径</string>
+        <string>拖拽目标路径到此处（不含最后一层）</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
@@ -100,7 +103,7 @@
         <set>Qt::AlignCenter</set>
        </property>
        <property name="placeholderText">
-        <string>目标名称</string>
+        <string>映射文件夹名</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
@@ -123,7 +126,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>选择本体路径</string>
+        <string>选择源文件夹</string>
        </property>
       </widget>
      </item>
@@ -133,7 +136,7 @@
         <set>Qt::AlignCenter</set>
        </property>
        <property name="placeholderText">
-        <string>请先选择本体路径</string>
+        <string>拖拽源文件夹到此处</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>

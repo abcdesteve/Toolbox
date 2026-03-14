@@ -49,7 +49,7 @@ class TaskEdit(FluentWindow, Ui_task_edit):
         self.setupUi(self.container)
         self.addSubInterface(
             self.container, mainwindow.windowIcon(), mainwindow.windowTitle())
-        self.setWindowIcon(mainwindow.windowIcon())
+        # self.setWindowIcon(mainwindow.windowIcon())
         self.setWindowTitle('任务编辑')
         self.mainwindow = mainwindow
         self.navigationInterface.setVisible(False)

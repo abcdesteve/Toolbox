@@ -43,12 +43,14 @@ class Ui_fhc(object):
         self.lineedit_A = PlainTextEdit(fhc)
         self.lineedit_A.setObjectName(u"lineedit_A")
         self.lineedit_A.setAcceptDrops(False)
+        self.lineedit_A.setTabChangesFocus(True)
 
         self.gridLayout.addWidget(self.lineedit_A, 1, 0, 1, 1)
 
         self.lineedit_B = PlainTextEdit(fhc)
         self.lineedit_B.setObjectName(u"lineedit_B")
         self.lineedit_B.setAcceptDrops(False)
+        self.lineedit_B.setTabChangesFocus(True)
 
         self.gridLayout.addWidget(self.lineedit_B, 1, 1, 1, 1)
 
@@ -234,6 +236,8 @@ class Ui_fhc(object):
         fhc.setWindowTitle(QCoreApplication.translate("fhc", u"Form", None))
         self.btn_A.setText(QCoreApplication.translate("fhc", u"\u9009\u62e9\u6587\u4ef6", None))
         self.btn_B.setText(QCoreApplication.translate("fhc", u"\u9009\u62e9\u6587\u4ef6", None))
+        self.lineedit_A.setPlaceholderText(QCoreApplication.translate("fhc", u"\u62d6\u5165\u6587\u4ef6\u5230\u6b64\u5904 \u6216\u7c98\u8d34\u54c8\u5e0c\u503c\u81f3\u4e0b\u65b9\u8868\u683c", None))
+        self.lineedit_B.setPlaceholderText(QCoreApplication.translate("fhc", u"\u62d6\u5165\u6587\u4ef6\u5230\u6b64\u5904 \u6216\u7c98\u8d34\u54c8\u5e0c\u503c\u81f3\u4e0b\u65b9\u8868\u683c", None))
         ___qtablewidgetitem = self.tablewidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("fhc", u"A\u533a\u54c8\u5e0c\u503c", None));
         ___qtablewidgetitem1 = self.tablewidget.horizontalHeaderItem(1)

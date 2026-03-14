@@ -1,6 +1,7 @@
 import os
 import logging
 import zipfile
+from typing_extensions import overload
 
 from qfluentwidgets import *
 from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
@@ -15,7 +16,7 @@ from input_dialog_ui import Ui_Input_dialog
 class sltk:
     "神龙工具集"
 
-    def scan_file(dir_name: str, goal: str, depth: int, strict:bool=True, black_list: list[str] = ['C:\\Windows', 'C:\\$RECYCLE.BIN', 'C:\\Recovery', 'C:\\System Volume Information', 'D:\\$RECYCLE.BIN', 'D:\\System Volume Information']) -> list[str]:
+    def scan_file(dir_name: str, goal: str, depth: int, strict: bool = True, black_list: list[str] = ['C:\\Windows', 'C:\\$RECYCLE.BIN', 'C:\\Recovery', 'C:\\System Volume Information', 'D:\\$RECYCLE.BIN', 'D:\\System Volume Information']) -> list[str]:
         """
         Find the goal in the given dir.
         Return mutiple results if found.
@@ -42,7 +43,7 @@ class sltk:
                         if goal in i:
                             results.append(sltk.join_path(dir_name, i))
                 temp = [results.extend(sltk.scan_file(sltk.join_path(dir_name, i), goal, depth - 1, strict, black_list))
-                    for i in lis if os.path.isdir(sltk.join_path(dir_name, i))]
+                        for i in lis if os.path.isdir(sltk.join_path(dir_name, i))]
                 # print(f'temp:{temp}')
                 return results
             except PermissionError:
@@ -52,7 +53,7 @@ class sltk:
         else:
             return []
 
-    def safe_load(self, origin: dict[str, str | dict], data: dict[str, str | dict]) -> dict[str, str | dict]:
+    def safe_load(self, origin: dict[str, int | str | dict], data: dict[str, int | str | dict]) -> dict[str, int | str | dict]:
         '''安全加载json配置，避免因版本不同导致配置冲突'''
         for okey, ovalue in origin.items():
             if okey in list(data.keys()):
@@ -63,7 +64,7 @@ class sltk:
         return origin
 
     def unique_add_items(widget: QComboBox | ComboBox | QListWidget | ListWidget, *items: str | list[str], format_item: bool = True):
-        '''为ComboBox不重复地添加一个或多个item，同时格式化路径（如果可以）'''
+        '''为ComboBox/ListWidget不重复地添加一个或多个item，同时格式化路径（如果可以）'''
         previous_items = [(widget.itemText(i) if type(widget) in [
                            QComboBox, ComboBox]else widget.item(i).text()) for i in range(widget.count())]
         if type(items[0]) == list:
@@ -111,13 +112,13 @@ class sltk:
     def join_path(*argv: str) -> str:
         return os.path.realpath(os.path.join(*argv))
 
-    def expend_children_text(widget: QComboBox | QListWidget | QTableWidget | QTreeWidget | ComboBox | ListWidget | TableWidget | TreeWidget) -> list[str]:
+    def expend_children_text(widget: QComboBox | QListWidget | QTableWidget | QTreeWidget | ComboBox | ListWidget | TableWidget | TreeWidget) -> list[str] | list[list[str]]:
         '''
         Return all item text in the widget\n
         `ComboBox` -> list[str]\n
         `ListWidget` -> list[str]\n
         `TableWidget` -> list[list[str]]\n
-        `TreeWidget` -> list[str]
+        `TreeWidget` -> list[list[str]]]
         '''
         # if type(widget) in [QComboBox, ComboBox]:
         if isinstance(widget, (QComboBox, ComboBox, EditableComboBox)):
@@ -136,7 +137,7 @@ class sltk:
 
         # elif type(widget) in [QTreeWidget, TreeWidget]:
         elif isinstance(widget, (QTreeWidget, TreeWidget)):
-            return [widget.topLevelItem(i).text(0) for i in range(widget.topLevelItemCount())]
+            return [[widget.topLevelItem(i).text(col) for col in range(widget.columnCount())] for i in range(widget.topLevelItemCount())]
         else:
             raise TypeError(f'Unsupported widget type: {type(widget)}')
 
@@ -147,6 +148,7 @@ class sltk:
             if bit < 1024:
                 return f"{bit:.2f} {unit}"
             bit /= 1024.0
+
 
 class QMessageBox:
     """

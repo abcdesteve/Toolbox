@@ -5,7 +5,7 @@ from .csl_ui import Ui_csl
 
 from sl_lib import QMessageBox
 
-import os
+import os,_winapi
 
 class CSL(QWidget,Ui_csl):
     '''创建符号链接\ncreate symbol link'''
@@ -19,6 +19,12 @@ class CSL(QWidget,Ui_csl):
         self.btn_to.clicked.connect(self.csl_select_to)
         self.btn_from.clicked.connect(self.csl_select_from)
         self.btn_start.clicked.connect(self.csl_start)
+        self.lineedit_from.textChanged.connect(self.update_btn_status)
+        self.lineedit_to_dir.textChanged.connect(self.update_btn_status)
+        self.lineedit_to_name.textChanged.connect(self.update_btn_status)
+
+    def update_btn_status(self):
+        self.btn_start.setEnabled(bool(self.lineedit_from.text() and self.lineedit_to_dir.text() and self.lineedit_to_name.text()))
 
     def csl_select_from(self):
         path = QFileDialog.getExistingDirectory(self, '请选择本体路径')
@@ -36,19 +42,18 @@ class CSL(QWidget,Ui_csl):
             QMessageBox.warning(self.mainwindow, '警告', '路径无效')
 
     def csl_start(self):
-        if self.lineedit_from.text() and self.lineedit_to_dir.text() and self.lineedit_to_name.text():
-            log = os.popen(
-                f'mklink /j "{self.lineedit_to_dir.text()}/{self.lineedit_to_name.text()}" "{self.lineedit_from.text()}"').read()
-            if 'created' in log or '成功'in log:
-                QMessageBox.information(self.mainwindow, '成功', '符号链接创建成功')
-            elif 'exists' in log:
-                QMessageBox.warning(self.mainwindow, '警告', f'请勿选择已存在的目标路径\n{log}')
-            elif 'NTFS' in log:
-                QMessageBox.warning(self.mainwindow, '警告', f'请确保路径所在驱动盘为NTFS文件格式\n{log}')
-            else:
-                QMessageBox.warning(self.mainwindow, '警告', f'未知错误\n{log}')
-        else:
-            QMessageBox.warning(self.mainwindow, '警告', '请先选择本体路径与目标路径')
-
-    def dragEnterEvent(self, event):
-        raise NotImplementedError
+        # log = os.popen(
+        #     f'mklink /j "{self.lineedit_to_dir.text()}/{self.lineedit_to_name.text()}" "{self.lineedit_from.text()}"').read()
+        # if 'created' in log or '成功' in log or '创建的联接' in log:
+        #     QMessageBox.information(self.mainwindow, '成功', '符号链接创建成功')
+        # elif 'exists' in log or '已存在' in log:
+        #     QMessageBox.warning(self.mainwindow, '警告', f'请勿选择已存在的目标路径\n{log}')
+        # elif 'NTFS' in log:
+        #     QMessageBox.warning(self.mainwindow, '警告', f'请确保路径所在驱动盘为NTFS文件格式\n{log}')
+        # else:
+        #     QMessageBox.warning(self.mainwindow, '警告', f'未知错误\n{log}')
+        try:
+            _winapi.CreateJunction(self.lineedit_from.text(),os.path.join(self.lineedit_to_dir.text(),self.lineedit_to_name.text()))
+            QMessageBox.information(self.mainwindow, '成功', '符号链接创建成功')
+        except Exception as e:
+            QMessageBox.warning(self.mainwindow, '警告', f'未知错误\n{e}')
