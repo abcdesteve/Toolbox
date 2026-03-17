@@ -11,6 +11,7 @@ from plugins.wam import WAM, Utility
 from plugins.csl import CSL
 from plugins.fhc import FHC
 from plugins.fas import FAS
+
 from plugins.fsa import FSA
 from plugins.settings import Settings
 from plugins.about import About
@@ -31,7 +32,7 @@ class Main(FluentWindow):
         self.subwin_csl = CSL(self)
         self.subwin_fhc = FHC(self)
         self.subwin_fas = FAS(self)
-        self.subwin_fsa = FSA(self, SETTINGS_PATH)
+        self.subwin_fsa = FSA(self, SETTINGS_PATH, os.path.dirname(__file__))
         self.subwin_settings = Settings(self, SETTINGS_PATH)
         self.subwin_about = About(os.path.dirname(__file__))
 
@@ -40,11 +41,11 @@ class Main(FluentWindow):
                              '安卓应用管理', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_wam, FluentIcon.APPLICATION,
                              'Windows应用管理', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_csl, FluentIcon.LINK,
+        self.addSubInterface(self.subwin_csl, MyFluentIcon.FolderLink,
                              '创建符号链接', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fhc, FluentIcon.FINGERPRINT,
                              '文件哈希校验', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fas, FluentIcon.SYNC,
+        self.addSubInterface(self.subwin_fas, MyFluentIcon.DocumentSync,
                              '文件自动同步', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fsa, FluentIcon.HISTORY,'文件快照归档',NavigationItemPosition.SCROLL)
         self.addSubInterface(

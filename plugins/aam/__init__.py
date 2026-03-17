@@ -63,10 +63,8 @@ class AAM(QWidget, Ui_aam):
         self.btn_unfreeze.setIcon(MyFluentIcon.UnFrigid)
         self.btn_backup.setIcon(FluentIcon.HISTORY)
         self.btn_restore.setIcon(FluentIcon.HISTORY)
-        self.btn_grant_permission.setIcon(FluentIcon.VPN)
-        self.btn_revoke_permission.setIcon(FluentIcon.VPN)
         self.btn_grant_permission.setIcon(MyFluentIcon.Sheild)
-        self.btn_revoke_permission.setIcon(MyFluentIcon.Sheild)
+        self.btn_revoke_permission.setIcon(MyFluentIcon.SheildProhibited)
         
 
     def init_signal(self):

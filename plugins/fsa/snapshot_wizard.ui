@@ -36,6 +36,87 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="SegmentedToolWidget" name="toggle_filter">
+       <property name="minimumSize">
+        <size>
+         <width>118</width>
+         <height>33</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="LineEdit" name="lineedit_filter">
+       <property name="placeholderText">
+        <string>在此键入筛选后缀名 如 jpg,png</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_hidden">
+       <property name="text">
+        <string>排除隐藏：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ToggleToolButton" name="toggle_windows">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>排除Windows系统上的隐藏文件与文件夹</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ToggleToolButton" name="toggle_unix">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>排除Unix类系统（Linux/Android/MacOS）上的隐藏文件夹</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="TreeWidget" name="TreeWidget">
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -55,9 +136,6 @@
      <property name="animated">
       <bool>true</bool>
      </property>
-     <attribute name="headerHighlightSections">
-      <bool>true</bool>
-     </attribute>
      <attribute name="headerShowSortIndicator" stdset="0">
       <bool>true</bool>
      </attribute>
@@ -69,11 +147,6 @@
      <column>
       <property name="text">
        <string>路径</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>文件夹</string>
       </property>
      </column>
     </widget>
@@ -114,7 +187,7 @@
 仅在文件存在云端不方便下载时取消勾选</string>
        </property>
        <property name="text">
-        <string>计算文件哈希</string>
+        <string>计算文件哈希/生成缩略图</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -165,11 +238,40 @@
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
+   <class>ToggleToolButton</class>
+   <extends>ToolButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>Pivot</class>
+   <extends>QWidget</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>SegmentedToolWidget</class>
+   <extends>Pivot</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
    <class>TreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>btn_add_file</tabstop>
+  <tabstop>btn_add_folder</tabstop>
+  <tabstop>btn_del</tabstop>
+  <tabstop>TreeWidget</tabstop>
+  <tabstop>ckb_calc_hash</tabstop>
+  <tabstop>btn_cancel</tabstop>
+  <tabstop>btn_create</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

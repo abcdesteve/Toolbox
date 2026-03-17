@@ -20,31 +20,31 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
 
 from qfluentwidgets import (EditableComboBox, LineEdit, PrimaryPushButton, PushButton)
 
-class Ui_Input_dialog(object):
-    def setupUi(self, Input_dialog):
-        if not Input_dialog.objectName():
-            Input_dialog.setObjectName(u"Input_dialog")
-        Input_dialog.resize(350, 250)
+class Ui_input_dialog(object):
+    def setupUi(self, input_dialog):
+        if not input_dialog.objectName():
+            input_dialog.setObjectName(u"input_dialog")
+        input_dialog.resize(350, 250)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Input_dialog.sizePolicy().hasHeightForWidth())
-        Input_dialog.setSizePolicy(sizePolicy)
-        Input_dialog.setMinimumSize(QSize(300, 200))
-        self.verticalLayout = QVBoxLayout(Input_dialog)
+        sizePolicy.setHeightForWidth(input_dialog.sizePolicy().hasHeightForWidth())
+        input_dialog.setSizePolicy(sizePolicy)
+        input_dialog.setMinimumSize(QSize(300, 200))
+        self.verticalLayout = QVBoxLayout(input_dialog)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.frame_2 = QFrame(Input_dialog)
-        self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setFrameShape(QFrame.NoFrame)
-        self.frame_2.setFrameShadow(QFrame.Plain)
-        self.frame_2.setLineWidth(0)
-        self.verticalLayout_3 = QVBoxLayout(self.frame_2)
+        self.frame_upper = QFrame(input_dialog)
+        self.frame_upper.setObjectName(u"frame_upper")
+        self.frame_upper.setFrameShape(QFrame.NoFrame)
+        self.frame_upper.setFrameShadow(QFrame.Plain)
+        self.frame_upper.setLineWidth(0)
+        self.verticalLayout_3 = QVBoxLayout(self.frame_upper)
         self.verticalLayout_3.setSpacing(10)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(20, 20, 20, 20)
-        self.title = QLabel(self.frame_2)
+        self.title = QLabel(self.frame_upper)
         self.title.setObjectName(u"title")
         font = QFont()
         font.setPointSize(16)
@@ -52,7 +52,7 @@ class Ui_Input_dialog(object):
 
         self.verticalLayout_3.addWidget(self.title)
 
-        self.content = QLabel(self.frame_2)
+        self.content = QLabel(self.frame_upper)
         self.content.setObjectName(u"content")
         font1 = QFont()
         font1.setPointSize(11)
@@ -62,30 +62,32 @@ class Ui_Input_dialog(object):
         self.verticalLayout_3.addWidget(self.content)
 
 
-        self.verticalLayout.addWidget(self.frame_2)
+        self.verticalLayout.addWidget(self.frame_upper)
 
-        self.frame = QFrame(Input_dialog)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.NoFrame)
-        self.frame.setFrameShadow(QFrame.Plain)
-        self.frame.setLineWidth(0)
-        self.verticalLayout_2 = QVBoxLayout(self.frame)
+        self.frame_lower = QFrame(input_dialog)
+        self.frame_lower.setObjectName(u"frame_lower")
+        self.frame_lower.setStyleSheet(u"QFrame{border-bottom-left-radius: 10px;\n"
+"border-bottom-right-radius: 10px;}")
+        self.frame_lower.setFrameShape(QFrame.NoFrame)
+        self.frame_lower.setFrameShadow(QFrame.Plain)
+        self.frame_lower.setLineWidth(0)
+        self.verticalLayout_2 = QVBoxLayout(self.frame_lower)
         self.verticalLayout_2.setSpacing(15)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(20, 20, 20, 20)
-        self.comboBox = EditableComboBox(self.frame)
+        self.comboBox = EditableComboBox(self.frame_lower)
         self.comboBox.setObjectName(u"comboBox")
 
         self.verticalLayout_2.addWidget(self.comboBox)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.btn_cancel = PushButton(self.frame)
+        self.btn_cancel = PushButton(self.frame_lower)
         self.btn_cancel.setObjectName(u"btn_cancel")
 
         self.horizontalLayout_2.addWidget(self.btn_cancel)
 
-        self.btn_ok = PrimaryPushButton(self.frame)
+        self.btn_ok = PrimaryPushButton(self.frame_lower)
         self.btn_ok.setObjectName(u"btn_ok")
 
         self.horizontalLayout_2.addWidget(self.btn_ok)
@@ -94,20 +96,20 @@ class Ui_Input_dialog(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
 
-        self.verticalLayout.addWidget(self.frame)
+        self.verticalLayout.addWidget(self.frame_lower)
 
 
-        self.retranslateUi(Input_dialog)
+        self.retranslateUi(input_dialog)
 
-        QMetaObject.connectSlotsByName(Input_dialog)
+        QMetaObject.connectSlotsByName(input_dialog)
     # setupUi
 
-    def retranslateUi(self, Input_dialog):
-        Input_dialog.setWindowTitle(QCoreApplication.translate("Input_dialog", u"Form", None))
+    def retranslateUi(self, input_dialog):
+        input_dialog.setWindowTitle(QCoreApplication.translate("input_dialog", u"Form", None))
 #if QT_CONFIG(accessibility)
-        self.frame.setAccessibleDescription(QCoreApplication.translate("Input_dialog", u"dialog_lower_frame", None))
+        self.frame_lower.setAccessibleDescription(QCoreApplication.translate("input_dialog", u"dialog_lower_frame", None))
 #endif // QT_CONFIG(accessibility)
-        self.btn_cancel.setText(QCoreApplication.translate("Input_dialog", u"\u53d6\u6d88", None))
-        self.btn_ok.setText(QCoreApplication.translate("Input_dialog", u"\u786e\u5b9a", None))
+        self.btn_cancel.setText(QCoreApplication.translate("input_dialog", u"\u53d6\u6d88", None))
+        self.btn_ok.setText(QCoreApplication.translate("input_dialog", u"\u786e\u5b9a", None))
     # retranslateUi
 

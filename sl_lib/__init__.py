@@ -1,5 +1,6 @@
 import os
 import logging
+import time
 import zipfile
 from typing_extensions import overload
 
@@ -10,7 +11,8 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 
 
-from input_dialog_ui import Ui_Input_dialog
+from .input_dialog_ui import Ui_input_dialog
+from .progress_popup_ui import Ui_progress_popup
 
 
 class sltk:
@@ -207,7 +209,7 @@ class QMessageBox:
         return QMessageBox.Yes if widget.exec() else QMessageBox.No
 
 
-class InputDialog(MaskDialogBase, Ui_Input_dialog):
+class InputDialog(MaskDialogBase, Ui_input_dialog):
     def __init__(self):
         pass
 
@@ -275,11 +277,106 @@ class StatisticsWidget(QWidget):
         self.valueLabel.setText(str(value))
 
 
+class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
+    """进度弹窗\n
+    `title` 弹窗标题
+    `total` 总进度（不传递时使用不确定的进度条） e.g. 100
+    `show_time` 是否显示预估时间\n
+    `current` 实时状态 e.g. C:/Users/xxx/Downloads/a.txt\n
+    `progress` 实时进度（仅在传递`total`时有效） e.g. 50\n
+    `thumbnail` 显示缩略图
+    """
+
+    def __init__(self):
+        pass
+
+    def run(self, parent, title: str, total: int = 0, delay: int = 1000, show_time=True):
+        super().__init__(parent)
+        self.setupUi(self.widget)
+        FluentStyleSheet.DIALOG.apply(self)
+        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+
+        self.label_title.setText(title)
+
+        self.setTotal(0)
+        QTimer().singleShot(delay, lambda: self.setTotal(total))
+        self.processed = 0
+
+        self.label_time_left.setVisible(show_time)
+        if show_time:
+            self.start_time = time.time()
+            self.timer = QTimer(interval=1000)
+            self.timer.timeout.connect(self._updateTime)
+            self.timer.start()
+
+        QTimer().singleShot(0, self.exec)
+        return self
+
+    def setTotal(self, value: int):
+        self.total = value
+        self.label_progress.setVisible(self.total != 0)
+        self.label_progress_data.setVisible(self.total != 0)
+
+        self.ProgressBar.setVisible(self.total != 0)
+        self.IndeterminateProgressBar.setVisible(self.total == 0)
+        self.setProcessed()
+        return self
+
+    def setCurrentItem(self, value: str = ""):
+        "当前处理的项目/文件，不是进度"
+        # self.label_current.setVisible(value == "")
+        self.label_current.setText(value)
+        return self
+
+    def setThumbnail(self, thumbnail: str=None):
+        if thumbnail:
+            self.ImageLabel.setPixmap(QPixmap(thumbnail).scaled(
+                75, 75, Qt.AspectRatioMode.KeepAspectRatio))
+        else:
+            self.ImageLabel.setPixmap(QPixmap())
+        return self
+
+    def setProcessed(self, value: int = -1):
+        "`value`为当前实时进度，不是百分比\n\n需要设置`total`"
+        if value >= 0:
+            self.processed = value
+        try:
+            self.label_progress_data.setText(
+                '%.1f%% (%d/%d)' % (self.processed/self.total*100, self.processed, self.total))
+            self.ProgressBar.setValue(int(self.processed/self.total*100))
+        except:
+            pass
+        return self
+
+    def _updateTime(self):
+        def format_time(seconds):
+            if seconds > 60*60*24:
+                return "超过1天"
+            h = seconds//3600
+            seconds %= 3600
+            m = seconds//60
+            seconds %= 60
+            seconds = int(seconds)
+            if h:
+                return '%02d:%02d:%02d' % (h, m, seconds)
+            if m:
+                return '%02d:%02d' % (m, seconds)
+            return f'{seconds}s'
+        past_time = time.time()-self.start_time
+        self.label_time_past.setText('已用时间：'+format_time(past_time))
+        if self.ProgressBar.value():
+            left_time = past_time/(self.ProgressBar.value()/100)-past_time
+            self.label_time_left.setText('剩余时间：'+format_time(left_time))
+
+
 class MyFluentIcon(FluentIconBase, Enum):
-    ToolBox = 'toolbox'
-    Sheild = 'shield'
     Android = 'android'
-    Frigid = 'frigid'
+    DocumentSync = 'documentSync'
+    FolderLink = 'folderLink'
+    Prohibited = 'prohibited'
+    Sheild = 'shield'
+    SheildProhibited = 'shieldProhibited'
+    ToolBox = 'toolbox'
     UnFrigid = 'unfrigid'
 
     def path(self, theme=Theme.AUTO) -> str:

@@ -17,7 +17,7 @@ class About(QWidget,Ui_about):
         self.setupUi(self)
         self.btn_github.setIcon(FluentIcon.GITHUB)
         # self.btn_bilibili.setIcon(FluentIcon.HOME)
-        self.btn_bilibili.setIcon(QIcon(sltk.join_path(parent_dir,'icons','bilibili.svg')))
+        self.btn_bilibili.setIcon(QIcon(sltk.join_path(parent_dir,'sl_lib','icons','bilibili.svg')))
         self.btn_tour.setIcon(FluentIcon.MOVIE)
         self.signal_connect()
         try:
