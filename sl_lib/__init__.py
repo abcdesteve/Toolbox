@@ -170,7 +170,7 @@ class sltk:
                 return f"{bit:.2f} {unit}"
             bit /= 1024.0
 
-    def calc_hash(file: str, md5: bool = True, crc32: bool = True, blake3: bool = True, sha1: bool = True, sha224: bool = True, sha256: bool = True, sha384: bool = True, sha512: bool = True, buffer_size: int = 1024*1024) -> dict[str, str]:
+    def calc_hash(file: str, md5: bool = False, crc32: bool = False, blake3: bool = False, sha1: bool = False, sha224: bool = False, sha256: bool = False, sha384: bool = False, sha512: bool = False, buffer_size: int = 1024*1024) -> dict[str, str]:
         '计算文件的哈希值'
         result = {}
         _md5, _crc32, _blake3, _sha1, _sha224, _sha256, _sha384, _sha512 = hashlib.md5(), 0, blake3lib.blake3(
@@ -355,13 +355,13 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
     """
 
     def __init__(self):
-        self.total = ""
+        self.total = 0
         self.currentItem = ""
         self.thumbnail = ""
         self.processed = -1
         self.is_done=False
 
-        self._total = ""
+        self._total = 0
         self._currentItem = ""
         self._thumbnail = ""
         self._processed = -1
@@ -414,13 +414,12 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
 
         self.ProgressBar.setVisible(self.total != 0)
         self.IndeterminateProgressBar.setVisible(self.total == 0)
-        self.setProcessed()
         return self
 
-    def setCurrentItem(self, value: str = ""):
+    def setCurrentItem(self, txt: str = ""):
         "当前处理的项目/文件，不是进度"
         # self.label_current.setVisible(value == "")
-        self.label_current.setText(value)
+        self.label_current.setText(txt)
         return self
 
     def setThumbnail(self, thumbnail: str = None):
@@ -432,15 +431,14 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
             self.ImageLabel.setPixmap(QPixmap())
         return self
 
-    def setProcessed(self, value: int = -1):
+    def setProcessed(self, value: int):
         "`value`为当前实时进度，不是百分比\n\n需要设置`total`"
-        if value >= 0:
-            try:
-                self.label_progress_data.setText(
-                    '%.1f%% (%d/%d)' % (value/self.total*100, value, self.total))
-                self.ProgressBar.setValue(int(self.processed/self.total*100))
-            except:
-                pass
+        try:
+            self.label_progress_data.setText(
+                '%.1f%% (%d/%d)' % (value/self.total*100, value, self.total))
+            self.ProgressBar.setValue(int(self.processed/self.total*100))
+        except:
+            pass
         return self
 
     def _updateTime(self):
@@ -459,7 +457,7 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
             return f'{seconds}s'
         past_time = time.time()-self.start_time
         self.label_time_past.setText('已用时间：'+format_time(past_time))
-        if self.ProgressBar.value():
+        if self.ProgressBar.value()*self.total!=0:
             left_time = past_time/(self.ProgressBar.value()/100)-past_time
             self.label_time_left.setText('剩余时间：'+format_time(left_time))
 

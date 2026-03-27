@@ -1,3 +1,5 @@
+from .snapshot_wizard_ui import Ui_snapshot_wizard
+from .fsa_ui import Ui_fsa
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -5,7 +7,7 @@ from PySide6.QtCore import *
 from qfluentwidgets.common.icon import FluentIcon
 from qfluentwidgets import FluentWindow
 
-from sl_lib import sltk,MyFluentIcon,InputDialog,ProgressPopUp,QMessageBox
+from sl_lib import sltk, MyFluentIcon, InputDialog, ProgressPopUp, QMessageBox
 import os
 import time
 import json
@@ -14,9 +16,6 @@ import threading
 from PIL import Image
 import pillow_heif
 pillow_heif.register_heif_opener()
-
-from .fsa_ui import Ui_fsa
-from .snapshot_wizard_ui import Ui_snapshot_wizard
 
 
 class FSA(QWidget, Ui_fsa):
@@ -32,17 +31,14 @@ class FSA(QWidget, Ui_fsa):
         self.btn_export_snap.setIcon(FluentIcon.SHARE)
         # 不知道为啥全局设定无效，必须在这里设置
         # ScrollArea的背景在scrollAreaWidgetContents里
-        self.setStyleSheet(
-            "QWidget#scrollAreaWidgetContents {background-color:transparent}")
+        self.setStyleSheet("QWidget#scrollAreaWidgetContents {background-color:transparent}")
 
         self.mainwindow = mainwindow
         self.settings_path = settings_path
         self.read_settings()
         self.update_btn_status()
-        self.subwin_snapshot_wizard = SnapshotWizard(
-            self.mainwindow, parent_dir, self.cmb_folder.currentText())
+        self.subwin_snapshot_wizard = SnapshotWizard(self.mainwindow, parent_dir, self.cmb_folder.currentText())
         self.init_signal()
-        
 
     def init_signal(self):
         self.btn_add_folder.clicked.connect(self.add_folder)
@@ -69,18 +65,15 @@ class FSA(QWidget, Ui_fsa):
             config_file = sltk.join_path(path, 'index.json')
             if not os.path.isfile(config_file):
                 with open(config_file, 'w', encoding='utf-8') as f:
-                    json.dump({"version": 1, "head": "",
-                              "current": "", "snapshots": []}, f)
-                    os.makedirs(sltk.join_path(
-                        path, 'snapshots'), exist_ok=True)
+                    json.dump({"version": 1, "head": "", "latest": ""}, f)
+                    os.makedirs(sltk.join_path(path, 'snapshots'), exist_ok=True)
         self.save_settings()
 
     def del_folder(self):
         temp = self.cmb_folder.currentText()
         self.cmb_folder.removeItem(self.cmb_folder.currentIndex())
         self.save_settings()
-        QMessageBox.information(
-            self, "提示", f"成功移除快照存档库 {temp}\n库中的文件仍然存在，可在稍后重新导入")
+        QMessageBox.information(self, "提示", f"成功移除快照存档库 {temp}\n库中的文件仍然存在，可在稍后重新导入")
 
     def read_settings(self):
         try:
@@ -93,8 +86,7 @@ class FSA(QWidget, Ui_fsa):
     def save_settings(self):
         os.makedirs(self.settings_path, exist_ok=True)
         with open(sltk.join_path(self.settings_path, 'fsa.json'), 'w', encoding='utf-8') as file:
-            json.dump(
-                {"vaults": sltk.expend_children_text(self.cmb_folder)}, file)
+            json.dump({"vaults": sltk.expend_children_text(self.cmb_folder)}, file)
 
     def del_snap(self):
         pass
@@ -102,11 +94,13 @@ class FSA(QWidget, Ui_fsa):
     def export_snap(self):
         pass
 
-def is_duplicate(path:list[str],lis:list[dict]):
-            for i in lis:
-                if i["path"] == path:
-                    return True
-            return False
+
+def is_duplicate(path: list[str], lis: list[dict]):
+    for i in lis:
+        if i["path"] == path:
+            return True
+    return False
+
 
 class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
     def __init__(self, mainwindow: QWidget, main_dir, vault_dir):
@@ -133,12 +127,10 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.toggle_filter.addItem("Include", FluentIcon.FILTER)
         self.toggle_filter.addItem("Exclude", FluentIcon.REMOVE_FROM)
         self.toggle_filter.setCurrentItem('Exclude')
-        self.toggle_windows.setIcon(QIcon(sltk.join_path(
-            main_dir, 'sl_lib', 'icons', 'windows.svg')))
-        self.toggle_unix.setIcon(QIcon(sltk.join_path(
-            main_dir, 'sl_lib', 'icons', 'linux.svg')))
+        self.toggle_windows.setIcon(QIcon(sltk.join_path(main_dir, 'sl_lib', 'icons', 'windows.svg')))
+        self.toggle_unix.setIcon(QIcon(sltk.join_path(main_dir, 'sl_lib', 'icons', 'linux.svg')))
 
-        self.lis_uuid=os.listdir(sltk.join_path(vault_dir, 'snapshots'))
+        self.lis_uuid: list[str] = os.listdir(sltk.join_path(vault_dir, 'snapshots'))
 
     def init_signal(self):
         self.btn_cancel.clicked.connect(self.close)
@@ -162,10 +154,8 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             flag_filter, flag_hidden = True, False
             # 文件夹不需要检测后缀名
             if self.toggle_filter.currentRouteKey() != 'All' and os.path.isfile(path):
-                is_match = os.path.splitext(path)[1][1:].lower(
-                ) in self.lineedit_filter.text().lower().split(',')
-                flag_filter = (self.toggle_filter.currentRouteKey()
-                               == 'Include') == is_match
+                is_match = os.path.splitext(path)[1][1:].lower() in self.lineedit_filter.text().lower().split(',')
+                flag_filter = (self.toggle_filter.currentRouteKey() == 'Include') == is_match
 
             if self.toggle_windows.isChecked():
                 flag_hidden |= os.stat(path).st_file_attributes & 0x2
@@ -204,71 +194,47 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             if result not in self.lis_uuid:
                 self.lis_uuid.append(result)
                 return result
-    
+
     def create_snap(self):
-        def worker():
-            # 回溯父快照
-            parent_files=self.retrace_parent_snap(parent_id)
-            # 计算快照
-            lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
-                "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
-            self.popup.total=len(lis)
-            lis_same:list[dict]=[]
-            for i in lis:
-                path:list[list[str],list[str]]=i.data(1, Qt.ItemDataRole.UserRole)
-                full_path=sltk.join_path(*path[0],*path[1])
-                self.popup.processed+=1
-                self.popup.currentItem=full_path
-                if os.path.isfile(full_path):
-                    self.snap_config['statistics']['file_count']+=1
-                    temp={"path":path[1],"size":os.path.getsize(full_path),"last_edit":int(time.strftime(r"%Y%m%d%H%M%S",time.gmtime(os.path.getmtime(full_path)))),"hash":[],"type":""}
-                    if self.ckb_calc_hash.isChecked():
-                        temp['hash']=sltk.calc_hash(full_path,md5=True,crc32=True,blake3=True,sha1=True,sha256=True)
-                        for i in parent_files:
-                            if i["hash"]==temp["hash"]:
-                                if i['path']==temp['path']:
-                                    temp['type']='same'
-                                else:
-                                    temp['type']='add'
-                                    self.snap_config['deleted'].append({"path":i['path']})
-                            else:
-                                if i['path']==temp['path']:
-                                    temp['type']='mod'
-                            if temp['type']:break
-                    else:
-                        for i in parent_files:
-                            if i["path"]==temp['path']:
-                                if i['size']==temp['size'] and i['last_edit']==temp['last_edit']:
-                                    temp['type']='same'
-                                else:
-                                    temp['type']='mod'
-                            if temp['type']:break
-                    if temp['type']=='same':
-                        lis_same.append({"path":path[1]})
-                        continue
-                    if not temp['type']:
-                        temp['type']='add'
-                    if temp['type']=='add':
-                        if os.path.splitext(full_path)[1] in ['.jpg','.jpeg','.png','.heif','.heic','.gif','.bmp']:
-                            with Image.open(full_path) as img:
-                                img.thumbnail((256,256),Image.Resampling.LANCZOS)
-                                img.convert("RGB")
-                                thumb_path=sltk.join_path(self.vault_dir,"snapshots",self.snap_config["id"],"thumbnails",temp['hash']['blake3']+".heic")
-                                img.save(thumb_path,format='HEIF',quality=35,subsampling="4:2:0")
-                            self.popup.thumbnail=thumb_path
-                    self.snap_config['statistics'][temp['type']]+=1
-                    self.snap_config['files'].append(temp)
-            # 找出删除的文件
-            for i in parent_files:
-                if not (is_duplicate(i["path"],self.snap_config['files']) or is_duplicate(i["path"],lis_same)):
-                    self.snap_config['deleted'].append({'path':i['path']})
-            self.snap_config['statistics']['del']=len(self.snap_config['deleted'])
-            self.snap_config['statistics']['delta']=self.snap_config['statistics']['add']+self.snap_config['statistics']['mod']+self.snap_config['statistics']['del']
+        def worker(index_config:dict):
+            parent_files = self.snap_retrace_parent(parent_id,self_id)
+            if parent_files=='error':
+                return
+            new_files,thumbnail_map = self.snap_calc_new()
+            self.popup.total = 0
+            self.popup.currentItem = '正在计算差异……'
+            lis_file, lis_deleted = self.snap_calc_delta(parent_files, new_files)
+            # 保存结果
+            self.snap_config['statistics']['file_count'] = len(new_files)
+            self.snap_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
+            self.snap_config['statistics']['del']=len(lis_deleted)
+            for i in lis_file:
+                self.snap_config['statistics'][i['type']] += 1
+                # 生成缩略图
+                if i['path'][-1].lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
+                    try:
+                        temp = thumbnail_map[sltk.join_path(*i['path'])]
+                        with Image.open(temp) as img:
+                            img.thumbnail((256, 256), Image.Resampling.LANCZOS)
+                            img.convert("RGB")
+                            thumb_path = sltk.join_path(self.vault_dir, "snapshots", self.snap_config["id"],
+                                                        "thumbnails", i['hash']['blake3'] + ".heic")
+                            img = pillow_heif.from_pillow(img)
+                            img.save(thumb_path, format='HEIF',
+                                     quality=35, subsampling="4:2:0", exif=None)
+                    except Exception as e:
+                        print(f'生成缩略图 {temp} 时出现错误：{e}')
+            self.snap_config['files'] = lis_file
+            self.snap_config['deleted'] = lis_deleted
             # 保存快照
-            with open(sltk.join_path(self.vault_dir,"snapshots",self.snap_config['id'],"manifest.json"),'w',encoding='utf-8') as file:
-                json.dump(self.snap_config,file)
-            self.popup.done_msg=['快照处理完成',f"快照 {snap_comment} ({self_id}) 包含{self.snap_config['statistics']['file_count']}个文件"]
-            self.popup.is_done=True
+            with open(sltk.join_path(self.vault_dir, "snapshots", self.snap_config['id'], "manifest.json"), 'w', encoding='utf-8') as file:
+                json.dump(self.snap_config, file)
+            # 更新index.json
+            with open(sltk.join_path(self.vault_dir, 'index.json'), 'w', encoding='utf-8') as file:
+                json.dump(index_config, file)
+            self.popup.done_msg = [
+                '快照创建成功', f"快照 {snap_comment} ({self_id}) 包含{self.snap_config['statistics']['file_count']}个文件"]
+            self.popup.is_done = True
 
         self_id = self.gen_uuid(8)
         snap_comment = InputDialog().run(self, '添加备注', f'为当前快照 {self_id} 添加备注')
@@ -276,46 +242,110 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             return
         # 在index.json中添加记录
         with open(sltk.join_path(self.vault_dir, 'index.json'), 'r', encoding='utf-8') as file:
-            index_config = json.load(file)
-            parent_id = index_config['latest']
-        if index_config['head'] == "":
+            index_config:dict = json.load(file)
+            parent_id = index_config.get('latest', '')
+        if index_config.get('head', '') == '':
             index_config['head'] = self_id
         index_config['latest'] = self_id
-        with open(sltk.join_path(self.vault_dir, 'index.json'), 'w', encoding='utf-8') as file:
-            json.dump(index_config, file)
-        
+        # 确认成功创建之后再由子线程写入
+
         # 初始化快照配置
-        os.makedirs(sltk.join_path(self.vault_dir,"snapshots",self_id,"thumbnails"),exist_ok=True)
-        self.snap_config = {"version": 1, "id": self_id, "parent": parent_id, "timestamp": int(time.strftime(
-            r"%Y%m%d%H%M%S")), "comment": snap_comment, "statistics": {"file_count": 0, "delta": 0, "add": 0, "del": 0, "mod": 0}, "files": [], "deleted": []}
-        with open(sltk.join_path(self.vault_dir,"snapshots",self_id,"manifest.json"),'w',encoding='utf-8') as file:
-            json.dump(self.snap_config,file)
+        os.makedirs(sltk.join_path(self.vault_dir, "snapshots", self_id, "thumbnails"), exist_ok=True)
+        self.snap_config = {"version": 1, "id": self_id, "parent": parent_id,
+                            "timestamp": int(time.strftime(r"%Y%m%d%H%M%S")), "comment": snap_comment,
+                            "statistics": {"file_count": 0, "delta": 0, "add": 0, "del": 0, "mod": 0}, "files": [], "deleted": []}
+        with open(sltk.join_path(self.vault_dir, "snapshots", self_id, "manifest.json"), 'w', encoding='utf-8') as file:
+            json.dump(self.snap_config, file)
 
         self.popup = ProgressPopUp().run(self, '正在创建快照')
-        threading.Thread(target=worker).start()
+        threading.Thread(target=worker,args=[index_config]).start()
 
-    def retrace_parent_snap(self, parent_id:str)->list[dict]:
+    def snap_calc_new(self) -> tuple[list[dict], dict[str,str]]:
+        '''由选中的文件生成快照信息，不会计算缩略图，但提供了图片预览展示\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
+        error_count = 0
+        lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
+            "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
+        self.popup.total = len(lis)
+        lis_file: list[dict] = []
+        thumbnail_map: dict[str,str] = {}
+        for i in lis:
+            try:
+                path: list[list[str], list[str]] = i.data(1, Qt.ItemDataRole.UserRole)
+                full_path = sltk.join_path(*path[0], *path[1])
+                self.popup.processed += 1
+                self.popup.currentItem = full_path
+                if os.path.isfile(full_path):
+                    self.snap_config['statistics']['file_count'] += 1
+                    temp = {"path": path[1], "size": os.path.getsize(full_path),
+                            "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
+                            "hash": [], "type": ""}
+                    if os.path.splitext(full_path)[1] in ['.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp']:
+                        self.popup.thumbnail = full_path
+                        thumbnail_map[sltk.join_path(*path[1])] = full_path
+                    if self.ckb_calc_hash.isChecked():
+                        temp['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
+                    lis_file.append(temp)
+            except Exception as e:
+                error_count += 1
+        if error_count > 0:
+            QMessageBox.warning(self, "部分文件异常", f"计算快照信息时出现{error_count}个错误，已尝试跳过失败文件\n最后的报错信息：\n{e}")
+        return lis_file,thumbnail_map
+
+    def snap_retrace_parent(self, parent_id: str,self_id:str) -> list[dict] | str:
+        '''从给定的快照id开始，一直回溯到根快照，重建给定id的完整文件信息\n\n注意回溯时不会考虑hash'''
         # 从后往前用while快很多，也能减少内存传递，回溯时完全不用管hash
-        lis_file:list[dict]=[]
-        lis_deleted:list[dict[str,list[str]]]=[]
-        while parent_id:
-            with open(sltk.join_path(self.vault_dir,"snapshots",parent_id,"manifest.json"), 'r', encoding='utf-8') as file:
-                parent_config = json.load(file)
-            # 先加后排除，文件移动时会同时出现在files和deleted中
-            for i in parent_config['files']:
-                if not (is_duplicate(i["path"],lis_deleted) or is_duplicate(i["path"],lis_file)):
-                    lis_file.append(i)
-            for i in parent_config['deleted']:
-                if not is_duplicate(i["path"],lis_deleted):
-                    lis_deleted.append(i)
-            parent_id = parent_config['parent']
-        return lis_file
-                    
+        lis_file: list[dict] = []
+        lis_deleted: list[dict[str, list[str]]] = []
+        try:
+            while parent_id:
+                with open(sltk.join_path(self.vault_dir, "snapshots", parent_id, "manifest.json"), 'r', encoding='utf-8') as file:
+                    parent_config = json.load(file)
+                # 先加后排除，文件移动时会同时出现在files和deleted中
+                for i in parent_config['files']:
+                    if not (is_duplicate(i["path"], lis_deleted) or is_duplicate(i["path"], lis_file)):
+                        lis_file.append(i)
+                for i in parent_config['deleted']:
+                    if not is_duplicate(i["path"], lis_deleted):
+                        lis_deleted.append(i)
+                parent_id = parent_config['parent']
+            return lis_file
+        except Exception as e:
+            QMessageBox.warning(self, "快照回溯失败", f"回溯节点 {parent_id} 时出现异常，节点可能已经损坏或被异常删除\n快照创建已被撤销，请手动删除当前节点 {self_id}\n\n{e}")
+            return 'error'
+
+    def snap_calc_delta(self, ref: list[dict[str, str | int | list | dict]], obj: list[dict[str, str | int | list | dict]]) -> tuple[list[dict[str, str | int | list | dict]], list[dict[str, list[str]]]]:
+        '''比较两个快照，返回`files`与`deleted`两个列表，格式与`manifest.json`相同'''
+        lis_file: list[dict] = []
+        lis_deleted: list[dict[str, list[str]]] = []
+        for i in obj:
+            i['type'] = 'add'
+        for old_file in ref:
+            is_match = False
+            for new_item in obj:
+                if old_file['path'] == new_item['path']:
+                    is_match = True
+                    if 'blake3' in new_item['hash']:
+                        if old_file['hash'].get('blake3', '') == new_item['hash']['blake3']:
+                            new_item['type'] = 'same'
+                        else:
+                            new_item['type'] = 'mod'
+                    else:
+                        if old_file['size'] == new_item['size'] and old_file['last_edit'] == new_item['last_edit']:
+                            new_item['type'] = 'same'
+                        else:
+                            new_item['type'] = 'mod'
+                    break
+            if not is_match:
+                lis_deleted.append({'path': old_file['path']})
+        # 从后往前删不会影响索引
+        for i in range(len(obj) - 1, -1, -1):
+            if obj[i]['type'] in ['add', 'mod']:
+                lis_file.append(obj[i])
+        return lis_file, lis_deleted
 
     @Slot(int, str)
     def show_scan_error(self, fail_count: int, error: str):
-        QMessageBox.information(
-            self, f"{fail_count}个文件添加失败", f"最后的错误信息：\n{error}")
+        QMessageBox.information(self, f"{fail_count}个文件添加失败", f"最后的错误信息：\n{error}")
 
     def add_file(self, path: list[str] = None):
         if not path:
@@ -334,12 +364,13 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     # temp.setCheckState(2,Qt.CheckState.Unchecked)
                     treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, False)
                     temp = sltk.split_path(i)
-                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [temp[:-1], temp[-1:]]) # [-1]会只剩str
+                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [
+                                           temp[:-1], temp[-1:]])  # [-1]会只剩str
                     treeWidgetItem.setFlags(treeWidgetItem.flags() & ~Qt.ItemFlag.ItemIsEditable & ~
-                                  Qt.ItemFlag.ItemIsUserCheckable & ~Qt.ItemFlag.ItemIsUserTristate)
+                                            Qt.ItemFlag.ItemIsUserCheckable & ~Qt.ItemFlag.ItemIsUserTristate)
                     self.TreeWidget.addTopLevelItem(treeWidgetItem)
                     self.label_count_data.setText(
-                        str(int(self.label_count_data.text())+1))
+                        str(int(self.label_count_data.text()) + 1))
             except Exception as error:
                 fail_count += 1
         if fail_count:
@@ -381,10 +412,11 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     treeWidgetItem.setIcon(0, self.map_icon(final_path, False))
                     # temp.setCheckState(2,Qt.CheckState.Unchecked)
                     treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, False)
-                    temp=sltk.split_path(full_path)
-                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [temp[:-(depth+1)],temp[-(depth+1):]])
+                    temp = sltk.split_path(full_path)
+                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [
+                                           temp[:-(depth + 1)], temp[-(depth + 1):]])
                     self.label_count_data.setText(
-                        str(int(self.label_count_data.text())+1))
+                        str(int(self.label_count_data.text()) + 1))
                 # 二次判断防止无效符号链接
                 elif os.path.isdir(full_path):
                     if flag_include_children or depth == 0:
@@ -393,10 +425,11 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                         # temp.setCheckState(2,Qt.CheckState.Checked)
                         treeWidgetItem.setData(
                             0, Qt.ItemDataRole.UserRole, True)
-                        temp=sltk.split_path(full_path)
-                        treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [temp[:-(depth+1)],temp[-(depth+1):]])
+                        temp = sltk.split_path(full_path)
+                        treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [
+                                               temp[:-(depth + 1)], temp[-(depth + 1):]])
                         count, error = self.recurse_folder(
-                            full_path, flag_include_children, previous_items, treeWidgetItem, depth+1)
+                            full_path, flag_include_children, previous_items, treeWidgetItem, depth + 1)
                         fail_count += count
                         if treeWidgetItem.childCount() == 0:
                             if parent:
@@ -421,7 +454,8 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 # QMessageBox.information(self,"提示",f"{fail_count}个文件添加失败\n最后一次错误信息：\n{error}")
         else:
             return fail_count, error
-        QMetaObject.invokeMethod(self, "update_btn_status", Qt.ConnectionType.QueuedConnection)
+        QMetaObject.invokeMethod(
+            self, "update_btn_status", Qt.ConnectionType.QueuedConnection)
 
     def calc_file_count(self):
         return sum([0 if item.data(0, Qt.ItemDataRole.UserRole)else 1 for item in self.TreeWidget.findItems("*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0)])
