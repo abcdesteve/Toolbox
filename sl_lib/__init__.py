@@ -2,7 +2,14 @@ import os
 import logging
 import time
 import zipfile
-from typing_extensions import overload
+
+import binascii
+import hashlib
+import blake3 as blake3lib
+
+from PIL import Image
+import pillow_heif
+pillow_heif.register_heif_opener()
 
 from qfluentwidgets import *
 from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
@@ -73,7 +80,7 @@ class sltk:
             items = items[0]
         for i in items:
             if format_item:
-                i = os.path.realpath(i)
+                i = os.path.normpath(i)
             if i not in previous_items:
                 widget.addItem(i)
 
@@ -112,7 +119,19 @@ class sltk:
             file.extractall(dst)
 
     def join_path(*argv: str) -> str:
-        return os.path.realpath(os.path.join(*argv))
+        return os.path.normpath(os.path.join(*argv))
+
+    def split_path(path: str) -> list[str]:
+        path = os.path.normpath(path)
+        result = []
+        while True:
+            path, temp = os.path.split(path)
+            if temp:
+                result.insert(0, temp)
+            else:
+                result.insert(0, path)
+                break
+        return result
 
     def expend_children_text(widget: QComboBox | QListWidget | QTableWidget | QTreeWidget | ComboBox | ListWidget | TableWidget | TreeWidget) -> list[str] | list[list[str]]:
         '''
@@ -150,6 +169,51 @@ class sltk:
             if bit < 1024:
                 return f"{bit:.2f} {unit}"
             bit /= 1024.0
+
+    def calc_hash(file: str, md5: bool = True, crc32: bool = True, blake3: bool = True, sha1: bool = True, sha224: bool = True, sha256: bool = True, sha384: bool = True, sha512: bool = True, buffer_size: int = 1024*1024) -> dict[str, str]:
+        '计算文件的哈希值'
+        result = {}
+        _md5, _crc32, _blake3, _sha1, _sha224, _sha256, _sha384, _sha512 = hashlib.md5(), 0, blake3lib.blake3(
+        ), hashlib.sha1(), hashlib.sha224(), hashlib.sha256(), hashlib.sha384(), hashlib.sha512()
+        with open(file, 'rb') as f:
+            while True:
+                temp = f.read(buffer_size)
+                if not temp:
+                    break
+                if md5:
+                    _md5.update(temp)
+                if crc32:
+                    _crc32 = binascii.crc32(temp, _crc32)
+                if blake3:
+                    _blake3.update(temp)
+                if sha1:
+                    _sha1.update(temp)
+                if sha224:
+                    _sha224.update(temp)
+                if sha256:
+                    _sha256.update(temp)
+                if sha384:
+                    _sha384.update(temp)
+                if sha512:
+                    _sha512.update(temp)
+
+        if md5:
+            result['md5'] = _md5.hexdigest().upper()
+        if crc32:
+            result['crc32'] = hex(_crc32)[2:].upper()
+        if blake3:
+            result['blake3'] = _blake3.hexdigest().upper()
+        if sha1:
+            result['sha1'] = _sha1.hexdigest().upper()
+        if sha224:
+            result['sha224'] = _sha224.hexdigest().upper()
+        if sha256:
+            result['sha256'] = _sha256.hexdigest().upper()
+        if sha384:
+            result['sha384'] = _sha384.hexdigest().upper()
+        if sha512:
+            result['sha512'] = _sha512.hexdigest().upper()
+        return result
 
 
 class QMessageBox:
@@ -278,20 +342,52 @@ class StatisticsWidget(QWidget):
 
 
 class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
-    """进度弹窗\n
+    """进度弹窗（不阻塞）\n
+    配合_auto_update机制，可在不同线程中更新进度，注意变量为单向同步，不应读取\n
     `title` 弹窗标题
     `total` 总进度（不传递时使用不确定的进度条） e.g. 100
+    `delay` 延迟显示进度条（ms），伪装加载动画
     `show_time` 是否显示预估时间\n
     `current` 实时状态 e.g. C:/Users/xxx/Downloads/a.txt\n
     `progress` 实时进度（仅在传递`total`时有效） e.g. 50\n
-    `thumbnail` 显示缩略图
+    `thumbnail` 显示缩略图\n
+    `processed` 已处理数（仅在传递`total`时有效） e.g. 50
     """
 
     def __init__(self):
-        pass
+        self.total = ""
+        self.currentItem = ""
+        self.thumbnail = ""
+        self.processed = -1
+        self.is_done=False
 
-    def run(self, parent, title: str, total: int = 0, delay: int = 1000, show_time=True):
+        self._total = ""
+        self._currentItem = ""
+        self._thumbnail = ""
+        self._processed = -1
+
+    def _auto_update(self):
+        if self.total != self._total:
+            self.setTotal(self.total)
+            self._total = self.total
+        if self.currentItem != self._currentItem:
+            self.setCurrentItem(self.currentItem)
+            self._currentItem = self.currentItem
+        if self.thumbnail != self._thumbnail:
+            self.setThumbnail(self.thumbnail)
+            self._thumbnail = self.thumbnail
+        if self.processed != self._processed:
+            self.setProcessed(self.processed)
+            self._processed = self.processed
+        if self.is_done:
+            self.timer.stop()
+            QTimer.singleShot(0,lambda:QMessageBox.information(self.mainwindow,*self.done_msg))
+            self.close()
+
+    def run(self, parent, title: str, done_msg: list[str,str] = ['处理完成',''],total: int = 0, delay: int = 1000, show_time=True):
         super().__init__(parent)
+        self.mainwindow=parent
+        self.done_msg=done_msg
         self.setupUi(self.widget)
         FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
@@ -300,14 +396,13 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
 
         self.setTotal(0)
         QTimer().singleShot(delay, lambda: self.setTotal(total))
-        self.processed = 0
 
         self.label_time_left.setVisible(show_time)
-        if show_time:
-            self.start_time = time.time()
-            self.timer = QTimer(interval=1000)
-            self.timer.timeout.connect(self._updateTime)
-            self.timer.start()
+        self.timer = QTimer(interval=1000)
+        self.timer.timeout.connect(self._auto_update)
+        self.start_time = time.time()
+        self.timer.timeout.connect(self._updateTime)
+        self.timer.start()
 
         QTimer().singleShot(0, self.exec)
         return self
@@ -328,10 +423,11 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.label_current.setText(value)
         return self
 
-    def setThumbnail(self, thumbnail: str=None):
+    def setThumbnail(self, thumbnail: str = None):
         if thumbnail:
-            self.ImageLabel.setPixmap(QPixmap(thumbnail).scaled(
-                75, 75, Qt.AspectRatioMode.KeepAspectRatio))
+            with Image.open(thumbnail) as img:
+                self.ImageLabel.setPixmap(img.toqpixmap().scaled(
+                    75, 75, Qt.AspectRatioMode.KeepAspectRatio))
         else:
             self.ImageLabel.setPixmap(QPixmap())
         return self
@@ -339,13 +435,12 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
     def setProcessed(self, value: int = -1):
         "`value`为当前实时进度，不是百分比\n\n需要设置`total`"
         if value >= 0:
-            self.processed = value
-        try:
-            self.label_progress_data.setText(
-                '%.1f%% (%d/%d)' % (self.processed/self.total*100, self.processed, self.total))
-            self.ProgressBar.setValue(int(self.processed/self.total*100))
-        except:
-            pass
+            try:
+                self.label_progress_data.setText(
+                    '%.1f%% (%d/%d)' % (value/self.total*100, value, self.total))
+                self.ProgressBar.setValue(int(self.processed/self.total*100))
+            except:
+                pass
         return self
 
     def _updateTime(self):

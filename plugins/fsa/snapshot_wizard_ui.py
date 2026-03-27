@@ -44,6 +44,7 @@ class Ui_snapshot_wizard(object):
 
         self.btn_del = ToolButton(snapshot_wizard)
         self.btn_del.setObjectName(u"btn_del")
+        self.btn_del.setEnabled(False)
 
         self.horizontalLayout_2.addWidget(self.btn_del)
 
@@ -135,6 +136,7 @@ class Ui_snapshot_wizard(object):
 
         self.btn_create = PrimaryPushButton(snapshot_wizard)
         self.btn_create.setObjectName(u"btn_create")
+        self.btn_create.setEnabled(False)
 
         self.horizontalLayout_3.addWidget(self.btn_create)
 

@@ -42,7 +42,7 @@ class FHC(QWidget, Ui_fhc):
             QMessageBox.warning(self.mainwindow, '警告', '路径无效')
 
     def get_result(self, method: str, txt: str):
-        STEP=1024000
+        STEP=1024*1024
         if method+':' in txt.lower():
             return [i[len(method)+1:].upper() for i in txt.splitlines() if method+':' in i.lower()][0]
         

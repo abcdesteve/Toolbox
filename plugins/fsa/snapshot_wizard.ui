@@ -31,7 +31,11 @@
       </widget>
      </item>
      <item>
-      <widget class="ToolButton" name="btn_del"/>
+      <widget class="ToolButton" name="btn_del">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -207,6 +211,9 @@
      </item>
      <item>
       <widget class="PrimaryPushButton" name="btn_create">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>创建快照</string>
        </property>
