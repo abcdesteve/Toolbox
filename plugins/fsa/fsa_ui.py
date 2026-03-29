@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QFrame, QHBoxLayout,
-    QHeaderView, QLabel, QSizePolicy, QSplitter,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHBoxLayout,
+    QHeaderView, QLabel, QSizePolicy, QSpacerItem,
+    QSplitter, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from qfluentwidgets import (ComboBox, HyperlinkLabel, PrimaryPushButton, ProgressBar,
     ProgressRing, PushButton, ScrollArea, TableWidget,
@@ -27,7 +27,7 @@ class Ui_fsa(object):
     def setupUi(self, fsa):
         if not fsa.objectName():
             fsa.setObjectName(u"fsa")
-        fsa.resize(718, 543)
+        fsa.resize(600, 400)
         self.verticalLayout_3 = QVBoxLayout(fsa)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout = QHBoxLayout()
@@ -76,12 +76,13 @@ class Ui_fsa(object):
         __qtablewidgetitem3 = QTableWidgetItem()
         self.TableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         self.TableWidget.setObjectName(u"TableWidget")
-        self.TableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.TableWidget.setShowGrid(True)
+        self.TableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.TableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.TableWidget.setSortingEnabled(True)
         self.splitter.addWidget(self.TableWidget)
+        self.TableWidget.horizontalHeader().setCascadingSectionResizes(True)
         self.TableWidget.horizontalHeader().setProperty(u"showSortIndicator", True)
         self.TableWidget.horizontalHeader().setStretchLastSection(True)
-        self.TableWidget.verticalHeader().setStretchLastSection(True)
         self.VerticalSeparator = VerticalSeparator(self.splitter)
         self.VerticalSeparator.setObjectName(u"VerticalSeparator")
         self.splitter.addWidget(self.VerticalSeparator)
@@ -144,6 +145,10 @@ class Ui_fsa(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
+        self.verticalSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer)
+
         self.ScrollArea = ScrollArea(self.layoutWidget)
         self.ScrollArea.setObjectName(u"ScrollArea")
         self.ScrollArea.setFrameShape(QFrame.NoFrame)
@@ -152,9 +157,11 @@ class Ui_fsa(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 197, 261))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 163, 235))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout.setSpacing(2)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.label_add = QLabel(self.scrollAreaWidgetContents)
@@ -236,6 +243,15 @@ class Ui_fsa(object):
 
         self.verticalLayout_2.addWidget(self.ScrollArea)
 
+        self.verticalSpacer_2 = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer_2)
+
+        self.btn_show_snap = PushButton(self.layoutWidget)
+        self.btn_show_snap.setObjectName(u"btn_show_snap")
+
+        self.verticalLayout_2.addWidget(self.btn_show_snap)
+
         self.btn_export_snap = PushButton(self.layoutWidget)
         self.btn_export_snap.setObjectName(u"btn_export_snap")
 
@@ -262,6 +278,14 @@ class Ui_fsa(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
+        QWidget.setTabOrder(self.cmb_folder, self.btn_add_folder)
+        QWidget.setTabOrder(self.btn_add_folder, self.btn_del_folder)
+        QWidget.setTabOrder(self.btn_del_folder, self.TableWidget)
+        QWidget.setTabOrder(self.TableWidget, self.label_parent_data)
+        QWidget.setTabOrder(self.label_parent_data, self.ScrollArea)
+        QWidget.setTabOrder(self.ScrollArea, self.btn_export_snap)
+        QWidget.setTabOrder(self.btn_export_snap, self.btn_del_snap)
+        QWidget.setTabOrder(self.btn_del_snap, self.btn_crt_snap)
 
         self.retranslateUi(fsa)
 
@@ -281,7 +305,7 @@ class Ui_fsa(object):
         ___qtablewidgetitem3.setText(QCoreApplication.translate("fsa", u"\u6587\u4ef6\u8ba1\u6570", None));
         self.label_parent.setText(QCoreApplication.translate("fsa", u"\u7236\u8282\u70b9\uff1a", None))
         self.label_parent_data.setText("")
-        self.label_dettime.setText(QCoreApplication.translate("fsa", u"\u8ddd\u79bb\u4e0a\u6b21\u6539\u52a8\u65f6\u95f4\uff1a", None))
+        self.label_dettime.setText(QCoreApplication.translate("fsa", u"\u8ddd\u4e0a\u4e2a\u5feb\u7167\uff1a", None))
         self.label_dettime_data.setText("")
         self.label_det.setText(QCoreApplication.translate("fsa", u"\u603b\u6539\u52a8\uff1a", None))
         self.label_det_data.setText(QCoreApplication.translate("fsa", u"0", None))
@@ -291,10 +315,11 @@ class Ui_fsa(object):
         self.label_mod_data.setText(QCoreApplication.translate("fsa", u"0", None))
         self.label_del.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\uff1a", None))
         self.label_del_data.setText(QCoreApplication.translate("fsa", u"0", None))
+        self.btn_show_snap.setText(QCoreApplication.translate("fsa", u"\u67e5\u770b\u8be6\u60c5", None))
         self.btn_export_snap.setText(QCoreApplication.translate("fsa", u"\u5bfc\u51fa\u5feb\u7167", None))
         self.btn_del_snap.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\u5feb\u7167", None))
-        self.btn_del_snap.setProperty(u"lightCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}", None))
-        self.btn_del_snap.setProperty(u"darkCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}", None))
+        self.btn_del_snap.setProperty(u"lightCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#b22222;}PushButton:hover{background-color:#a42222;}", None))
+        self.btn_del_snap.setProperty(u"darkCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#b22222;}PushButton:hover{background-color:#a42222;}", None))
         self.btn_crt_snap.setText(QCoreApplication.translate("fsa", u"\u521b\u5efa\u5feb\u7167", None))
     # retranslateUi
 

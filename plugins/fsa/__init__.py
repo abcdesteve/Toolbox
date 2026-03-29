@@ -1,3 +1,5 @@
+import shutil
+
 from .snapshot_wizard_ui import Ui_snapshot_wizard
 from .fsa_ui import Ui_fsa
 from PySide6.QtWidgets import *
@@ -28,6 +30,7 @@ class FSA(QWidget, Ui_fsa):
         self.btn_del_folder.setIcon(FluentIcon.DELETE)
         self.btn_crt_snap.setIcon(FluentIcon.CAMERA)
         self.btn_del_snap.setIcon(FluentIcon.DELETE)
+        self.btn_show_snap.setIcon(FluentIcon.VIEW)
         self.btn_export_snap.setIcon(FluentIcon.SHARE)
         # 不知道为啥全局设定无效，必须在这里设置
         # ScrollArea的背景在scrollAreaWidgetContents里
@@ -37,7 +40,9 @@ class FSA(QWidget, Ui_fsa):
         self.settings_path = settings_path
         self.read_settings()
         self.update_btn_status()
-        self.subwin_snapshot_wizard = SnapshotWizard(self.mainwindow, parent_dir, self.cmb_folder.currentText())
+        self.update_snap_list()
+        self.subwin_snapshot_wizard = SnapshotWizard(self.mainwindow, parent_dir)
+        self.subwin_snapshot_wizard.update_vault(self.cmb_folder.currentText())
         self.init_signal()
 
     def init_signal(self):
@@ -47,14 +52,104 @@ class FSA(QWidget, Ui_fsa):
         self.btn_del_snap.clicked.connect(self.del_snap)
         self.btn_export_snap.clicked.connect(self.export_snap)
 
+        self.label_parent_data.clicked.connect(self.select_parent_row)
+
         self.cmb_folder.currentTextChanged.connect(self.update_btn_status)
+        self.cmb_folder.currentTextChanged.connect(self.update_snap_list)
+        self.cmb_folder.currentTextChanged.connect(self.update_snap_info)
+        self.cmb_folder.currentTextChanged.connect(lambda:self.subwin_snapshot_wizard.update_vault(self.cmb_folder.currentText()))
         self.TableWidget.itemSelectionChanged.connect(self.update_btn_status)
+        self.TableWidget.itemSelectionChanged.connect(self.update_snap_info)
+
+    def select_parent_row(self):
+        if len(self.label_parent_data.text()) == 8:
+            self.TableWidget.clearSelection()
+            for i in range(self.TableWidget.rowCount()):
+                if self.TableWidget.item(i, 2).text() == self.label_parent_data.text():
+                    self.TableWidget.selectRow(i)
+                    return
 
     def update_btn_status(self):
         self.btn_del_folder.setEnabled(bool(self.cmb_folder.currentText()))
         self.btn_crt_snap.setEnabled(bool(self.cmb_folder.currentText()))
         self.btn_del_snap.setEnabled(bool(self.TableWidget.selectedItems()))
+        self.btn_show_snap.setEnabled(bool(self.TableWidget.selectedItems()))
         self.btn_export_snap.setEnabled(bool(self.TableWidget.selectedItems()))
+
+    def update_snap_list(self):
+        self.TableWidget.clearContents()
+        self.TableWidget.setRowCount(0)
+        if self.cmb_folder.currentText():
+            lis_snap = os.listdir(sltk.join_path(self.cmb_folder.currentText(), 'snapshots'))
+            for i in lis_snap:
+                try:
+                    with open(sltk.join_path(self.cmb_folder.currentText(), 'snapshots', i, 'manifest.json'), 'r', encoding='utf-8') as file:
+                        temp: dict = json.load(file)
+                    if temp.get('comment', ''):
+                        self.TableWidget.setSortingEnabled(False)
+                        self.TableWidget.insertRow(0)
+                        self.TableWidget.setItem(0, 0, QTableWidgetItem(time.strftime(r"%Y/%m/%d %H:%M:%S", time.strptime(str(temp.get('timestamp', 19700101000000)), r"%Y%m%d%H%M%S"))))
+                        self.TableWidget.setItem(0, 1, QTableWidgetItem(temp.get('comment', '')))
+                        self.TableWidget.setItem(0, 2, QTableWidgetItem(temp.get('id', '')))
+                        self.TableWidget.setItem(0, 3, QTableWidgetItem(str(temp.get('statistics', {}).get('file_count', 0))))
+                        self.TableWidget.setSortingEnabled(True)
+                except:
+                    pass
+            self.TableWidget.resizeColumnsToContents()
+
+    def update_snap_info(self):
+        self.label_parent_data.setText('')
+        self.label_dettime_data.setText('')
+        self.label_det_data.setText('0')
+        self.label_add_data.setText('0')
+        self.label_mod_data.setText('0')
+        self.label_del_data.setText('0')
+        self.pgr_add.setValue(0)
+        self.pgr_mod.setValue(0)
+        self.pgr_del.setValue(0)
+        try:
+            with open(sltk.join_path(self.cmb_folder.currentText(), 'snapshots', self.TableWidget.item(self.TableWidget.currentRow(), 2).text(), 'manifest.json'), 'r', encoding='utf-8') as file:
+                manifest: dict = json.load(file)
+
+            if manifest.get('parent', ''):
+                self.label_parent_data.setText(manifest['parent'])
+
+                for i in range(self.TableWidget.rowCount()):
+                    if self.TableWidget.item(i, 2).text() == manifest['parent']:
+                        temp = time.mktime(time.strptime(str(manifest['timestamp']), r"%Y%m%d%H%M%S"))
+                        temp -= time.mktime(time.strptime(self.TableWidget.item(i, 0).text(), r"%Y/%m/%d %H:%M:%S"))
+                        temp = int(temp)
+                        if temp >= 0:
+                            txt = ''
+                            if temp >= 60 * 60 * 24 * 30 * 12:
+                                txt += f'{temp//(60*60*24*30*12)}年 '
+                                temp %= (60 * 60 * 24 * 30 * 12)
+                            if temp >= 60 * 60 * 24 * 30:
+                                txt += f'{temp//(60*60*24*30)}月 '
+                                temp %= (60 * 60 * 24 * 30)
+                            if temp >= 60 * 60 * 24:
+                                txt += f'{temp//(60*60*24)}天 '
+                                temp %= (60 * 60 * 24)
+                            if temp >= 60 * 60:
+                                txt += f'{temp//(60*60)}小时 '
+                                temp %= (60 * 60)
+                            if temp >= 60:
+                                txt += f'{temp//60}分 '
+                                temp %= 60
+                            txt += f'{temp}秒'
+                            self.label_dettime_data.setText(txt)
+                        break
+
+            self.label_det_data.setText(str(manifest['statistics']['delta']))
+            self.label_add_data.setText(str(manifest['statistics']['add']))
+            self.label_mod_data.setText(str(manifest['statistics']['mod']))
+            self.label_del_data.setText(str(manifest['statistics']['del']))
+            if manifest['statistics']['delta']:
+                self.pgr_add.setValue(int(manifest['statistics']['add'] / manifest['statistics']['delta'] * 100))
+                self.pgr_mod.setValue(int(manifest['statistics']['mod'] / manifest['statistics']['delta'] * 100))
+                self.pgr_del.setValue(int(manifest['statistics']['del'] / manifest['statistics']['delta'] * 100))
+        except:
+            pass
 
     def add_folder(self):
         path = QFileDialog.getExistingDirectory(self, "选择快照存档文件夹")
@@ -89,21 +184,20 @@ class FSA(QWidget, Ui_fsa):
             json.dump({"vaults": sltk.expend_children_text(self.cmb_folder)}, file)
 
     def del_snap(self):
-        pass
+        if self.TableWidget.currentRow() >= 0:
+            del_id = self.TableWidget.item(self.TableWidget.currentRow(), 2).text()
+            if QMessageBox.question(self, "确认删除快照？",
+                                    "将永久删除快照 {} ({})\n后续快照需要重新计算".format(
+                                        self.TableWidget.item(self.TableWidget.currentRow(), 1).text(), del_id),
+                                    yes_text="确认删除"):
+                self.subwin_snapshot_wizard.snap_delete(del_id)
 
     def export_snap(self):
         pass
 
 
-def is_duplicate(path: list[str], lis: list[dict]):
-    for i in lis:
-        if i["path"] == path:
-            return True
-    return False
-
-
 class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
-    def __init__(self, mainwindow: QWidget, main_dir, vault_dir):
+    def __init__(self, mainwindow: QMainWindow, main_dir):
         super().__init__()
         self.setAcceptDrops(True)
         self.mainwindow = mainwindow
@@ -113,7 +207,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.setWindowTitle('快照向导')
         self.navigationInterface.setVisible(False)
 
-        self.vault_dir = vault_dir
         self.init_signal()
 
         self.TreeWidget.setColumnWidth(0, 250)
@@ -129,8 +222,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.toggle_filter.setCurrentItem('Exclude')
         self.toggle_windows.setIcon(QIcon(sltk.join_path(main_dir, 'sl_lib', 'icons', 'windows.svg')))
         self.toggle_unix.setIcon(QIcon(sltk.join_path(main_dir, 'sl_lib', 'icons', 'linux.svg')))
-
-        self.lis_uuid: list[str] = os.listdir(sltk.join_path(vault_dir, 'snapshots'))
 
     def init_signal(self):
         self.btn_cancel.clicked.connect(self.close)
@@ -196,22 +287,22 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 return result
 
     def create_snap(self):
-        def worker(index_config:dict):
-            parent_files = self.snap_retrace_parent(parent_id,self_id)
-            if parent_files=='error':
+        def worker(index_config: dict):
+            parent_files = self.snap_retrace(parent_id, self_id)
+            if parent_files == 'error':
                 return
-            new_files,thumbnail_map = self.snap_calc_new()
+            new_files, thumbnail_map = self.snap_calc_new()
             self.popup.total = 0
             self.popup.currentItem = '正在计算差异……'
             lis_file, lis_deleted = self.snap_calc_delta(parent_files, new_files)
             # 保存结果
             self.snap_config['statistics']['file_count'] = len(new_files)
             self.snap_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
-            self.snap_config['statistics']['del']=len(lis_deleted)
+            self.snap_config['statistics']['del'] = len(lis_deleted)
             for i in lis_file:
                 self.snap_config['statistics'][i['type']] += 1
                 # 生成缩略图
-                if i['path'][-1].lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
+                if self.ckb_calc_hash.isChecked() and i['path'][-1].lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
                     try:
                         temp = thumbnail_map[sltk.join_path(*i['path'])]
                         with Image.open(temp) as img:
@@ -228,7 +319,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             self.snap_config['deleted'] = lis_deleted
             # 保存快照
             with open(sltk.join_path(self.vault_dir, "snapshots", self.snap_config['id'], "manifest.json"), 'w', encoding='utf-8') as file:
-                json.dump(self.snap_config, file)
+                json.dump(self.snap_config, file, ensure_ascii=False, indent=4)
             # 更新index.json
             with open(sltk.join_path(self.vault_dir, 'index.json'), 'w', encoding='utf-8') as file:
                 json.dump(index_config, file)
@@ -242,7 +333,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             return
         # 在index.json中添加记录
         with open(sltk.join_path(self.vault_dir, 'index.json'), 'r', encoding='utf-8') as file:
-            index_config:dict = json.load(file)
+            index_config: dict = json.load(file)
             parent_id = index_config.get('latest', '')
         if index_config.get('head', '') == '':
             index_config['head'] = self_id
@@ -258,20 +349,20 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             json.dump(self.snap_config, file)
 
         self.popup = ProgressPopUp().run(self, '正在创建快照')
-        threading.Thread(target=worker,args=[index_config]).start()
+        threading.Thread(target=worker, args=[index_config]).start()
 
-    def snap_calc_new(self) -> tuple[list[dict], dict[str,str]]:
+    def snap_calc_new(self) -> tuple[list[dict], dict[str, str]]:
         '''由选中的文件生成快照信息，不会计算缩略图，但提供了图片预览展示\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
         error_count = 0
         lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
             "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
         self.popup.total = len(lis)
         lis_file: list[dict] = []
-        thumbnail_map: dict[str,str] = {}
+        thumbnail_map: dict[str, str] = {}
         for i in lis:
             try:
                 path: list[list[str], list[str]] = i.data(1, Qt.ItemDataRole.UserRole)
-                full_path = sltk.join_path(*path[0], *path[1])
+                full_path:str = sltk.join_path(*path[0], *path[1])
                 self.popup.processed += 1
                 self.popup.currentItem = full_path
                 if os.path.isfile(full_path):
@@ -279,7 +370,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     temp = {"path": path[1], "size": os.path.getsize(full_path),
                             "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
                             "hash": [], "type": ""}
-                    if os.path.splitext(full_path)[1] in ['.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp']:
+                    if full_path.lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
                         self.popup.thumbnail = full_path
                         thumbnail_map[sltk.join_path(*path[1])] = full_path
                     if self.ckb_calc_hash.isChecked():
@@ -289,16 +380,21 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 error_count += 1
         if error_count > 0:
             QMessageBox.warning(self, "部分文件异常", f"计算快照信息时出现{error_count}个错误，已尝试跳过失败文件\n最后的报错信息：\n{e}")
-        return lis_file,thumbnail_map
+        return lis_file, thumbnail_map
 
-    def snap_retrace_parent(self, parent_id: str,self_id:str) -> list[dict] | str:
-        '''从给定的快照id开始，一直回溯到根快照，重建给定id的完整文件信息\n\n注意回溯时不会考虑hash'''
+    def snap_retrace(self, from_id: str, self_id: str) -> list[dict] | str:
+        '''从给定的快照id开始（含），一直回溯到根快照，重建给定id的完整文件信息\n\n注意回溯时不会考虑hash\n\n`self_id`只作为报错信息使用'''
+        def is_duplicate(path: list[str], lis: list[dict]):
+            for i in lis:
+                if i["path"] == path:
+                    return True
+            return False
         # 从后往前用while快很多，也能减少内存传递，回溯时完全不用管hash
         lis_file: list[dict] = []
         lis_deleted: list[dict[str, list[str]]] = []
         try:
-            while parent_id:
-                with open(sltk.join_path(self.vault_dir, "snapshots", parent_id, "manifest.json"), 'r', encoding='utf-8') as file:
+            while from_id:
+                with open(sltk.join_path(self.vault_dir, "snapshots", from_id, "manifest.json"), 'r', encoding='utf-8') as file:
                     parent_config = json.load(file)
                 # 先加后排除，文件移动时会同时出现在files和deleted中
                 for i in parent_config['files']:
@@ -307,10 +403,10 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 for i in parent_config['deleted']:
                     if not is_duplicate(i["path"], lis_deleted):
                         lis_deleted.append(i)
-                parent_id = parent_config['parent']
+                from_id = parent_config['parent']
             return lis_file
         except Exception as e:
-            QMessageBox.warning(self, "快照回溯失败", f"回溯节点 {parent_id} 时出现异常，节点可能已经损坏或被异常删除\n快照创建已被撤销，请手动删除当前节点 {self_id}\n\n{e}")
+            QMessageBox.warning(self, "快照回溯失败", f"回溯节点 {from_id} 时出现异常，节点可能已经损坏或被异常删除\n快照创建已被撤销，请手动删除当前节点 {self_id}\n\n{e}")
             return 'error'
 
     def snap_calc_delta(self, ref: list[dict[str, str | int | list | dict]], obj: list[dict[str, str | int | list | dict]]) -> tuple[list[dict[str, str | int | list | dict]], list[dict[str, list[str]]]]:
@@ -342,6 +438,60 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             if obj[i]['type'] in ['add', 'mod']:
                 lis_file.append(obj[i])
         return lis_file, lis_deleted
+    
+    def snap_rebase(self, obj_id:str, new_parent_id: str):
+        '''将快照obj_id的父节点改为new_parent_id'''
+        with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
+            obj_config = json.load(file)
+        try:
+            obj_state=self.snap_retrace(obj_id, obj_id)
+            new_parent_state=self.snap_retrace(new_parent_id, new_parent_id)
+            lis_file,lis_deleted=self.snap_calc_delta(new_parent_state, obj_state)
+            obj_config['parent'] = new_parent_id
+            obj_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
+            obj_config['statistics']['del'] = len(lis_deleted)
+            obj_config['statistics']['add']=0
+            obj_config['statistics']['mod']=0
+            for i in lis_file:
+                obj_config['statistics'][i['type']] += 1
+            obj_config['files']=lis_file
+            obj_config['deleted']=lis_deleted
+            with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'w', encoding='utf-8') as file:
+                json.dump(obj_config, file, indent=4, ensure_ascii=False)
+        except Exception as e:
+            temp=self if self.isVisible() else self.mainwindow
+            QMessageBox.warning(temp,'变更快照父节点失败',f"尝试更改快照 {obj_config['comment']} ({obj_id}) 的父节点时出现异常，变更已被撤销\n\n{e}")
+
+    def snap_delete(self, obj_id: str):
+        '''删除快照obj_id'''
+        print('没有考虑删除节点里的缩略图')
+        history=[]
+        with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
+            obj_config = json.load(file)
+        parent_id = obj_config['parent']
+        try:
+            for i in os.listdir(sltk.join_path(self.vault_dir, "snapshots")):
+                manifest_path = sltk.join_path(self.vault_dir, "snapshots", i, "manifest.json")
+                if not os.path.isfile(manifest_path):
+                    continue
+                with open(sltk.join_path(self.vault_dir, "snapshots", i, "manifest.json"), 'r', encoding='utf-8') as file:
+                    config:dict = json.load(file)
+                if config['parent'] == obj_id:
+                    self.snap_rebase(config['id'],parent_id)
+                    history.append(config['id'])
+            with open(sltk.join_path(self.vault_dir, "index.json"), 'r', encoding='utf-8') as file:
+                index = json.load(file)
+            if index['head']==obj_id:
+                index['head']=''
+            if index['latest']==obj_id:
+                index['latest']=parent_id
+            with open(sltk.join_path(self.vault_dir, "index.json"), 'w', encoding='utf-8') as file:
+                json.dump(index, file)
+            shutil.rmtree(sltk.join_path(self.vault_dir, "snapshots", obj_id))
+        except Exception as e:
+            temp=self if self.isVisible() else self.mainwindow
+            QMessageBox.warning(temp,'删除快照失败',f"尝试删除快照 {obj_config['comment']} ({obj_id}) 时出现异常，删除操作已中断\n以下快照的父节点已从 {obj_id} 变更为 {parent_id if parent_id else '无'} ：\n{'、'.join(history)} \n\n{e}")
+        self.mainwindow.subwin_fsa.update_snap_list()
 
     @Slot(int, str)
     def show_scan_error(self, fail_count: int, error: str):
@@ -515,6 +665,10 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 elif os.path.isdir(path):
                     self.add_folder(path)
 
+    def update_vault(self, vault_dir: str):
+        self.vault_dir = vault_dir
+        self.lis_uuid: list[str] = os.listdir(sltk.join_path(vault_dir, 'snapshots')) if vault_dir else []
+
     def showEvent(self, e):
         self.mainwindow.hide()
         self.resize(600, 400)
@@ -526,5 +680,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 for i in range(self.TreeWidget.topLevelItemCount()):
                     self.TreeWidget.takeTopLevelItem(0)
                     self.label_count_data.setText("0")
+        self.mainwindow.subwin_fsa.update_snap_list()
         self.mainwindow.show()
         return super().closeEvent(e)

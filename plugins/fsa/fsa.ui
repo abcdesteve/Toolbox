@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>543</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,19 +51,22 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="TableWidget" name="TableWidget">
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContents</enum>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
       </property>
-      <property name="showGrid">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="sortingEnabled">
        <bool>true</bool>
       </property>
+      <attribute name="horizontalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
        <bool>true</bool>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderStretchLastSection">
        <bool>true</bool>
       </attribute>
       <column>
@@ -128,7 +131,7 @@
             </font>
            </property>
            <property name="text">
-            <string>距离上次改动时间：</string>
+            <string>距上个快照：</string>
            </property>
           </widget>
          </item>
@@ -178,6 +181,19 @@
         </layout>
        </item>
        <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="ScrollArea" name="ScrollArea">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -196,11 +212,26 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>197</width>
-            <height>261</height>
+            <width>163</width>
+            <height>235</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
@@ -347,6 +378,26 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="PushButton" name="btn_show_snap">
+         <property name="text">
+          <string>查看详情</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="PushButton" name="btn_export_snap">
          <property name="text">
           <string>导出快照</string>
@@ -368,10 +419,10 @@
         <string>删除快照</string>
        </property>
        <property name="lightCustomQss" stdset="0">
-        <string>PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}</string>
+        <string>PushButton{background-color:#b22222;}PushButton:hover{background-color:#a42222;}</string>
        </property>
        <property name="darkCustomQss" stdset="0">
-        <string>PushButton{background-color:#e81123;}PushButton:hover{background-color:#e63342;}</string>
+        <string>PushButton{background-color:#b22222;}PushButton:hover{background-color:#a42222;}</string>
        </property>
       </widget>
      </item>
@@ -442,6 +493,17 @@
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>cmb_folder</tabstop>
+  <tabstop>btn_add_folder</tabstop>
+  <tabstop>btn_del_folder</tabstop>
+  <tabstop>TableWidget</tabstop>
+  <tabstop>label_parent_data</tabstop>
+  <tabstop>ScrollArea</tabstop>
+  <tabstop>btn_export_snap</tabstop>
+  <tabstop>btn_del_snap</tabstop>
+  <tabstop>btn_crt_snap</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
