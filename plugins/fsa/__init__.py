@@ -57,7 +57,7 @@ class FSA(QWidget, Ui_fsa):
         self.cmb_folder.currentTextChanged.connect(self.update_btn_status)
         self.cmb_folder.currentTextChanged.connect(self.update_snap_list)
         self.cmb_folder.currentTextChanged.connect(self.update_snap_info)
-        self.cmb_folder.currentTextChanged.connect(lambda:self.subwin_snapshot_wizard.update_vault(self.cmb_folder.currentText()))
+        self.cmb_folder.currentTextChanged.connect(lambda: self.subwin_snapshot_wizard.update_vault(self.cmb_folder.currentText()))
         self.TableWidget.itemSelectionChanged.connect(self.update_btn_status)
         self.TableWidget.itemSelectionChanged.connect(self.update_snap_info)
 
@@ -362,7 +362,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         for i in lis:
             try:
                 path: list[list[str], list[str]] = i.data(1, Qt.ItemDataRole.UserRole)
-                full_path:str = sltk.join_path(*path[0], *path[1])
+                full_path: str = sltk.join_path(*path[0], *path[1])
                 self.popup.processed += 1
                 self.popup.currentItem = full_path
                 if os.path.isfile(full_path):
@@ -378,8 +378,10 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     lis_file.append(temp)
             except Exception as e:
                 error_count += 1
+                error_msg = e  # e离开缩进之后不可用
         if error_count > 0:
-            QMessageBox.warning(self, "部分文件异常", f"计算快照信息时出现{error_count}个错误，已尝试跳过失败文件\n最后的报错信息：\n{e}")
+            QMetaObject.invokeMethod(self, "show_scan_error", Qt.ConnectionType.QueuedConnection,
+                                         Q_ARG(str, 'create'), Q_ARG(int, error_count), Q_ARG(str, str(error_msg)))
         return lis_file, thumbnail_map
 
     def snap_retrace(self, from_id: str, self_id: str) -> list[dict] | str:
@@ -438,34 +440,34 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             if obj[i]['type'] in ['add', 'mod']:
                 lis_file.append(obj[i])
         return lis_file, lis_deleted
-    
-    def snap_rebase(self, obj_id:str, new_parent_id: str):
+
+    def snap_rebase(self, obj_id: str, new_parent_id: str):
         '''将快照obj_id的父节点改为new_parent_id'''
         with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
             obj_config = json.load(file)
         try:
-            obj_state=self.snap_retrace(obj_id, obj_id)
-            new_parent_state=self.snap_retrace(new_parent_id, new_parent_id)
-            lis_file,lis_deleted=self.snap_calc_delta(new_parent_state, obj_state)
+            obj_state = self.snap_retrace(obj_id, obj_id)
+            new_parent_state = self.snap_retrace(new_parent_id, new_parent_id)
+            lis_file, lis_deleted = self.snap_calc_delta(new_parent_state, obj_state)
             obj_config['parent'] = new_parent_id
             obj_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
             obj_config['statistics']['del'] = len(lis_deleted)
-            obj_config['statistics']['add']=0
-            obj_config['statistics']['mod']=0
+            obj_config['statistics']['add'] = 0
+            obj_config['statistics']['mod'] = 0
             for i in lis_file:
                 obj_config['statistics'][i['type']] += 1
-            obj_config['files']=lis_file
-            obj_config['deleted']=lis_deleted
+            obj_config['files'] = lis_file
+            obj_config['deleted'] = lis_deleted
             with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'w', encoding='utf-8') as file:
                 json.dump(obj_config, file, indent=4, ensure_ascii=False)
         except Exception as e:
-            temp=self if self.isVisible() else self.mainwindow
-            QMessageBox.warning(temp,'变更快照父节点失败',f"尝试更改快照 {obj_config['comment']} ({obj_id}) 的父节点时出现异常，变更已被撤销\n\n{e}")
+            temp = self if self.isVisible() else self.mainwindow
+            QMessageBox.warning(temp, '变更快照父节点失败', f"尝试更改快照 {obj_config['comment']} ({obj_id}) 的父节点时出现异常，变更已被撤销\n\n{e}")
 
     def snap_delete(self, obj_id: str):
         '''删除快照obj_id'''
         print('没有考虑删除节点里的缩略图')
-        history=[]
+        history = []
         with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
             obj_config = json.load(file)
         parent_id = obj_config['parent']
@@ -475,27 +477,32 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 if not os.path.isfile(manifest_path):
                     continue
                 with open(sltk.join_path(self.vault_dir, "snapshots", i, "manifest.json"), 'r', encoding='utf-8') as file:
-                    config:dict = json.load(file)
+                    config: dict = json.load(file)
                 if config['parent'] == obj_id:
-                    self.snap_rebase(config['id'],parent_id)
+                    self.snap_rebase(config['id'], parent_id)
                     history.append(config['id'])
             with open(sltk.join_path(self.vault_dir, "index.json"), 'r', encoding='utf-8') as file:
                 index = json.load(file)
-            if index['head']==obj_id:
-                index['head']=''
-            if index['latest']==obj_id:
-                index['latest']=parent_id
+            if index['head'] == obj_id:
+                index['head'] = ''
+            if index['latest'] == obj_id:
+                index['latest'] = parent_id
             with open(sltk.join_path(self.vault_dir, "index.json"), 'w', encoding='utf-8') as file:
                 json.dump(index, file)
             shutil.rmtree(sltk.join_path(self.vault_dir, "snapshots", obj_id))
         except Exception as e:
-            temp=self if self.isVisible() else self.mainwindow
-            QMessageBox.warning(temp,'删除快照失败',f"尝试删除快照 {obj_config['comment']} ({obj_id}) 时出现异常，删除操作已中断\n以下快照的父节点已从 {obj_id} 变更为 {parent_id if parent_id else '无'} ：\n{'、'.join(history)} \n\n{e}")
+            temp = self if self.isVisible() else self.mainwindow
+            QMessageBox.warning(temp, '删除快照失败', f"尝试删除快照 {obj_config['comment']} ({obj_id}) 时出现异常，删除操作已中断\n以下快照的父节点已从 {obj_id} 变更为 {parent_id if parent_id else '无'} ：\n{'、'.join(history)} \n\n{e}")
         self.mainwindow.subwin_fsa.update_snap_list()
 
-    @Slot(int, str)
-    def show_scan_error(self, fail_count: int, error: str):
-        QMessageBox.information(self, f"{fail_count}个文件添加失败", f"最后的错误信息：\n{error}")
+    @Slot(str, int, str)
+    def show_scan_error(self, step: str, error_count: int, error_msg: str):
+        container = self if self.isVisible() else self.mainwindow
+        match step:
+            case 'scan':
+                QMessageBox.warning(container, f"{error_count}个文件添加失败", f"最后的错误信息：\n{error_msg}")
+            case 'create':
+                QMessageBox.warning(container, "部分文件异常", f"计算快照信息时出现{error_count}个错误，已尝试跳过失败文件\n最后的报错信息：\n{error_msg}")
 
     def add_file(self, path: list[str] = None):
         if not path:
@@ -503,7 +510,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 self, "选择一个或多个文件")[0]]
         previous_items = [sltk.join_path(
             item[1], item[0]) for item in sltk.expend_children_text(self.TreeWidget)]
-        fail_count = 0
+        error_count = 0
         for i in path:
             try:
                 if self.file_filter(i) and i not in previous_items:
@@ -521,10 +528,11 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     self.TreeWidget.addTopLevelItem(treeWidgetItem)
                     self.label_count_data.setText(
                         str(int(self.label_count_data.text()) + 1))
-            except Exception as error:
-                fail_count += 1
-        if fail_count:
-            self.show_scan_error(fail_count, error)
+            except Exception as e:
+                error_count += 1
+                error_msg = str(e)
+        if error_count:
+            self.show_scan_error('scan',error_count, error_msg)
         self.update_btn_status()
 
     def add_folder(self, path: str = None):
@@ -599,8 +607,8 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 error = str(e)
         if depth == 0:
             if fail_count:
-                QMetaObject.invokeMethod(self, "show_scan_error", Qt.ConnectionType.QueuedConnection, Q_ARG(
-                    int, fail_count), Q_ARG(str, str(error)))
+                QMetaObject.invokeMethod(self, "show_scan_error", Qt.ConnectionType.QueuedConnection,
+                                         Q_ARG(str, 'scan'), Q_ARG(int, fail_count), Q_ARG(str, str(error)))
                 # QMessageBox.information(self,"提示",f"{fail_count}个文件添加失败\n最后一次错误信息：\n{error}")
         else:
             return fail_count, error

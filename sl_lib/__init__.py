@@ -423,11 +423,11 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         return self
 
     def setThumbnail(self, thumbnail: str = None):
-        if thumbnail:
+        try:
             with Image.open(thumbnail) as img:
                 self.ImageLabel.setPixmap(img.toqpixmap().scaled(
                     75, 75, Qt.AspectRatioMode.KeepAspectRatio))
-        else:
+        except:
             self.ImageLabel.setPixmap(QPixmap())
         return self
 
