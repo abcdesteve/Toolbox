@@ -91,7 +91,7 @@ class Main(FluentWindow):
                 case 2:
                     self.animation.setEndValue(QSize(500, 200))
                 case 3:
-                    self.animation.setEndValue(QSize(500, 400))
+                    self.animation.setEndValue(QSize(800, 600))
                     self.subwin_fhc.update_table_size()
                 case 4:
                     self.animation.setEndValue(QSize(600, 300))

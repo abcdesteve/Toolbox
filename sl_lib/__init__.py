@@ -3,8 +3,8 @@ import logging
 import time
 import zipfile
 
-import binascii
 import hashlib
+from zlib import crc32 as calc_crc32
 import blake3 as blake3lib
 
 from PIL import Image
@@ -21,6 +21,13 @@ from PySide6.QtCore import *
 from .input_dialog_ui import Ui_input_dialog
 from .progress_popup_ui import Ui_progress_popup
 
+def benchmark(fx):
+    def wrapper(*args, **kwargs):
+        start=time.time_ns()
+        fx(*args, **kwargs)
+        end=time.time_ns()
+        print(f'函数{fx.__name__}消耗{(end-start)/1000000}ms\n')
+    return wrapper
 
 class sltk:
     "神龙工具集"
@@ -183,7 +190,7 @@ class sltk:
                 if md5:
                     _md5.update(temp)
                 if crc32:
-                    _crc32 = binascii.crc32(temp, _crc32)
+                    _crc32 = calc_crc32(temp, _crc32) # 用zlib的比binascii更快
                 if blake3:
                     _blake3.update(temp)
                 if sha1:
@@ -356,12 +363,14 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
 
     def __init__(self):
         self.total = 0
+        self.title = ""
         self.currentItem = ""
         self.thumbnail = ""
         self.processed = -1
         self.is_done=False
 
         self._total = 0
+        self._title = ""
         self._currentItem = ""
         self._thumbnail = ""
         self._processed = -1
@@ -370,6 +379,9 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         if self.total != self._total:
             self.setTotal(self.total)
             self._total = self.total
+        if self.title != self._title:
+            self.setTitle(self.title)
+            self._title = self.title
         if self.currentItem != self._currentItem:
             self.setCurrentItem(self.currentItem)
             self._currentItem = self.currentItem
@@ -395,12 +407,15 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.label_title.setText(title)
 
         self.setTotal(0)
-        QTimer().singleShot(delay, lambda: self.setTotal(total))
+        if total: # 可能出现计算total很快，delay之后覆盖原值的情况
+            QTimer().singleShot(delay, lambda: self.setTotal(total))
 
         self.label_time_left.setVisible(show_time)
+
+        self.start_time = time.time()
+
         self.timer = QTimer(interval=1000)
         self.timer.timeout.connect(self._auto_update)
-        self.start_time = time.time()
         self.timer.timeout.connect(self._updateTime)
         self.timer.start()
 
@@ -408,13 +423,15 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         return self
 
     def setTotal(self, value: int):
-        self.total = value
-        self.label_progress.setVisible(self.total != 0)
-        self.label_progress_data.setVisible(self.total != 0)
+        self.label_progress.setVisible(value != 0)
+        self.label_progress_data.setVisible(value != 0)
 
-        self.ProgressBar.setVisible(self.total != 0)
-        self.IndeterminateProgressBar.setVisible(self.total == 0)
+        self.ProgressBar.setVisible(value != 0)
+        self.IndeterminateProgressBar.setVisible(value == 0)
         return self
+    
+    def setTitle(self, txt: str = ""):
+        self.label_title.setText(txt)
 
     def setCurrentItem(self, txt: str = ""):
         "当前处理的项目/文件，不是进度"
@@ -433,12 +450,12 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
 
     def setProcessed(self, value: int):
         "`value`为当前实时进度，不是百分比\n\n需要设置`total`"
-        try:
-            self.label_progress_data.setText(
-                '%.1f%% (%d/%d)' % (value/self.total*100, value, self.total))
-            self.ProgressBar.setValue(int(self.processed/self.total*100))
-        except:
-            pass
+        if self.total:
+            percentage=value/self.total*100
+        else:
+            percentage=0
+        self.label_progress_data.setText('%.1f%% (%d/%d)' % (percentage, value, self.total))
+        self.ProgressBar.setValue(int(percentage))
         return self
 
     def _updateTime(self):

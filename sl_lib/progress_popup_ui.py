@@ -24,8 +24,9 @@ class Ui_progress_popup(object):
     def setupUi(self, progress_popup):
         if not progress_popup.objectName():
             progress_popup.setObjectName(u"progress_popup")
-        progress_popup.setMinimumSize(QSize(350, 200))
-        progress_popup.setMaximumSize(QSize(350, 214))
+        progress_popup.resize(400, 250)
+        progress_popup.setMinimumSize(QSize(400, 250))
+        progress_popup.setMaximumSize(QSize(400, 250))
         self.verticalLayout_4 = QVBoxLayout(progress_popup)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -53,7 +54,7 @@ class Ui_progress_popup(object):
         self.label_current = QLabel(self.frame_upper)
         self.label_current.setObjectName(u"label_current")
         font1 = QFont()
-        font1.setPointSize(11)
+        font1.setPointSize(10)
         self.label_current.setFont(font1)
         self.label_current.setWordWrap(True)
 

@@ -9,7 +9,7 @@ from PySide6.QtCore import *
 from qfluentwidgets.common.icon import FluentIcon
 from qfluentwidgets import FluentWindow
 
-from sl_lib import sltk, MyFluentIcon, InputDialog, ProgressPopUp, QMessageBox
+from sl_lib import sltk, MyFluentIcon, InputDialog, ProgressPopUp, QMessageBox, benchmark
 import os
 import time
 import json
@@ -18,6 +18,25 @@ import threading
 from PIL import Image
 import pillow_heif
 pillow_heif.register_heif_opener()
+
+EXT_PICTURE=('.jpg', '.jpeg', '.jxl', '.png', '.apng',
+            '.gif', '.bmp', '.tif', '.tiff', '.ico',
+            '.svg', '.webp', '.heic', '.heif', '.avif',
+            '.raw', '.dng', '.img', '.cr2', '.cr3', '.crf')
+EXT_VIDEO=('.mp4', '.mkv', '.avi', '.mov', '.flv',
+            '.wmv', 'swf', '.ts', '.mts', '.webm',
+            '.m2t', '.m2ts', '.rmvb', '.bdmv', '.vp6',
+            '.vp7', '.vp8', '.vp9', '.vp10', '.h264',
+            '.h265', '.hevc', '.h266', '.vvc', '.av1',
+            '.m3u', '.m3u8', '.srt', '.ass')
+EXT_MUSIC=('.mp3', '.m4a', '.flac', '.wav', '.opus',
+            '.wave', '.aac', '.ogg', '.wma', '.ape',
+            '.pcm', '.ac3', '.eac3', '.dts', '.lrc')
+EXT_LINK=('.lnk', '.url')
+EXT_TEXT=('.txt', '.log', '.md', '.json', '.xml',
+            '.ini', '.yaml', '.yml', '.toml', '.ini',
+            '.conf', '.cfg', '.config', '.properties', '.prop',
+            'htm', '.html')
 
 
 class FSA(QWidget, Ui_fsa):
@@ -258,7 +277,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             return True
 
     def update_ext_filter(self):
-        INCLUDE_EXT = 'jpg,jpeg,png,heif,heic,avif,jxl,raw,dng'
+        INCLUDE_EXT = 'jpg,jpeg,png,bmp,heif,heic,avif,jxl,raw,dng'
         EXCLUDE_EXT = 'lnk,url,ini,conf,config,log,db'
         match self.toggle_filter.currentRouteKey():
             case "All":
@@ -291,40 +310,44 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             parent_files = self.snap_retrace(parent_id, self_id)
             if parent_files == 'error':
                 return
-            new_files, thumbnail_map = self.snap_calc_new()
-            self.popup.total = 0
-            self.popup.currentItem = '正在计算差异……'
-            lis_file, lis_deleted = self.snap_calc_delta(parent_files, new_files)
+            all_files, thumbnail_map = self.snap_calc_new()
+            self.popup.total = len(all_files)
+            self.popup.processed=0
+            self.popup.start_time=time.time()
+            self.popup.title = '正在计算差异……'
+            new_files, deleted_files = self.snap_calc_delta(parent_files, all_files)
             # 保存结果
-            self.snap_config['statistics']['file_count'] = len(new_files)
-            self.snap_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
-            self.snap_config['statistics']['del'] = len(lis_deleted)
-            for i in lis_file:
+            self.snap_config['statistics']['file_count'] = len(all_files)
+            self.snap_config['statistics']['delta'] = len(new_files) + len(deleted_files)
+            self.snap_config['statistics']['del'] = len(deleted_files)
+            for i in new_files:
                 self.snap_config['statistics'][i['type']] += 1
+                rel_path=sltk.join_path(*i['path'])
+                self.popup.currentItem=rel_path
                 # 生成缩略图
-                if self.ckb_calc_hash.isChecked() and i['path'][-1].lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
+                if self.ckb_calc_hash.isChecked() and rel_path in thumbnail_map:
                     try:
-                        temp = thumbnail_map[sltk.join_path(*i['path'])]
-                        with Image.open(temp) as img:
-                            img.thumbnail((256, 256), Image.Resampling.LANCZOS)
+                        full_path=thumbnail_map[rel_path]
+                        with Image.open(full_path) as img:
+                            img.thumbnail((256, 256), Image.Resampling.LANCZOS) # LANCZOS(圈圈伪影) 6ms/BOX(块状锯齿) 4ms/NEAREST 3ms
                             img.convert("RGB")
                             thumb_path = sltk.join_path(self.vault_dir, "snapshots", self.snap_config["id"],
-                                                        "thumbnails", i['hash']['blake3'] + ".heic")
-                            img = pillow_heif.from_pillow(img)
-                            img.save(thumb_path, format='HEIF',
-                                     quality=35, subsampling="4:2:0", exif=None)
+                                                        "thumbnails", i['hash']['blake3'] + ".webp")
+                            # img = pillow_heif.from_pillow(img)
+                            img.save(thumb_path, format='WEBP',quality=90, method=1) # 90画质好很多，0比较糊
+                            self.popup.thumbnail=thumb_path
+                            self.popup.processed+=1
                     except Exception as e:
-                        print(f'生成缩略图 {temp} 时出现错误：{e}')
-            self.snap_config['files'] = lis_file
-            self.snap_config['deleted'] = lis_deleted
+                        print(f'生成 {full_path} 的缩略图时出现错误：{e}')
+            self.snap_config['files'] = new_files
+            self.snap_config['deleted'] = deleted_files
             # 保存快照
             with open(sltk.join_path(self.vault_dir, "snapshots", self.snap_config['id'], "manifest.json"), 'w', encoding='utf-8') as file:
                 json.dump(self.snap_config, file, ensure_ascii=False, indent=4)
             # 更新index.json
             with open(sltk.join_path(self.vault_dir, 'index.json'), 'w', encoding='utf-8') as file:
                 json.dump(index_config, file)
-            self.popup.done_msg = [
-                '快照创建成功', f"快照 {snap_comment} ({self_id}) 包含{self.snap_config['statistics']['file_count']}个文件"]
+            self.popup.done_msg = ['快照创建成功', f"快照 {snap_comment} ({self_id}) 包含{self.snap_config['statistics']['file_count']}个文件"]
             self.popup.is_done = True
 
         self_id = self.gen_uuid(8)
@@ -352,7 +375,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         threading.Thread(target=worker, args=[index_config]).start()
 
     def snap_calc_new(self) -> tuple[list[dict], dict[str, str]]:
-        '''由选中的文件生成快照信息，不会计算缩略图，但提供了图片预览展示\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
+        '''由选中的文件生成快照信息，不会计算缩略图\n\n提供thumbnail_map以解决文件信息中不含绝对路径的问题\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
         error_count = 0
         lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
             "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
@@ -366,13 +389,12 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 self.popup.processed += 1
                 self.popup.currentItem = full_path
                 if os.path.isfile(full_path):
-                    self.snap_config['statistics']['file_count'] += 1
                     temp = {"path": path[1], "size": os.path.getsize(full_path),
                             "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
                             "hash": [], "type": ""}
-                    if full_path.lower().endswith(('.jpg', '.jpeg', '.png', '.heif', '.heic', '.gif', '.bmp')):
-                        self.popup.thumbnail = full_path
+                    if full_path.lower().endswith(EXT_PICTURE):
                         thumbnail_map[sltk.join_path(*path[1])] = full_path
+                        # 暂不显示缩略图以提速
                     if self.ckb_calc_hash.isChecked():
                         temp['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
                     lis_file.append(temp)
@@ -466,7 +488,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
 
     def snap_delete(self, obj_id: str):
         '''删除快照obj_id'''
-        print('没有考虑删除节点里的缩略图')
         history = []
         with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
             obj_config = json.load(file)
@@ -476,11 +497,19 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 manifest_path = sltk.join_path(self.vault_dir, "snapshots", i, "manifest.json")
                 if not os.path.isfile(manifest_path):
                     continue
-                with open(sltk.join_path(self.vault_dir, "snapshots", i, "manifest.json"), 'r', encoding='utf-8') as file:
+                with open(manifest_path, 'r', encoding='utf-8') as file:
                     config: dict = json.load(file)
                 if config['parent'] == obj_id:
                     self.snap_rebase(config['id'], parent_id)
                     history.append(config['id'])
+                    # 迁移缩略图，变基之后需要重新读取manifest
+                    old_thumbnails=os.listdir(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails"))
+                    with open(manifest_path, 'r', encoding='utf-8') as file:
+                        config: dict = json.load(file)
+                    for j in config['files']:
+                        thumbnail_name=j['hash']['blake3']+'.webp'
+                        if thumbnail_name in old_thumbnails:
+                            shutil.copy2(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails", thumbnail_name), sltk.join_path(self.vault_dir, "snapshots", i, "thumbnails"))
             with open(sltk.join_path(self.vault_dir, "index.json"), 'r', encoding='utf-8') as file:
                 index = json.load(file)
             if index['head'] == obj_id:
@@ -634,28 +663,15 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             return QIcon()
             return FluentIcon.FOLDER.icon()
         else:
-            if os.path.splitext(item)[1].lower() in ['.jpg', '.jpeg', '.jxl', '.png', '.apng',
-                                                     '.gif', '.bmp', '.tif', '.tiff', '.ico',
-                                                     '.svg', '.webp', '.heic', '.heif', '.avif',
-                                                     '.raw', '.dng', '.img', '.cr2', '.cr3', '.crf']:
+            if os.path.splitext(item)[1].lower() in EXT_PICTURE:
                 return FluentIcon.PHOTO.icon()
-            elif os.path.splitext(item)[1].lower() in ['.mp4', '.mkv', '.avi', '.mov', '.flv',
-                                                       '.wmv', 'swf', '.ts', '.mts', '.webm',
-                                                       '.m2t', '.m2ts', '.rmvb', '.bdmv', '.vp6',
-                                                       '.vp7', '.vp8', '.vp9', '.vp10', '.h264',
-                                                       '.h265', '.hevc', '.h266', '.vvc', '.av1',
-                                                       '.m3u', '.m3u8', '.srt', '.ass']:
+            elif os.path.splitext(item)[1].lower() in EXT_VIDEO:
                 return FluentIcon.MOVIE.icon()
-            elif os.path.splitext(item)[1].lower() in ['.mp3', '.m4a', '.flac', '.wav', '.opus',
-                                                       '.wave', '.aac', '.ogg', '.wma', '.ape',
-                                                       '.pcm', '.ac3', '.eac3', '.dts', '.lrc']:
+            elif os.path.splitext(item)[1].lower() in EXT_MUSIC:
                 return FluentIcon.MUSIC.icon()
-            elif os.path.splitext(item)[1].lower() in ['.lnk', '.url']:
+            elif os.path.splitext(item)[1].lower() in EXT_LINK:
                 return FluentIcon.LINK.icon()
-            elif os.path.splitext(item)[1].lower() in ['.txt', '.log', '.md', '.json', '.xml',
-                                                       '.ini', '.yaml', '.yml', '.toml', '.ini',
-                                                       '.conf', '.cfg', '.config', '.properties', '.prop',
-                                                       'htm', '.html']:
+            elif os.path.splitext(item)[1].lower() in EXT_TEXT:
                 return FluentIcon.LABEL.icon()
             else:
                 return FluentIcon.DOCUMENT.icon()
