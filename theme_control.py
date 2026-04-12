@@ -1,8 +1,8 @@
-__version__ = 20240511
+__version__ = 20260410
 
 import winreg
 import darkdetect
-from qfluentwidgets import setTheme, Theme, setThemeColor ,theme,FluentIcon
+from qfluentwidgets import setTheme, Theme, setThemeColor
 from PySide6.QtGui import QColor
 
 def get_system_color():
@@ -15,7 +15,7 @@ def get_system_color():
             blue = value & 0xFF
             return QColor(red, green, blue,alpha)
         except Exception as e:
-            # print("获取个性化颜色失败:", repr(e))
+            print("获取个性化颜色失败:", repr(e))
             return QColor(41, 241, 255)
 
 def apply_theme(app,goal_theme:str):
@@ -39,6 +39,7 @@ QLabel {color:#f0f0f0}
 QSplitter::handle {background-color:transparent}
 QGroupBox::title {color:#f0f0f0}
 QFrame[accessibleDescription="dialog_lower_frame"] {background-color:#202020}
+QFrame[accessibleDescription="right_info_panel"] {background-color:#aa202020; border-top:1px solid #303030; border-left:1px solid #303030; border-right:none; border-bottom:none;}
 
 QMessageBox {background-color:#282828;  color:#f0f0f0;  border-radius:5px}
 QMessageBox QLabel {color:#f0f0f0;  }
@@ -56,6 +57,7 @@ QLabel {color:#000000}
 QSplitter::handle {background-color:transparent}
 QGroupBox::title {color:#000000}
 QFrame[accessibleDescription="dialog_lower_frame"] {background-color:#f3f3f3}
+QFrame[accessibleDescription="right_info_panel"] {background-color:#60f3f3f3; border-top:1px solid #f3f3f3; border-left:1px solid #f0f0f0; border-right:none; border-bottom:none;}
 
 QMessageBox {background-color:#f0f0f0;  color:#000000;  border-radius:5px}
 QMessageBox QLabel {color:#000000;  }

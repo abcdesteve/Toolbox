@@ -136,7 +136,8 @@ class sltk:
             if temp:
                 result.insert(0, temp)
             else:
-                result.insert(0, path)
+                if path: # 注意传入相对路径（无盘符时）path可能为空
+                    result.insert(0, path)
                 break
         return result
 

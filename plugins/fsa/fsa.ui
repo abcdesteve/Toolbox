@@ -94,7 +94,7 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0">
          <item>
           <widget class="QLabel" name="label_parent">
            <property name="font">
@@ -110,9 +110,6 @@
          </item>
          <item>
           <widget class="HyperlinkLabel" name="label_parent_data">
-           <property name="text">
-            <string/>
-           </property>
            <property name="underlineVisible">
             <bool>true</bool>
            </property>
@@ -121,7 +118,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
          <item>
           <widget class="QLabel" name="label_dettime">
            <property name="font">
@@ -137,6 +134,12 @@
          </item>
          <item>
           <widget class="QLabel" name="label_dettime_data">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -146,12 +149,15 @@
            <property name="text">
             <string/>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
          <item>
           <widget class="QLabel" name="label_det">
            <property name="font">
@@ -175,6 +181,9 @@
            </property>
            <property name="text">
             <string>0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -212,7 +221,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>163</width>
+            <width>197</width>
             <height>235</height>
            </rect>
           </property>
@@ -257,6 +266,19 @@
                 <string>0</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
               <widget class="ProgressRing" name="pgr_add">
@@ -306,6 +328,19 @@
               </widget>
              </item>
              <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
               <widget class="ProgressRing" name="pgr_mod">
                <property name="minimumSize">
                 <size>
@@ -353,6 +388,19 @@
               </widget>
              </item>
              <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
               <widget class="ProgressRing" name="pgr_del">
                <property name="minimumSize">
                 <size>
@@ -391,7 +439,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="PushButton" name="btn_show_snap">
+        <widget class="PushButton" name="btn_view_snap">
          <property name="text">
           <string>查看详情</string>
          </property>

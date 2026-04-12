@@ -108,6 +108,7 @@ class Ui_fsa(object):
 
         self.horizontalLayout_7.addWidget(self.label_parent_data)
 
+        self.horizontalLayout_7.setStretch(0, 1)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
 
@@ -121,10 +122,17 @@ class Ui_fsa(object):
 
         self.label_dettime_data = QLabel(self.layoutWidget)
         self.label_dettime_data.setObjectName(u"label_dettime_data")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.label_dettime_data.sizePolicy().hasHeightForWidth())
+        self.label_dettime_data.setSizePolicy(sizePolicy1)
         self.label_dettime_data.setFont(font)
+        self.label_dettime_data.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_8.addWidget(self.label_dettime_data)
 
+        self.horizontalLayout_8.setStretch(1, 1)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
 
@@ -139,9 +147,11 @@ class Ui_fsa(object):
         self.label_det_data = QLabel(self.layoutWidget)
         self.label_det_data.setObjectName(u"label_det_data")
         self.label_det_data.setFont(font)
+        self.label_det_data.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.label_det_data)
 
+        self.horizontalLayout_3.setStretch(1, 1)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
@@ -157,7 +167,7 @@ class Ui_fsa(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 163, 235))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 197, 235))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setSpacing(2)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -177,6 +187,10 @@ class Ui_fsa(object):
         self.label_add_data.setFont(font1)
 
         self.horizontalLayout_4.addWidget(self.label_add_data)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer)
 
         self.pgr_add = ProgressRing(self.scrollAreaWidgetContents)
         self.pgr_add.setObjectName(u"pgr_add")
@@ -203,6 +217,10 @@ class Ui_fsa(object):
 
         self.horizontalLayout_5.addWidget(self.label_mod_data)
 
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_2)
+
         self.pgr_mod = ProgressRing(self.scrollAreaWidgetContents)
         self.pgr_mod.setObjectName(u"pgr_mod")
         self.pgr_mod.setMinimumSize(QSize(75, 75))
@@ -228,6 +246,10 @@ class Ui_fsa(object):
 
         self.horizontalLayout_6.addWidget(self.label_del_data)
 
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_3)
+
         self.pgr_del = ProgressRing(self.scrollAreaWidgetContents)
         self.pgr_del.setObjectName(u"pgr_del")
         self.pgr_del.setMinimumSize(QSize(75, 75))
@@ -247,10 +269,10 @@ class Ui_fsa(object):
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 
-        self.btn_show_snap = PushButton(self.layoutWidget)
-        self.btn_show_snap.setObjectName(u"btn_show_snap")
+        self.btn_view_snap = PushButton(self.layoutWidget)
+        self.btn_view_snap.setObjectName(u"btn_view_snap")
 
-        self.verticalLayout_2.addWidget(self.btn_show_snap)
+        self.verticalLayout_2.addWidget(self.btn_view_snap)
 
         self.btn_export_snap = PushButton(self.layoutWidget)
         self.btn_export_snap.setObjectName(u"btn_export_snap")
@@ -304,7 +326,6 @@ class Ui_fsa(object):
         ___qtablewidgetitem3 = self.TableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("fsa", u"\u6587\u4ef6\u8ba1\u6570", None));
         self.label_parent.setText(QCoreApplication.translate("fsa", u"\u7236\u8282\u70b9\uff1a", None))
-        self.label_parent_data.setText("")
         self.label_dettime.setText(QCoreApplication.translate("fsa", u"\u8ddd\u4e0a\u4e2a\u5feb\u7167\uff1a", None))
         self.label_dettime_data.setText("")
         self.label_det.setText(QCoreApplication.translate("fsa", u"\u603b\u6539\u52a8\uff1a", None))
@@ -315,7 +336,7 @@ class Ui_fsa(object):
         self.label_mod_data.setText(QCoreApplication.translate("fsa", u"0", None))
         self.label_del.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\uff1a", None))
         self.label_del_data.setText(QCoreApplication.translate("fsa", u"0", None))
-        self.btn_show_snap.setText(QCoreApplication.translate("fsa", u"\u67e5\u770b\u8be6\u60c5", None))
+        self.btn_view_snap.setText(QCoreApplication.translate("fsa", u"\u67e5\u770b\u8be6\u60c5", None))
         self.btn_export_snap.setText(QCoreApplication.translate("fsa", u"\u5bfc\u51fa\u5feb\u7167", None))
         self.btn_del_snap.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\u5feb\u7167", None))
         self.btn_del_snap.setProperty(u"lightCustomQss", QCoreApplication.translate("fsa", u"PushButton{background-color:#b22222;}PushButton:hover{background-color:#a42222;}", None))

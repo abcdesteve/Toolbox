@@ -47,16 +47,16 @@ class Main(FluentWindow):
                              '文件哈希校验', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fas, MyFluentIcon.DocumentSync,
                              '文件自动同步', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_fsa, FluentIcon.HISTORY,'文件快照归档',NavigationItemPosition.SCROLL)
-        self.addSubInterface(
-            self.subwin_settings, FluentIcon.SETTING, '设置', NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.subwin_fsa, FluentIcon.HISTORY,
+                             '文件快照归档',NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_settings, FluentIcon.SETTING, 
+                             '设置', NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.subwin_about, FluentIcon.INFO,
                              '关于', NavigationItemPosition.BOTTOM)
 
         self.stackedWidget.currentChanged.connect(self.window_size_change)
         self.window_size_change()
-        self.subwin_settings.cfg.theme_style.valueChanged.connect(
-            self.update_theme)
+        self.subwin_settings.cfg.theme_style.valueChanged.connect(self.update_theme)
         self.update_theme()
         self.subwin_settings.cfg.theme_color.valueChanged.connect(
             lambda: setThemeColor(self.subwin_settings.cfg.theme_color.value))
@@ -69,9 +69,9 @@ class Main(FluentWindow):
         self.setWindowIcon(MyFluentIcon.icon(MyFluentIcon.ToolBox))
         self.subwin_fas.subwin_taskedit.setWindowIcon(self.windowIcon())
         self.subwin_fsa.subwin_snapshot_wizard.setWindowIcon(self.windowIcon())
+        self.subwin_fsa.subwin_snapshot_viewer.setWindowIcon(self.windowIcon())
 
     def window_size_change(self):
-        
         if not self.isMaximized():
             self.animation = QPropertyAnimation(self, b'size')
             # if self.subwin_settings.ckb_enable_animation.isChecked():
@@ -140,11 +140,9 @@ class Main(FluentWindow):
                 # event.pos()返回的是相对触发widget的坐标，被官方弃用
                 # event.position()返回的是相对屏幕的坐标
                 if event.position().x() <= self.width()//2:
-                    self.subwin_fhc.lineedit_A.setPlainText(
-                        f'file:{drag_file}')
+                    self.subwin_fhc.lineedit_A.setPlainText(f'file:{drag_file}')
                 else:
-                    self.subwin_fhc.lineedit_B.setPlainText(
-                        f'file:{drag_file}')
+                    self.subwin_fhc.lineedit_B.setPlainText(f'file:{drag_file}')
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         match self.stackedWidget.currentIndex():
@@ -154,8 +152,7 @@ class Main(FluentWindow):
                         popen = os.popen(
                             self.subwin_aam.lineedit_cmd.text()).read()
                         self.subwin_aam.textedit_log.append(popen)
-                        self.subwin_aam.textedit_log.moveCursor(
-                            QTextCursor.MoveOperation.End)
+                        self.subwin_aam.textedit_log.moveCursor(QTextCursor.MoveOperation.End)
                     threading.Thread(target=aam_cmd).start()
         event.ignore()
 

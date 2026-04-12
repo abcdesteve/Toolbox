@@ -1,7 +1,3 @@
-import shutil
-
-from .snapshot_wizard_ui import Ui_snapshot_wizard
-from .fsa_ui import Ui_fsa
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -9,8 +5,14 @@ from PySide6.QtCore import *
 from qfluentwidgets.common.icon import FluentIcon
 from qfluentwidgets import FluentWindow
 
+from .fsa_ui import Ui_fsa
+from .snapshot_wizard_ui import Ui_snapshot_wizard
+from .snapshot_viewer_ui import Ui_snapshot_viewer
+
+
 from sl_lib import sltk, MyFluentIcon, InputDialog, ProgressPopUp, QMessageBox, benchmark
 import os
+import shutil
 import time
 import json
 import random
@@ -19,24 +21,44 @@ from PIL import Image
 import pillow_heif
 pillow_heif.register_heif_opener()
 
-EXT_PICTURE=('.jpg', '.jpeg', '.jxl', '.png', '.apng',
-            '.gif', '.bmp', '.tif', '.tiff', '.ico',
-            '.svg', '.webp', '.heic', '.heif', '.avif',
-            '.raw', '.dng', '.img', '.cr2', '.cr3', '.crf')
-EXT_VIDEO=('.mp4', '.mkv', '.avi', '.mov', '.flv',
-            '.wmv', 'swf', '.ts', '.mts', '.webm',
-            '.m2t', '.m2ts', '.rmvb', '.bdmv', '.vp6',
-            '.vp7', '.vp8', '.vp9', '.vp10', '.h264',
-            '.h265', '.hevc', '.h266', '.vvc', '.av1',
-            '.m3u', '.m3u8', '.srt', '.ass')
-EXT_MUSIC=('.mp3', '.m4a', '.flac', '.wav', '.opus',
-            '.wave', '.aac', '.ogg', '.wma', '.ape',
-            '.pcm', '.ac3', '.eac3', '.dts', '.lrc')
-EXT_LINK=('.lnk', '.url')
-EXT_TEXT=('.txt', '.log', '.md', '.json', '.xml',
+EXT_PICTURE = ('.jpg', '.jpeg', '.jxl', '.png', '.apng',
+               '.gif', '.bmp', '.tif', '.tiff', '.ico',
+               '.svg', '.webp', '.heic', '.heif', '.avif',
+               '.raw', '.dng', '.img', '.cr2', '.cr3', '.crf')
+EXT_VIDEO = ('.mp4', '.mkv', '.avi', '.mov', '.flv',
+             '.wmv', 'swf', '.ts', '.mts', '.webm',
+             '.m2t', '.m2ts', '.rmvb', '.bdmv', '.vp6',
+             '.vp7', '.vp8', '.vp9', '.vp10', '.h264',
+             '.h265', '.hevc', '.h266', '.vvc', '.av1',
+             '.m3u', '.m3u8', '.srt', '.ass')
+EXT_MUSIC = ('.mp3', '.m4a', '.flac', '.wav', '.opus',
+             '.wave', '.aac', '.ogg', '.wma', '.ape',
+             '.pcm', '.ac3', '.eac3', '.dts', '.lrc')
+EXT_LINK = ('.lnk', '.url')
+EXT_TEXT = ('.txt', '.log', '.md', '.json', '.xml',
             '.ini', '.yaml', '.yml', '.toml', '.ini',
             '.conf', '.cfg', '.config', '.properties', '.prop',
             'htm', '.html')
+
+
+def map_icon(item: str, is_dir: bool) -> QIcon:
+    if is_dir:
+        # 文件夹无图标方便区分
+        return QIcon()
+        return FluentIcon.FOLDER.icon()
+    else:
+        if os.path.splitext(item)[1].lower() in EXT_PICTURE:
+            return FluentIcon.PHOTO.icon()
+        elif os.path.splitext(item)[1].lower() in EXT_VIDEO:
+            return FluentIcon.MOVIE.icon()
+        elif os.path.splitext(item)[1].lower() in EXT_MUSIC:
+            return FluentIcon.MUSIC.icon()
+        elif os.path.splitext(item)[1].lower() in EXT_LINK:
+            return FluentIcon.LINK.icon()
+        elif os.path.splitext(item)[1].lower() in EXT_TEXT:
+            return FluentIcon.LABEL.icon()
+        else:
+            return FluentIcon.DOCUMENT.icon()
 
 
 class FSA(QWidget, Ui_fsa):
@@ -49,7 +71,7 @@ class FSA(QWidget, Ui_fsa):
         self.btn_del_folder.setIcon(FluentIcon.DELETE)
         self.btn_crt_snap.setIcon(FluentIcon.CAMERA)
         self.btn_del_snap.setIcon(FluentIcon.DELETE)
-        self.btn_show_snap.setIcon(FluentIcon.VIEW)
+        self.btn_view_snap.setIcon(FluentIcon.VIEW)
         self.btn_export_snap.setIcon(FluentIcon.SHARE)
         # 不知道为啥全局设定无效，必须在这里设置
         # ScrollArea的背景在scrollAreaWidgetContents里
@@ -62,12 +84,15 @@ class FSA(QWidget, Ui_fsa):
         self.update_snap_list()
         self.subwin_snapshot_wizard = SnapshotWizard(self.mainwindow, parent_dir)
         self.subwin_snapshot_wizard.update_vault(self.cmb_folder.currentText())
+        self.subwin_snapshot_viewer = SnapshotViewer(mainwindow)
         self.init_signal()
 
     def init_signal(self):
         self.btn_add_folder.clicked.connect(self.add_folder)
         self.btn_del_folder.clicked.connect(self.del_folder)
         self.btn_crt_snap.clicked.connect(self.subwin_snapshot_wizard.show)
+        self.btn_view_snap.clicked.connect(lambda: self.subwin_snapshot_viewer.view_snapshot(self.cmb_folder.currentText(), self.TableWidget.item(self.TableWidget.currentRow(), 2).text()))
+        self.btn_view_snap.clicked.connect(self.mainwindow.update_theme)  # 更新主题只影响最开始存在的窗口，拆分器会附带颜色
         self.btn_del_snap.clicked.connect(self.del_snap)
         self.btn_export_snap.clicked.connect(self.export_snap)
 
@@ -92,7 +117,7 @@ class FSA(QWidget, Ui_fsa):
         self.btn_del_folder.setEnabled(bool(self.cmb_folder.currentText()))
         self.btn_crt_snap.setEnabled(bool(self.cmb_folder.currentText()))
         self.btn_del_snap.setEnabled(bool(self.TableWidget.selectedItems()))
-        self.btn_show_snap.setEnabled(bool(self.TableWidget.selectedItems()))
+        self.btn_view_snap.setEnabled(bool(self.TableWidget.selectedItems()))
         self.btn_export_snap.setEnabled(bool(self.TableWidget.selectedItems()))
 
     def update_snap_list(self):
@@ -141,19 +166,19 @@ class FSA(QWidget, Ui_fsa):
                         if temp >= 0:
                             txt = ''
                             if temp >= 60 * 60 * 24 * 30 * 12:
-                                txt += f'{temp//(60*60*24*30*12)}年 '
+                                txt += f'{temp//(60*60*24*30*12)}年'
                                 temp %= (60 * 60 * 24 * 30 * 12)
                             if temp >= 60 * 60 * 24 * 30:
-                                txt += f'{temp//(60*60*24*30)}月 '
+                                txt += f'{temp//(60*60*24*30)}月'
                                 temp %= (60 * 60 * 24 * 30)
                             if temp >= 60 * 60 * 24:
-                                txt += f'{temp//(60*60*24)}天 '
+                                txt += f'{temp//(60*60*24)}天'
                                 temp %= (60 * 60 * 24)
                             if temp >= 60 * 60:
-                                txt += f'{temp//(60*60)}小时 '
+                                txt += f'{temp//(60*60)}小时'
                                 temp %= (60 * 60)
                             if temp >= 60:
-                                txt += f'{temp//60}分 '
+                                txt += f'{temp//60}分'
                                 temp %= 60
                             txt += f'{temp}秒'
                             self.label_dettime_data.setText(txt)
@@ -312,8 +337,8 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 return
             all_files, thumbnail_map = self.snap_calc_new()
             self.popup.total = len(all_files)
-            self.popup.processed=0
-            self.popup.start_time=time.time()
+            self.popup.processed = 0
+            self.popup.start_time = time.time()
             self.popup.title = '正在计算差异……'
             new_files, deleted_files = self.snap_calc_delta(parent_files, all_files)
             # 保存结果
@@ -322,21 +347,21 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             self.snap_config['statistics']['del'] = len(deleted_files)
             for i in new_files:
                 self.snap_config['statistics'][i['type']] += 1
-                rel_path=sltk.join_path(*i['path'])
-                self.popup.currentItem=rel_path
+                rel_path = sltk.join_path(*i['path'])
+                self.popup.currentItem = rel_path
                 # 生成缩略图
                 if self.ckb_calc_hash.isChecked() and rel_path in thumbnail_map:
                     try:
-                        full_path=thumbnail_map[rel_path]
+                        full_path = thumbnail_map[rel_path]
                         with Image.open(full_path) as img:
-                            img.thumbnail((256, 256), Image.Resampling.LANCZOS) # LANCZOS(圈圈伪影) 6ms/BOX(块状锯齿) 4ms/NEAREST 3ms
+                            img.thumbnail((256, 256), Image.Resampling.LANCZOS)  # LANCZOS(圈圈伪影) 6ms/BOX(块状锯齿) 4ms/NEAREST 3ms
                             img.convert("RGB")
                             thumb_path = sltk.join_path(self.vault_dir, "snapshots", self.snap_config["id"],
                                                         "thumbnails", i['hash']['blake3'] + ".webp")
                             # img = pillow_heif.from_pillow(img)
-                            img.save(thumb_path, format='WEBP',quality=90, method=1) # 90画质好很多，0比较糊
-                            self.popup.thumbnail=thumb_path
-                            self.popup.processed+=1
+                            img.save(thumb_path, format='WEBP', quality=90, method=1)  # 90画质好很多，0比较糊
+                            self.popup.thumbnail = thumb_path
+                            self.popup.processed += 1
                     except Exception as e:
                         print(f'生成 {full_path} 的缩略图时出现错误：{e}')
             self.snap_config['files'] = new_files
@@ -391,7 +416,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 if os.path.isfile(full_path):
                     temp = {"path": path[1], "size": os.path.getsize(full_path),
                             "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
-                            "hash": [], "type": ""}
+                            "hash": {}, "type": ""}
                     if full_path.lower().endswith(EXT_PICTURE):
                         thumbnail_map[sltk.join_path(*path[1])] = full_path
                         # 暂不显示缩略图以提速
@@ -403,7 +428,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 error_msg = e  # e离开缩进之后不可用
         if error_count > 0:
             QMetaObject.invokeMethod(self, "show_scan_error", Qt.ConnectionType.QueuedConnection,
-                                         Q_ARG(str, 'create'), Q_ARG(int, error_count), Q_ARG(str, str(error_msg)))
+                                     Q_ARG(str, 'create'), Q_ARG(int, error_count), Q_ARG(str, str(error_msg)))
         return lis_file, thumbnail_map
 
     def snap_retrace(self, from_id: str, self_id: str) -> list[dict] | str:
@@ -503,11 +528,11 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     self.snap_rebase(config['id'], parent_id)
                     history.append(config['id'])
                     # 迁移缩略图，变基之后需要重新读取manifest
-                    old_thumbnails=os.listdir(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails"))
+                    old_thumbnails = os.listdir(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails"))
                     with open(manifest_path, 'r', encoding='utf-8') as file:
                         config: dict = json.load(file)
                     for j in config['files']:
-                        thumbnail_name=j['hash']['blake3']+'.webp'
+                        thumbnail_name = j['hash']['blake3'] + '.webp'
                         if thumbnail_name in old_thumbnails:
                             shutil.copy2(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails", thumbnail_name), sltk.join_path(self.vault_dir, "snapshots", i, "thumbnails"))
             with open(sltk.join_path(self.vault_dir, "index.json"), 'r', encoding='utf-8') as file:
@@ -545,7 +570,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 if self.file_filter(i) and i not in previous_items:
                     treeWidgetItem = QTreeWidgetItem()
                     treeWidgetItem.setText(0, os.path.basename(i))
-                    treeWidgetItem.setIcon(0, self.map_icon(i, False))
+                    treeWidgetItem.setIcon(0, map_icon(i, False))
                     treeWidgetItem.setText(1, os.path.dirname(i))
                     # temp.setCheckState(2,Qt.CheckState.Unchecked)
                     treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, False)
@@ -561,7 +586,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 error_count += 1
                 error_msg = str(e)
         if error_count:
-            self.show_scan_error('scan',error_count, error_msg)
+            self.show_scan_error('scan', error_count, error_msg)
         self.update_btn_status()
 
     def add_folder(self, path: str = None):
@@ -596,7 +621,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 treeWidgetItem.setText(0, final_path)
 
                 if os.path.isfile(full_path):
-                    treeWidgetItem.setIcon(0, self.map_icon(final_path, False))
+                    treeWidgetItem.setIcon(0, map_icon(final_path, False))
                     # temp.setCheckState(2,Qt.CheckState.Unchecked)
                     treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, False)
                     temp = sltk.split_path(full_path)
@@ -608,7 +633,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 elif os.path.isdir(full_path):
                     if flag_include_children or depth == 0:
                         treeWidgetItem.setIcon(
-                            0, self.map_icon(final_path, True))
+                            0, map_icon(final_path, True))
                         # temp.setCheckState(2,Qt.CheckState.Checked)
                         treeWidgetItem.setData(
                             0, Qt.ItemDataRole.UserRole, True)
@@ -657,25 +682,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.label_count_data.setText(str(self.calc_file_count()))
         self.update_btn_status()
 
-    def map_icon(self, item: str, is_dir: bool) -> QIcon:
-        if is_dir:
-            # 文件夹无图标方便区分
-            return QIcon()
-            return FluentIcon.FOLDER.icon()
-        else:
-            if os.path.splitext(item)[1].lower() in EXT_PICTURE:
-                return FluentIcon.PHOTO.icon()
-            elif os.path.splitext(item)[1].lower() in EXT_VIDEO:
-                return FluentIcon.MOVIE.icon()
-            elif os.path.splitext(item)[1].lower() in EXT_MUSIC:
-                return FluentIcon.MUSIC.icon()
-            elif os.path.splitext(item)[1].lower() in EXT_LINK:
-                return FluentIcon.LINK.icon()
-            elif os.path.splitext(item)[1].lower() in EXT_TEXT:
-                return FluentIcon.LABEL.icon()
-            else:
-                return FluentIcon.DOCUMENT.icon()
-
     def dragEnterEvent(self, event: QDragEnterEvent):
         event.accept()
 
@@ -705,5 +711,148 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     self.TreeWidget.takeTopLevelItem(0)
                     self.label_count_data.setText("0")
         self.mainwindow.subwin_fsa.update_snap_list()
+        self.mainwindow.show()
+        return super().closeEvent(e)
+
+
+class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
+    sig_setTreeWidgetItemParent=Signal(QTreeWidgetItem,QTreeWidgetItem)
+    def __init__(self, mainwindow: QMainWindow):
+        super().__init__()
+        self.container = QWidget()
+        self.setupUi(self.container)
+        self.addSubInterface(self.container, None, '')
+        self.setWindowTitle('快照详情')
+        self.navigationInterface.setVisible(False)
+
+        self.mainwindow = mainwindow
+
+        self.btn_return.setIcon(FluentIcon.CANCEL)
+        self.btn_show_gallery.setIcon(FluentIcon.VIEW)
+
+        self.btn_return.clicked.connect(self.close)
+        self.sig_setTreeWidgetItemParent.connect(self._setTreeWidgetItemParent)
+        self.TreeWidget_add.itemSelectionChanged.connect(lambda:self.load_detail('add'))
+        self.TreeWidget_mod.itemSelectionChanged.connect(lambda:self.load_detail('mod'))
+        self.TreeWidget_del.itemSelectionChanged.connect(lambda:self.load_detail('del'))
+        update_show_gallery=lambda:self.btn_show_gallery.setEnabled(bool(len(self.TreeWidget_add.selectedIndexes())+len(self.TreeWidget_mod.selectedIndexes())+len(self.TreeWidget_del.selectedIndexes())))
+        self.TreeWidget_add.itemSelectionChanged.connect(update_show_gallery)
+        self.TreeWidget_mod.itemSelectionChanged.connect(update_show_gallery)
+        self.TreeWidget_del.itemSelectionChanged.connect(update_show_gallery)
+
+    def _setTreeWidgetItemParent(self, child:QTreeWidgetItem, parent:QTreeWidgetItem):
+        '''Slot+invokeMethod缺点是只能传递部分基本类型，而Signal可以传递任意类型'''
+        parent.addChild(child)
+        self._flag_setParent_done=True
+
+    def _locateTreeWidget(self, path: list[str], file_type: str):
+        '''root节点不能在子线程动，其他可以，而且建议用invisibleRootItem来统一所有节点的方法名'''
+        w = {'add': self.TreeWidget_add, 'mod': self.TreeWidget_mod, 'del': self.TreeWidget_del}[file_type]
+        current_parent = w.invisibleRootItem()
+        for dep in range(len(path)):  # 含头不含尾
+            for i in range(current_parent.childCount()):
+                if current_parent.child(i).data(0, Qt.ItemDataRole.UserRole) == path[:dep+1]:
+                    current_parent = current_parent.child(i)
+                    break
+            else:
+                temp = QTreeWidgetItem(current_parent)
+                temp.setData(0, Qt.ItemDataRole.UserRole, path[:dep+1])
+                temp.setText(0, path[dep])
+                temp.setExpanded(False)
+                self._flag_setParent_done=False
+                self.sig_setTreeWidgetItemParent.emit(temp, current_parent)
+                while self._flag_setParent_done==False:
+                    time.sleep(0)
+                current_parent = temp
+        # lis_items=w.findItems('*', Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0)
+        # for dep in range(0,len(path)): # 含头不含尾，但下方切片又不含尾，且[:0]为空没意义，要+1
+        #     for i in lis_items:
+        #         if i.data(0, Qt.ItemDataRole.UserRole) == path[:dep+1]:
+        #             current_parent = i
+        #             break
+        #     else:
+        #         temp = QTreeWidgetItem(current_parent)
+        #         temp.setData(0, Qt.ItemDataRole.UserRole, path[:dep+1])
+        #         temp.setText(0, path[dep])
+        #         temp.setExpanded(False)
+        #         current_parent = temp
+
+    def view_snapshot(self, vault_dir, snap_id):
+        self.vault_dir = vault_dir
+        self.snap_id = snap_id
+        self.TreeWidget_add.clear()
+        self.TreeWidget_mod.clear()
+        self.TreeWidget_del.clear()
+        with open(sltk.join_path(vault_dir, 'snapshots', snap_id, 'manifest.json'), 'r', encoding='utf-8') as f:
+            manifest = json.load(f)
+
+        def worker():
+            QMetaObject.invokeMethod(self,'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id}) - 加载中...'))
+            for i in manifest['files']:
+                if not self.flag_running:
+                    return
+                self._locateTreeWidget(i['path'], i['type'])
+            for i in manifest['deleted']:
+                if not self.flag_running:
+                    return
+                self._locateTreeWidget(i['path'], 'del')
+            QMetaObject.invokeMethod(self,'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id})'))
+        threading.Thread(target=worker).start()
+        self.show()
+
+    def load_detail(self,trigger:str):
+        lis_type=['add','mod','del']
+        MAP_TYPE={'add':self.TreeWidget_add,'mod':self.TreeWidget_mod,'del':self.TreeWidget_del}
+        selected_item=MAP_TYPE[trigger].selectedItems()
+        if selected_item:
+            selected_item=selected_item[0]
+        else:return
+        path:list[str]=selected_item.data(0,Qt.ItemDataRole.UserRole)
+        lis_type.remove(trigger)
+        MAP_TYPE[lis_type[0]].clearSelection()
+        MAP_TYPE[lis_type[1]].clearSelection()
+        if selected_item.childCount()>0:
+            self.label_file_path.setText(sltk.join_path(*path))
+            self.label_size_data.setText('')
+            self.label_mtime_data.setText('')
+            self.label_md5_data.setText('')
+            self.label_crc32_data.setText('')
+            self.label_blake3_data.setText('')
+            self.label_sha1_data.setText('')
+            self.label_sha256_data.setText('')
+            self.ImageLabel.setImage(FluentIcon.icon(FluentIcon.FOLDER).pixmap(256,256))
+            self.ImageLabel.scaledToWidth(100)
+            return
+        
+        with open(sltk.join_path(self.vault_dir, 'snapshots', self.snap_id, 'manifest.json'), 'r', encoding='utf-8') as f:
+            manifest = json.load(f)
+        for i in manifest['files']+manifest['deleted']:
+            i:dict[str,str|dict[str,str]]
+            if i['path']==path:
+                self.label_file_path.setText(sltk.join_path(*path))
+                self.label_size_data.setText(sltk.bit2size(i.get('size',0)))
+                self.label_mtime_data.setText(time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(str(i.get('last_edit', 19700101000000)), r"%Y%m%d%H%M%S")))
+                self.label_md5_data.setText(i.get('hash',{}).get('md5',''))
+                self.label_crc32_data.setText(i.get('hash',{}).get('crc32',''))
+                self.label_blake3_data.setText(thumb_name:=i.get('hash',{}).get('blake3',''))
+                self.label_sha1_data.setText(i.get('hash',{}).get('sha1',''))
+                self.label_sha256_data.setText(i.get('hash',{}).get('sha256',''))
+                break
+        thumb_name=sltk.join_path(self.vault_dir, 'snapshots', self.snap_id, 'thumbnails', thumb_name+'.webp')
+        if os.path.isfile(thumb_name):
+            self.ImageLabel.setImage(thumb_name)
+        else:
+            self.ImageLabel.setImage(map_icon(path[-1],False).pixmap(256,256))
+            self.ImageLabel.scaledToWidth(100)
+
+
+    def showEvent(self, e):
+        self.flag_running=True
+        self.mainwindow.hide()
+        self.resize(800, 500)
+        return super().showEvent(e)
+
+    def closeEvent(self, e):
+        self.flag_running=False
         self.mainwindow.show()
         return super().closeEvent(e)
