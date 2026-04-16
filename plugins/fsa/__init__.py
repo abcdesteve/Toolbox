@@ -17,9 +17,12 @@ import time
 import json
 import random
 import threading
+import multiprocessing
 from PIL import Image
 import pillow_heif
 pillow_heif.register_heif_opener()
+
+MAX_PROCESS = max(1, multiprocessing.cpu_count() // 2)
 
 EXT_PICTURE = ('.jpg', '.jpeg', '.jxl', '.png', '.apng',
                '.gif', '.bmp', '.tif', '.tiff', '.ico',
@@ -240,6 +243,38 @@ class FSA(QWidget, Ui_fsa):
         pass
 
 
+def _gen_snap(rel_path: list[str], full_path: str, lis_file: list, flag_calc_hash: bool, error_count, error_msg, lock) -> str:
+    try:
+        temp = {"path": rel_path, "size": os.path.getsize(full_path),
+                "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
+                "hash": {}, "type": ""}
+        # 暂不显示缩略图以提速
+        if flag_calc_hash:
+            temp['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
+        lis_file.append(temp)
+    except Exception as e:
+        with lock:
+            error_count.value += 1
+        error_msg = repr(e)
+    return full_path
+
+
+def _gen_thumb(rel_path: str, full_path: str, thumb_path: str, error_count, error_msg, lock) -> tuple[str, str]:
+    # 多进程启动的函数不能属于类
+    try:
+        with Image.open(full_path) as img:
+            img.thumbnail((256, 256), Image.Resampling.LANCZOS)  # LANCZOS(圈圈伪影) 6ms/BOX(块状锯齿) 4ms/NEAREST 3ms
+            img = img.convert("RGB")
+            # img = pillow_heif.from_pillow(img)
+            img.save(thumb_path, format='WEBP', quality=90, method=1)  # 90画质好很多，0比较糊
+    except Exception as e:
+        print(f'生成 {full_path} 的缩略图时出现错误：{e}')
+        with lock:
+            error_count.value += 1
+        error_msg = repr(e)
+    return rel_path, thumb_path
+
+
 class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
     def __init__(self, mainwindow: QMainWindow, main_dir):
         super().__init__()
@@ -331,7 +366,15 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 return result
 
     def create_snap(self):
+        def _gen_thumb_callback(result):
+            '''callback函数回传单个值，要手动解包\n\n此时在启动池的进程中运行，可以动self，但由于多线程还是不能动UI'''
+            rel_path, thumb_path = result
+            self.popup.currentItem = rel_path
+            self.popup.thumbnail = thumb_path
+            self.popup.processed += 1
+
         def worker(index_config: dict):
+            self.popup.title = '正在回溯快照……'
             parent_files = self.snap_retrace(parent_id, self_id)
             if parent_files == 'error':
                 return
@@ -347,23 +390,6 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             self.snap_config['statistics']['del'] = len(deleted_files)
             for i in new_files:
                 self.snap_config['statistics'][i['type']] += 1
-                rel_path = sltk.join_path(*i['path'])
-                self.popup.currentItem = rel_path
-                # 生成缩略图
-                if self.ckb_calc_hash.isChecked() and rel_path in thumbnail_map:
-                    try:
-                        full_path = thumbnail_map[rel_path]
-                        with Image.open(full_path) as img:
-                            img.thumbnail((256, 256), Image.Resampling.LANCZOS)  # LANCZOS(圈圈伪影) 6ms/BOX(块状锯齿) 4ms/NEAREST 3ms
-                            img.convert("RGB")
-                            thumb_path = sltk.join_path(self.vault_dir, "snapshots", self.snap_config["id"],
-                                                        "thumbnails", i['hash']['blake3'] + ".webp")
-                            # img = pillow_heif.from_pillow(img)
-                            img.save(thumb_path, format='WEBP', quality=90, method=1)  # 90画质好很多，0比较糊
-                            self.popup.thumbnail = thumb_path
-                            self.popup.processed += 1
-                    except Exception as e:
-                        print(f'生成 {full_path} 的缩略图时出现错误：{e}')
             self.snap_config['files'] = new_files
             self.snap_config['deleted'] = deleted_files
             # 保存快照
@@ -372,7 +398,39 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             # 更新index.json
             with open(sltk.join_path(self.vault_dir, 'index.json'), 'w', encoding='utf-8') as file:
                 json.dump(index_config, file)
-            self.popup.done_msg = ['快照创建成功', f"快照 {snap_comment} ({self_id}) 包含{self.snap_config['statistics']['file_count']}个文件"]
+
+            process_count = min(MAX_PROCESS, len(new_files))
+            self.popup.title = f'等待多进程启动…… ({process_count}/{multiprocessing.cpu_count()})'
+            mpManager = multiprocessing.Manager()
+            error_count = mpManager.Value('i', 0)
+            error_msg = mpManager.Value('s', '')
+            lock = mpManager.Lock()
+            # 生成缩略图
+            if self.ckb_calc_hash.isChecked():
+                with multiprocessing.Pool(process_count)as p:
+                    for i in new_files:
+                        rel_path = sltk.join_path(*i['path'])
+                        if rel_path in thumbnail_map:
+                            full_path = thumbnail_map[rel_path]
+                            thumb_path = sltk.join_path(self.vault_dir, "snapshots", self.snap_config["id"],
+                                                        "thumbnails", i['hash']['blake3'] + ".webp")
+                            p.apply_async(_gen_thumb, args=(rel_path, full_path, thumb_path, error_count, error_msg, lock), callback=_gen_thumb_callback, error_callback=print)
+                    # 这两步必须在with中，一离开with池就被销毁了
+                    self.popup.title = '正在生成缩略图……'
+                    p.close()  # 拒绝新提交
+                    p.join()  # 等待所有任务完成
+            if error_count.get() > 0:
+                self.popup.done_msg = [f'快照 {snap_comment} ({self_id}) 创建完成', f"{error_count.get()}个文件生成缩略图失败，最后一次错误信息：\n{error_msg.get()}\n\n\
+                                        快照包含{self.snap_config['statistics']['file_count']}个文件\n\
+                                        - 新增{self.snap_config['statistics']['add']}个文件\n\
+                                        - 修改{self.snap_config['statistics']['mod']}个文件\n\
+                                        - 删除{self.snap_config['statistics']['del']}个文件"]
+            else:
+                self.popup.done_msg = [f'快照 {snap_comment} ({self_id}) 创建成功',
+                                       f"快照包含{self.snap_config['statistics']['file_count']}个文件\n\
+                                        - 新增{self.snap_config['statistics']['add']}个文件\n\
+                                        - 修改{self.snap_config['statistics']['mod']}个文件\n\
+                                        - 删除{self.snap_config['statistics']['del']}个文件"]
             self.popup.is_done = True
 
         self_id = self.gen_uuid(8)
@@ -396,40 +454,42 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         with open(sltk.join_path(self.vault_dir, "snapshots", self_id, "manifest.json"), 'w', encoding='utf-8') as file:
             json.dump(self.snap_config, file)
 
-        self.popup = ProgressPopUp().run(self, '正在创建快照')
+        self.popup = ProgressPopUp().run(self, '')
         threading.Thread(target=worker, args=[index_config]).start()
 
     def snap_calc_new(self) -> tuple[list[dict], dict[str, str]]:
         '''由选中的文件生成快照信息，不会计算缩略图\n\n提供thumbnail_map以解决文件信息中不含绝对路径的问题\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
-        error_count = 0
+        def _gen_snap_callback(result):
+            full_path = result
+            self.popup.processed += 1
+            self.popup.currentItem = full_path
+
         lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
             "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
         self.popup.total = len(lis)
-        lis_file: list[dict] = []
+        process_count = min(MAX_PROCESS, len(lis))
+        self.popup.title = f'等待多进程启动…… ({process_count}/{multiprocessing.cpu_count()})'
+        mpManager = multiprocessing.Manager()
+        error_count = mpManager.Value('i', 0)
+        error_msg = mpManager.Value('s', '')
+        lock = mpManager.Lock()
+        lis_file: list[dict] = mpManager.list()
         thumbnail_map: dict[str, str] = {}
-        for i in lis:
-            try:
+        with multiprocessing.Pool(process_count) as p:
+            for i in lis:
                 path: list[list[str], list[str]] = i.data(1, Qt.ItemDataRole.UserRole)
                 full_path: str = sltk.join_path(*path[0], *path[1])
-                self.popup.processed += 1
-                self.popup.currentItem = full_path
                 if os.path.isfile(full_path):
-                    temp = {"path": path[1], "size": os.path.getsize(full_path),
-                            "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
-                            "hash": {}, "type": ""}
                     if full_path.lower().endswith(EXT_PICTURE):
                         thumbnail_map[sltk.join_path(*path[1])] = full_path
-                        # 暂不显示缩略图以提速
-                    if self.ckb_calc_hash.isChecked():
-                        temp['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
-                    lis_file.append(temp)
-            except Exception as e:
-                error_count += 1
-                error_msg = e  # e离开缩进之后不可用
-        if error_count > 0:
+                    p.apply_async(_gen_snap, args=(path[1], full_path, lis_file, self.ckb_calc_hash.isChecked(), error_count, error_msg, lock), callback=_gen_snap_callback, error_callback=print)
+            self.popup.title = '正在扫描文件……'
+            p.close()
+            p.join()
+        if error_count.get() > 0:  # ValueProxy不直接支持比较
             QMetaObject.invokeMethod(self, "show_scan_error", Qt.ConnectionType.QueuedConnection,
-                                     Q_ARG(str, 'create'), Q_ARG(int, error_count), Q_ARG(str, str(error_msg)))
-        return lis_file, thumbnail_map
+                                     Q_ARG(str, 'create'), Q_ARG(int, error_count.get()), Q_ARG(str, str(error_msg.get())))
+        return list(lis_file), thumbnail_map  # 记得转回正常类型，共享类型很多功能不完善
 
     def snap_retrace(self, from_id: str, self_id: str) -> list[dict] | str:
         '''从给定的快照id开始（含），一直回溯到根快照，重建给定id的完整文件信息\n\n注意回溯时不会考虑hash\n\n`self_id`只作为报错信息使用'''
@@ -584,7 +644,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                         str(int(self.label_count_data.text()) + 1))
             except Exception as e:
                 error_count += 1
-                error_msg = str(e)
+                error_msg = repr(e)  # e离开缩进之后不可用
         if error_count:
             self.show_scan_error('scan', error_count, error_msg)
         self.update_btn_status()
@@ -716,7 +776,8 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
 
 
 class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
-    sig_setTreeWidgetItemParent=Signal(QTreeWidgetItem,QTreeWidgetItem)
+    sig_setTreeWidgetItemParent = Signal(QTreeWidgetItem, QTreeWidgetItem)
+
     def __init__(self, mainwindow: QMainWindow):
         super().__init__()
         self.container = QWidget()
@@ -732,18 +793,18 @@ class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
 
         self.btn_return.clicked.connect(self.close)
         self.sig_setTreeWidgetItemParent.connect(self._setTreeWidgetItemParent)
-        self.TreeWidget_add.itemSelectionChanged.connect(lambda:self.load_detail('add'))
-        self.TreeWidget_mod.itemSelectionChanged.connect(lambda:self.load_detail('mod'))
-        self.TreeWidget_del.itemSelectionChanged.connect(lambda:self.load_detail('del'))
-        update_show_gallery=lambda:self.btn_show_gallery.setEnabled(bool(len(self.TreeWidget_add.selectedIndexes())+len(self.TreeWidget_mod.selectedIndexes())+len(self.TreeWidget_del.selectedIndexes())))
+        self.TreeWidget_add.itemSelectionChanged.connect(lambda: self.load_detail('add'))
+        self.TreeWidget_mod.itemSelectionChanged.connect(lambda: self.load_detail('mod'))
+        self.TreeWidget_del.itemSelectionChanged.connect(lambda: self.load_detail('del'))
+        def update_show_gallery(): return self.btn_show_gallery.setEnabled(bool(len(self.TreeWidget_add.selectedIndexes()) + len(self.TreeWidget_mod.selectedIndexes()) + len(self.TreeWidget_del.selectedIndexes())))
         self.TreeWidget_add.itemSelectionChanged.connect(update_show_gallery)
         self.TreeWidget_mod.itemSelectionChanged.connect(update_show_gallery)
         self.TreeWidget_del.itemSelectionChanged.connect(update_show_gallery)
 
-    def _setTreeWidgetItemParent(self, child:QTreeWidgetItem, parent:QTreeWidgetItem):
+    def _setTreeWidgetItemParent(self, child: QTreeWidgetItem, parent: QTreeWidgetItem):
         '''Slot+invokeMethod缺点是只能传递部分基本类型，而Signal可以传递任意类型'''
         parent.addChild(child)
-        self._flag_setParent_done=True
+        self._flag_setParent_done = True
 
     def _locateTreeWidget(self, path: list[str], file_type: str):
         '''root节点不能在子线程动，其他可以，而且建议用invisibleRootItem来统一所有节点的方法名'''
@@ -751,17 +812,17 @@ class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
         current_parent = w.invisibleRootItem()
         for dep in range(len(path)):  # 含头不含尾
             for i in range(current_parent.childCount()):
-                if current_parent.child(i).data(0, Qt.ItemDataRole.UserRole) == path[:dep+1]:
+                if current_parent.child(i).data(0, Qt.ItemDataRole.UserRole) == path[:dep + 1]:
                     current_parent = current_parent.child(i)
                     break
             else:
                 temp = QTreeWidgetItem(current_parent)
-                temp.setData(0, Qt.ItemDataRole.UserRole, path[:dep+1])
+                temp.setData(0, Qt.ItemDataRole.UserRole, path[:dep + 1])
                 temp.setText(0, path[dep])
                 temp.setExpanded(False)
-                self._flag_setParent_done=False
+                self._flag_setParent_done = False
                 self.sig_setTreeWidgetItemParent.emit(temp, current_parent)
-                while self._flag_setParent_done==False:
+                while self._flag_setParent_done == False:
                     time.sleep(0)
                 current_parent = temp
         # lis_items=w.findItems('*', Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0)
@@ -787,7 +848,7 @@ class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
             manifest = json.load(f)
 
         def worker():
-            QMetaObject.invokeMethod(self,'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id}) - 加载中...'))
+            QMetaObject.invokeMethod(self, 'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id}) - 加载中...'))
             for i in manifest['files']:
                 if not self.flag_running:
                     return
@@ -796,22 +857,23 @@ class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
                 if not self.flag_running:
                     return
                 self._locateTreeWidget(i['path'], 'del')
-            QMetaObject.invokeMethod(self,'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id})'))
+            QMetaObject.invokeMethod(self, 'setWindowTitle', Qt.ConnectionType.QueuedConnection, Q_ARG(str, f'快照详情 ({snap_id})'))
+        self.show()  # 先修改flag_running的值
         threading.Thread(target=worker).start()
-        self.show()
 
-    def load_detail(self,trigger:str):
-        lis_type=['add','mod','del']
-        MAP_TYPE={'add':self.TreeWidget_add,'mod':self.TreeWidget_mod,'del':self.TreeWidget_del}
-        selected_item=MAP_TYPE[trigger].selectedItems()
+    def load_detail(self, trigger: str):
+        lis_type = ['add', 'mod', 'del']
+        MAP_TYPE = {'add': self.TreeWidget_add, 'mod': self.TreeWidget_mod, 'del': self.TreeWidget_del}
+        selected_item = MAP_TYPE[trigger].selectedItems()
         if selected_item:
-            selected_item=selected_item[0]
-        else:return
-        path:list[str]=selected_item.data(0,Qt.ItemDataRole.UserRole)
+            selected_item = selected_item[0]
+        else:
+            return
+        path: list[str] = selected_item.data(0, Qt.ItemDataRole.UserRole)
         lis_type.remove(trigger)
         MAP_TYPE[lis_type[0]].clearSelection()
         MAP_TYPE[lis_type[1]].clearSelection()
-        if selected_item.childCount()>0:
+        if selected_item.childCount() > 0:
             self.label_file_path.setText(sltk.join_path(*path))
             self.label_size_data.setText('')
             self.label_mtime_data.setText('')
@@ -820,39 +882,38 @@ class SnapshotViewer(FluentWindow, Ui_snapshot_viewer):
             self.label_blake3_data.setText('')
             self.label_sha1_data.setText('')
             self.label_sha256_data.setText('')
-            self.ImageLabel.setImage(FluentIcon.icon(FluentIcon.FOLDER).pixmap(256,256))
+            self.ImageLabel.setImage(FluentIcon.icon(FluentIcon.FOLDER).pixmap(256, 256))
             self.ImageLabel.scaledToWidth(100)
             return
-        
+
         with open(sltk.join_path(self.vault_dir, 'snapshots', self.snap_id, 'manifest.json'), 'r', encoding='utf-8') as f:
             manifest = json.load(f)
-        for i in manifest['files']+manifest['deleted']:
-            i:dict[str,str|dict[str,str]]
-            if i['path']==path:
+        for i in manifest['files'] + manifest['deleted']:
+            i: dict[str, str | dict[str, str]]
+            if i['path'] == path:
                 self.label_file_path.setText(sltk.join_path(*path))
-                self.label_size_data.setText(sltk.bit2size(i.get('size',0)))
+                self.label_size_data.setText(sltk.bit2size(i.get('size', 0)))
                 self.label_mtime_data.setText(time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(str(i.get('last_edit', 19700101000000)), r"%Y%m%d%H%M%S")))
-                self.label_md5_data.setText(i.get('hash',{}).get('md5',''))
-                self.label_crc32_data.setText(i.get('hash',{}).get('crc32',''))
-                self.label_blake3_data.setText(thumb_name:=i.get('hash',{}).get('blake3',''))
-                self.label_sha1_data.setText(i.get('hash',{}).get('sha1',''))
-                self.label_sha256_data.setText(i.get('hash',{}).get('sha256',''))
+                self.label_md5_data.setText(i.get('hash', {}).get('md5', ''))
+                self.label_crc32_data.setText(i.get('hash', {}).get('crc32', ''))
+                self.label_blake3_data.setText(thumb_name := i.get('hash', {}).get('blake3', ''))
+                self.label_sha1_data.setText(i.get('hash', {}).get('sha1', ''))
+                self.label_sha256_data.setText(i.get('hash', {}).get('sha256', ''))
                 break
-        thumb_name=sltk.join_path(self.vault_dir, 'snapshots', self.snap_id, 'thumbnails', thumb_name+'.webp')
+        thumb_name = sltk.join_path(self.vault_dir, 'snapshots', self.snap_id, 'thumbnails', thumb_name + '.webp')
         if os.path.isfile(thumb_name):
             self.ImageLabel.setImage(thumb_name)
         else:
-            self.ImageLabel.setImage(map_icon(path[-1],False).pixmap(256,256))
+            self.ImageLabel.setImage(map_icon(path[-1], False).pixmap(256, 256))
             self.ImageLabel.scaledToWidth(100)
 
-
     def showEvent(self, e):
-        self.flag_running=True
+        self.flag_running = True
         self.mainwindow.hide()
         self.resize(800, 500)
         return super().showEvent(e)
 
     def closeEvent(self, e):
-        self.flag_running=False
+        self.flag_running = False
         self.mainwindow.show()
         return super().closeEvent(e)

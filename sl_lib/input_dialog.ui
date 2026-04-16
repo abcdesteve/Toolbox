@@ -98,8 +98,7 @@
       <string>dialog_lower_frame</string>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame{border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;}</string>
+      <string notr="true">QFrame{border-radius: 10px;}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -133,6 +132,9 @@ border-bottom-right-radius: 10px;}</string>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="PushButton" name="btn_cancel">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>取消</string>
           </property>
@@ -140,6 +142,9 @@ border-bottom-right-radius: 10px;}</string>
         </item>
         <item>
          <widget class="PrimaryPushButton" name="btn_ok">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>确定</string>
           </property>

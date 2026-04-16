@@ -6,19 +6,19 @@ from qfluentwidgets import *
 from sl_lib import *
 import theme_control
 
-from plugins.aam import AAM
-from plugins.wam import WAM, Utility
-from plugins.csl import CSL
-from plugins.fhc import FHC
-from plugins.fas import FAS
-
-from plugins.fsa import FSA
-from plugins.settings import Settings
-from plugins.about import About
-
 import os
 import sys
 import threading
+import multiprocessing
+
+from plugins.aam import AAM
+from plugins.wam import WAM
+from plugins.csl import CSL
+from plugins.fhc import FHC
+from plugins.fas import FAS
+from plugins.fsa import FSA
+from plugins.settings import Settings
+from plugins.about import About
 
 
 class Main(FluentWindow):
@@ -36,7 +36,6 @@ class Main(FluentWindow):
         self.subwin_settings = Settings(self, SETTINGS_PATH)
         self.subwin_about = About(os.path.dirname(__file__))
 
-
         self.addSubInterface(self.subwin_aam, MyFluentIcon.Android,
                              '安卓应用管理', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_wam, FluentIcon.APPLICATION,
@@ -48,8 +47,8 @@ class Main(FluentWindow):
         self.addSubInterface(self.subwin_fas, MyFluentIcon.DocumentSync,
                              '文件自动同步', NavigationItemPosition.SCROLL)
         self.addSubInterface(self.subwin_fsa, FluentIcon.HISTORY,
-                             '文件快照归档',NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.subwin_settings, FluentIcon.SETTING, 
+                             '文件快照归档', NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.subwin_settings, FluentIcon.SETTING,
                              '设置', NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.subwin_about, FluentIcon.INFO,
                              '关于', NavigationItemPosition.BOTTOM)
@@ -80,7 +79,7 @@ class Main(FluentWindow):
             else:
                 self.animation.setDuration(0)
             self.animation.setEasingCurve(
-                eval('QEasingCurve.'+self.subwin_settings.cfg.get(self.subwin_settings.cfg.animation_type)))
+                eval('QEasingCurve.' + self.subwin_settings.cfg.get(self.subwin_settings.cfg.animation_type)))
             # print(self.stackedWidget.currentIndex())
             match self.stackedWidget.currentIndex():
                 case 0:
@@ -139,7 +138,7 @@ class Main(FluentWindow):
             elif self.stackedWidget.currentIndex() == 3:
                 # event.pos()返回的是相对触发widget的坐标，被官方弃用
                 # event.position()返回的是相对屏幕的坐标
-                if event.position().x() <= self.width()//2:
+                if event.position().x() <= self.width() // 2:
                     self.subwin_fhc.lineedit_A.setPlainText(f'file:{drag_file}')
                 else:
                     self.subwin_fhc.lineedit_B.setPlainText(f'file:{drag_file}')
@@ -161,6 +160,7 @@ class Main(FluentWindow):
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()  # 修复打包后多个窗口同时运行的bug
     app = QApplication(sys.argv)
     fluent_translator = FluentTranslator()
     app.installTranslator(fluent_translator)

@@ -1,3 +1,10 @@
+from .progress_popup_ui import Ui_progress_popup
+from .input_dialog_ui import Ui_input_dialog
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
+from qfluentwidgets import *
 import os
 import logging
 import time
@@ -11,23 +18,15 @@ from PIL import Image
 import pillow_heif
 pillow_heif.register_heif_opener()
 
-from qfluentwidgets import *
-from qfluentwidgets.components.dialog_box.mask_dialog_base import MaskDialogBase
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-
-
-from .input_dialog_ui import Ui_input_dialog
-from .progress_popup_ui import Ui_progress_popup
 
 def benchmark(fx):
     def wrapper(*args, **kwargs):
-        start=time.time_ns()
+        start = time.time_ns()
         fx(*args, **kwargs)
-        end=time.time_ns()
+        end = time.time_ns()
         print(f'函数{fx.__name__}消耗{(end-start)/1000000}ms\n')
     return wrapper
+
 
 class sltk:
     "神龙工具集"
@@ -136,7 +135,7 @@ class sltk:
             if temp:
                 result.insert(0, temp)
             else:
-                if path: # 注意传入相对路径（无盘符时）path可能为空
+                if path:  # 注意传入相对路径（无盘符时）path可能为空
                     result.insert(0, path)
                 break
         return result
@@ -178,7 +177,7 @@ class sltk:
                 return f"{bit:.2f} {unit}"
             bit /= 1024.0
 
-    def calc_hash(file: str, md5: bool = False, crc32: bool = False, blake3: bool = False, sha1: bool = False, sha224: bool = False, sha256: bool = False, sha384: bool = False, sha512: bool = False, buffer_size: int = 1024*1024) -> dict[str, str]:
+    def calc_hash(file: str, md5: bool = False, crc32: bool = False, blake3: bool = False, sha1: bool = False, sha224: bool = False, sha256: bool = False, sha384: bool = False, sha512: bool = False, buffer_size: int = 1024 * 1024) -> dict[str, str]:
         '计算文件的哈希值'
         result = {}
         _md5, _crc32, _blake3, _sha1, _sha224, _sha256, _sha384, _sha512 = hashlib.md5(), 0, blake3lib.blake3(
@@ -191,7 +190,7 @@ class sltk:
                 if md5:
                     _md5.update(temp)
                 if crc32:
-                    _crc32 = calc_crc32(temp, _crc32) # 用zlib的比binascii更快
+                    _crc32 = calc_crc32(temp, _crc32)  # 用zlib的比binascii更快
                 if blake3:
                     _blake3.update(temp)
                 if sha1:
@@ -244,7 +243,7 @@ class QMessageBox:
             # MessageBox不支持关闭遮罩
             # widget = MessageBox(title, content, parent)
             # widget.clearMask()
-
+        widget.buttonLayout.setDirection(QBoxLayout.Direction.RightToLeft)  # 把确认按钮放右边
         widget.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
         return widget
 
@@ -273,8 +272,8 @@ class QMessageBox:
     def question(parent: QMainWindow, title, content, mask=True, yes_text='继续', no_text='取消') -> bool:
         widget = QMessageBox.base(parent, title, content, mask)
 
-        widget.yesButton.setShortcut('alt+y')
-        widget.cancelButton.setShortcut('alt+n')
+        widget.yesButton.setShortcut('Alt+Y, Enter, Return')
+        widget.cancelButton.setShortcut('Alt+N, Escape')
         widget.yesButton.setText(yes_text)
         widget.cancelButton.setText(no_text)
 
@@ -295,14 +294,19 @@ class InputDialog(MaskDialogBase, Ui_input_dialog):
         FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
-        self.btn_cancel.setShortcut('Alt+N')
-        self.btn_ok.setShortcut('Alt+Y')
+        # self.btn_cancel.setShortcut('Alt+N, Escape')
+        # self.shortcut_cancel = QShortcut('Alt+N, Escape', self, self.cancel, Qt.ShortcutContext.ApplicationShortcut)
+        # self.btn_ok.setShortcut('Alt+Y, Enter, Return')
+        # self.shortcut_ok = QShortcut('Alt+Y, Enter, Return', self, self.ok, Qt.ShortcutContext.ApplicationShortcut)
         self.btn_cancel.clicked.connect(self.cancel)
         self.btn_ok.clicked.connect(self.ok)
         self.title.setText(title)
         self.content.setText(content)
         sltk.unique_add_items(self.comboBox, options, format_item=False)
+        self.comboBox.dropButton.setVisible(bool(len(options)))
         self.comboBox.setReadOnly(not editable)
+        self.comboBox.setFocus()
+        self.status = False
         # self.show()
         self.exec()
         return self.comboBox.currentText() if self.status else None
@@ -317,10 +321,6 @@ class InputDialog(MaskDialogBase, Ui_input_dialog):
 
     # def closeEvent(self, arg: QCloseEvent):
     #     self.done(1)
-
-    # def keyPressEvent(self, event: QKeyEvent):
-    #     if event.key() in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
-    #         self.close()
 
 
 class StatisticsWidget(QWidget):
@@ -368,7 +368,7 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.currentItem = ""
         self.thumbnail = ""
         self.processed = -1
-        self.is_done=False
+        self.is_done = False
 
         self._total = 0
         self._title = ""
@@ -394,13 +394,13 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
             self._processed = self.processed
         if self.is_done:
             self.timer.stop()
-            QTimer.singleShot(0,lambda:QMessageBox.information(self.mainwindow,*self.done_msg))
+            QTimer.singleShot(0, lambda: QMessageBox.information(self.mainwindow, *self.done_msg))
             self.close()
 
-    def run(self, parent, title: str, done_msg: list[str,str] = ['处理完成',''],total: int = 0, delay: int = 1000, show_time=True):
+    def run(self, parent, title: str, done_msg: list[str, str] = ['处理完成', ''], total: int = 0, delay: int = 1000, show_time=True):
         super().__init__(parent)
-        self.mainwindow=parent
-        self.done_msg=done_msg
+        self.mainwindow = parent
+        self.done_msg = done_msg
         self.setupUi(self.widget)
         FluentStyleSheet.DIALOG.apply(self)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
@@ -408,7 +408,7 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.label_title.setText(title)
 
         self.setTotal(0)
-        if total: # 可能出现计算total很快，delay之后覆盖原值的情况
+        if total:  # 可能出现计算total很快，delay之后覆盖原值的情况
             QTimer().singleShot(delay, lambda: self.setTotal(total))
 
         self.label_time_left.setVisible(show_time)
@@ -430,7 +430,7 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.ProgressBar.setVisible(value != 0)
         self.IndeterminateProgressBar.setVisible(value == 0)
         return self
-    
+
     def setTitle(self, txt: str = ""):
         self.label_title.setText(txt)
 
@@ -452,20 +452,20 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
     def setProcessed(self, value: int):
         "`value`为当前实时进度，不是百分比\n\n需要设置`total`"
         if self.total:
-            percentage=value/self.total*100
+            percentage = value / self.total * 100
         else:
-            percentage=0
+            percentage = 0
         self.label_progress_data.setText('%.1f%% (%d/%d)' % (percentage, value, self.total))
         self.ProgressBar.setValue(int(percentage))
         return self
 
     def _updateTime(self):
         def format_time(seconds):
-            if seconds > 60*60*24:
+            if seconds > 60 * 60 * 24:
                 return "超过1天"
-            h = seconds//3600
+            h = seconds // 3600
             seconds %= 3600
-            m = seconds//60
+            m = seconds // 60
             seconds %= 60
             seconds = int(seconds)
             if h:
@@ -473,11 +473,11 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
             if m:
                 return '%02d:%02d' % (m, seconds)
             return f'{seconds}s'
-        past_time = time.time()-self.start_time
-        self.label_time_past.setText('已用时间：'+format_time(past_time))
-        if self.ProgressBar.value()*self.total!=0:
-            left_time = past_time/(self.ProgressBar.value()/100)-past_time
-            self.label_time_left.setText('剩余时间：'+format_time(left_time))
+        past_time = time.time() - self.start_time
+        self.label_time_past.setText('已用时间：' + format_time(past_time))
+        if self.ProgressBar.value() * self.total != 0:
+            left_time = past_time / (self.ProgressBar.value() / 100) - past_time
+            self.label_time_left.setText('剩余时间：' + format_time(left_time))
 
 
 class MyFluentIcon(FluentIconBase, Enum):

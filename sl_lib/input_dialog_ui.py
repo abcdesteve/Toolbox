@@ -66,8 +66,7 @@ class Ui_input_dialog(object):
 
         self.frame_lower = QFrame(input_dialog)
         self.frame_lower.setObjectName(u"frame_lower")
-        self.frame_lower.setStyleSheet(u"QFrame{border-bottom-left-radius: 10px;\n"
-"border-bottom-right-radius: 10px;}")
+        self.frame_lower.setStyleSheet(u"QFrame{border-radius: 10px;}")
         self.frame_lower.setFrameShape(QFrame.NoFrame)
         self.frame_lower.setFrameShadow(QFrame.Plain)
         self.frame_lower.setLineWidth(0)
@@ -84,11 +83,13 @@ class Ui_input_dialog(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.btn_cancel = PushButton(self.frame_lower)
         self.btn_cancel.setObjectName(u"btn_cancel")
+        self.btn_cancel.setFocusPolicy(Qt.NoFocus)
 
         self.horizontalLayout_2.addWidget(self.btn_cancel)
 
         self.btn_ok = PrimaryPushButton(self.frame_lower)
         self.btn_ok.setObjectName(u"btn_ok")
+        self.btn_ok.setFocusPolicy(Qt.NoFocus)
 
         self.horizontalLayout_2.addWidget(self.btn_ok)
 

@@ -75,8 +75,7 @@ class Ui_progress_popup(object):
 
         self.frame_lower = QFrame(progress_popup)
         self.frame_lower.setObjectName(u"frame_lower")
-        self.frame_lower.setStyleSheet(u"QFrame{border-bottom-left-radius: 10px;\n"
-"border-bottom-right-radius: 10px;}")
+        self.frame_lower.setStyleSheet(u"QFrame{border-radius: 10px;}")
         self.frame_lower.setFrameShape(QFrame.NoFrame)
         self.frame_lower.setFrameShadow(QFrame.Plain)
         self.frame_lower.setLineWidth(0)
