@@ -114,6 +114,30 @@ class Ui_snapshot_viewer(object):
 
         self.horizontalLayout_13.addLayout(self.vbox_del)
 
+        self.vbox_move = QVBoxLayout()
+        self.vbox_move.setObjectName(u"vbox_move")
+        self.label_title_move = QLabel(self.layoutWidget)
+        self.label_title_move.setObjectName(u"label_title_move")
+        self.label_title_move.setFont(font)
+        self.label_title_move.setAlignment(Qt.AlignCenter)
+
+        self.vbox_move.addWidget(self.label_title_move)
+
+        self.TreeWidget_move = TreeWidget(self.layoutWidget)
+        __qtreewidgetitem3 = QTreeWidgetItem()
+        __qtreewidgetitem3.setText(0, u"1");
+        self.TreeWidget_move.setHeaderItem(__qtreewidgetitem3)
+        self.TreeWidget_move.setObjectName(u"TreeWidget_move")
+        self.TreeWidget_move.setAlternatingRowColors(True)
+        self.TreeWidget_move.setUniformRowHeights(True)
+        self.TreeWidget_move.setAnimated(True)
+        self.TreeWidget_move.setHeaderHidden(True)
+
+        self.vbox_move.addWidget(self.TreeWidget_move)
+
+
+        self.horizontalLayout_13.addLayout(self.vbox_move)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_13)
 
@@ -370,6 +394,7 @@ class Ui_snapshot_viewer(object):
         self.label_title_add.setText(QCoreApplication.translate("snapshot_viewer", u"\u65b0\u589e", None))
         self.label_title_mod.setText(QCoreApplication.translate("snapshot_viewer", u"\u4fee\u6539", None))
         self.label_title_del.setText(QCoreApplication.translate("snapshot_viewer", u"\u5220\u9664", None))
+        self.label_title_move.setText(QCoreApplication.translate("snapshot_viewer", u"\u79fb\u52a8/\u91cd\u547d\u540d", None))
         self.btn_return.setText(QCoreApplication.translate("snapshot_viewer", u"\u8fd4\u56de", None))
         self.btn_show_gallery.setText(QCoreApplication.translate("snapshot_viewer", u"\u67e5\u770b\u7f29\u7565\u56fe\u5e93", None))
 #if QT_CONFIG(accessibility)

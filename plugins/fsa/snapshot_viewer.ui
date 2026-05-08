@@ -170,6 +170,46 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QVBoxLayout" name="vbox_move">
+           <item>
+            <widget class="QLabel" name="label_title_move">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>移动/重命名</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="TreeWidget" name="TreeWidget_move">
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="uniformRowHeights">
+              <bool>true</bool>
+             </property>
+             <property name="animated">
+              <bool>true</bool>
+             </property>
+             <property name="headerHidden">
+              <bool>true</bool>
+             </property>
+             <column>
+              <property name="text">
+               <string notr="true">1</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
        <item>

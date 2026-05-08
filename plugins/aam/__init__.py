@@ -41,7 +41,7 @@ class AAM(QWidget, Ui_aam):
         'using `__file__` of parent which will direct to the dir *inside* the program'
         self.NEAR_DIR = os.path.dirname(sys.argv[0])
         'using `sys.argv[0]` which will direct to the dir *near* the program'
-        self.adb_path = lambda specific=False: '\"'+sltk.join_path(self.INSIDE_DIR, 'adb.exe')+'\" '+\
+        self.adb_path = lambda specific=False: '\"'+sltk.join_path(self.INSIDE_DIR, 'bin', 'adb.exe')+'\" '+\
                         (f'-s {self.cmb_device.currentText()}' if specific else '')
         'when `flag` is `True`, a specific device is returned'
 

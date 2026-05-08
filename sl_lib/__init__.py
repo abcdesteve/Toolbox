@@ -489,6 +489,7 @@ class MyFluentIcon(FluentIconBase, Enum):
     SheildProhibited = 'shieldProhibited'
     ToolBox = 'toolbox'
     UnFrigid = 'unfrigid'
+    Flash = 'flash'
 
     def path(self, theme=Theme.AUTO) -> str:
         return sltk.join_path(os.path.dirname(__file__), 'icons', f'{self.value}_{getIconColor(theme)}.svg')

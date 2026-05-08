@@ -22,7 +22,7 @@ class About(QWidget,Ui_about):
         self.signal_connect()
         try:
             with open(sltk.join_path(parent_dir,'update.md'),'r',encoding='utf-8')as file:
-                self.textEdit.setMarkdown('\n'.join(file.readlines()[9:]))
+                self.textEdit.setMarkdown('\n'.join(file.readlines()))
         except:
             pass
 

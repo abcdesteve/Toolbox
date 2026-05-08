@@ -42,13 +42,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="SegmentedToolWidget" name="toggle_filter">
-       <property name="minimumSize">
-        <size>
-         <width>118</width>
-         <height>33</height>
-        </size>
-       </property>
+      <widget class="SegmentedToolWidget" name="switch_filter">
        <property name="maximumSize">
         <size>
          <width>90</width>
@@ -185,16 +179,19 @@
       </spacer>
      </item>
      <item>
-      <widget class="CheckBox" name="ckb_calc_hash">
-       <property name="toolTip">
-        <string>建议勾选，可用于验证文件是否被修改或压缩，取消勾选后将只记录文件名
-仅在文件存在云端不方便下载时取消勾选</string>
-       </property>
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>计算文件哈希/生成缩略图</string>
+        <string>扫描模式：</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="SegmentedToolWidget" name="switch_scan_mode">
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>16777215</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -224,11 +221,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>CheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
   <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
@@ -275,7 +267,6 @@
   <tabstop>btn_add_folder</tabstop>
   <tabstop>btn_del</tabstop>
   <tabstop>TreeWidget</tabstop>
-  <tabstop>ckb_calc_hash</tabstop>
   <tabstop>btn_cancel</tabstop>
   <tabstop>btn_create</tabstop>
  </tabstops>

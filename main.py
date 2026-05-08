@@ -3,14 +3,6 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from qfluentwidgets import *
 
-from sl_lib import *
-import theme_control
-
-import os
-import sys
-import threading
-import multiprocessing
-
 from plugins.aam import AAM
 from plugins.wam import WAM
 from plugins.csl import CSL
@@ -20,12 +12,19 @@ from plugins.fsa import FSA
 from plugins.settings import Settings
 from plugins.about import About
 
+from sl_lib import *
+import theme_control
+
+import os
+import sys
+import threading
+import multiprocessing
 
 class Main(FluentWindow):
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
-        self.setWindowTitle('神龙工具箱v2.2')
+        self.setWindowTitle('神龙工具箱v2.3')
 
         self.subwin_aam = AAM(self, os.path.dirname(__file__))
         self.subwin_wam = WAM(self, SETTINGS_PATH)
@@ -158,15 +157,14 @@ class Main(FluentWindow):
     def closeEvent(self, event: QCloseEvent):
         app.exit()
 
-
+# 子进程__name__为__mp_main__
 if __name__ == '__main__':
     multiprocessing.freeze_support()  # 修复打包后多个窗口同时运行的bug
     app = QApplication(sys.argv)
     fluent_translator = FluentTranslator()
     app.installTranslator(fluent_translator)
 
-    SETTINGS_PATH = sltk.join_path(os.path.expandvars(
-        r'%appdata%'), 'Avoconal', '神龙工具箱')
+    SETTINGS_PATH = sltk.join_path(os.path.expandvars(r'%appdata%'), 'Avoconal', '神龙工具箱')
     window = Main()
 
     sys.exit(app.exec())

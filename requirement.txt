@@ -1,0 +1,7 @@
+blake3
+importlib-metadata
+numpy
+pillow
+pillow-heif
+pyside6==6.10.0
+pyside6-fluent-widgets

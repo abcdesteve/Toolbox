@@ -161,13 +161,14 @@ class Ui_fsa(object):
 
         self.ScrollArea = ScrollArea(self.layoutWidget)
         self.ScrollArea.setObjectName(u"ScrollArea")
+        self.ScrollArea.setMaximumSize(QSize(16777215, 320))
         self.ScrollArea.setFrameShape(QFrame.NoFrame)
         self.ScrollArea.setFrameShadow(QFrame.Plain)
         self.ScrollArea.setLineWidth(0)
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 197, 235))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 267, 314))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setSpacing(2)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -261,6 +262,35 @@ class Ui_fsa(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_6)
 
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_move = QLabel(self.scrollAreaWidgetContents)
+        self.label_move.setObjectName(u"label_move")
+        self.label_move.setFont(font1)
+
+        self.horizontalLayout_9.addWidget(self.label_move)
+
+        self.label_move_data = QLabel(self.scrollAreaWidgetContents)
+        self.label_move_data.setObjectName(u"label_move_data")
+        self.label_move_data.setFont(font1)
+
+        self.horizontalLayout_9.addWidget(self.label_move_data)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_9.addItem(self.horizontalSpacer_4)
+
+        self.pgr_move = ProgressRing(self.scrollAreaWidgetContents)
+        self.pgr_move.setObjectName(u"pgr_move")
+        self.pgr_move.setMinimumSize(QSize(75, 75))
+        self.pgr_move.setMaximumSize(QSize(75, 75))
+        self.pgr_move.setTextVisible(True)
+
+        self.horizontalLayout_9.addWidget(self.pgr_move)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_9)
+
         self.ScrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.ScrollArea)
@@ -279,6 +309,9 @@ class Ui_fsa(object):
 
         self.verticalLayout_2.addWidget(self.btn_export_snap)
 
+        self.verticalLayout_2.setStretch(3, 1)
+        self.verticalLayout_2.setStretch(4, 100)
+        self.verticalLayout_2.setStretch(5, 1)
         self.splitter.addWidget(self.layoutWidget)
 
         self.verticalLayout_3.addWidget(self.splitter)
@@ -300,6 +333,7 @@ class Ui_fsa(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
+        self.verticalLayout_3.setStretch(1, 1)
         QWidget.setTabOrder(self.cmb_folder, self.btn_add_folder)
         QWidget.setTabOrder(self.btn_add_folder, self.btn_del_folder)
         QWidget.setTabOrder(self.btn_del_folder, self.TableWidget)
@@ -336,6 +370,8 @@ class Ui_fsa(object):
         self.label_mod_data.setText(QCoreApplication.translate("fsa", u"0", None))
         self.label_del.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\uff1a", None))
         self.label_del_data.setText(QCoreApplication.translate("fsa", u"0", None))
+        self.label_move.setText(QCoreApplication.translate("fsa", u"\u79fb\u52a8/\u91cd\u547d\u540d\uff1a", None))
+        self.label_move_data.setText(QCoreApplication.translate("fsa", u"0", None))
         self.btn_view_snap.setText(QCoreApplication.translate("fsa", u"\u67e5\u770b\u8be6\u60c5", None))
         self.btn_export_snap.setText(QCoreApplication.translate("fsa", u"\u5bfc\u51fa\u5feb\u7167", None))
         self.btn_del_snap.setText(QCoreApplication.translate("fsa", u"\u5220\u9664\u5feb\u7167", None))

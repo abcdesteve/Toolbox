@@ -294,7 +294,7 @@ class Ui_aam(object):
         self.btn_revoke_permission.setText(QCoreApplication.translate("aam", u"\u964d\u6743", None))
         self.btn_get_app.setText(QCoreApplication.translate("aam", u"\u83b7\u53d6\u5305\u540d", None))
         self.btn_clear.setText(QCoreApplication.translate("aam", u"\u6e05\u7a7a\u65e5\u5fd7", None))
-        self.textedit_log.setMarkdown(QCoreApplication.translate("aam", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.2\n"
+        self.textedit_log.setMarkdown(QCoreApplication.translate("aam", u"\u795e\u9f99\u5de5\u5177\u7bb1 v2.3\n"
 "\n"
 "\u4f5c\u8005\uff1aabcdesteve\n"
 "\n"
@@ -355,7 +355,7 @@ class Ui_aam(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v2.2</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u795e\u9f99\u5de5\u5177\u7bb1 v2.3</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'FiraCode Nerd Font';\">\u4f5c\u8005\uff1aabcdesteve</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px;"
                         " margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"

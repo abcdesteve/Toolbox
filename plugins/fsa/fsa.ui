@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -92,7 +92,7 @@
      </widget>
      <widget class="VerticalSeparator" name="VerticalSeparator"/>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,1,100,1,0,0">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0">
          <item>
@@ -204,6 +204,12 @@
        </item>
        <item>
         <widget class="ScrollArea" name="ScrollArea">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>320</height>
+          </size>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -221,8 +227,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>197</width>
-            <height>235</height>
+            <width>267</width>
+            <height>314</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -402,6 +408,66 @@
              </item>
              <item>
               <widget class="ProgressRing" name="pgr_del">
+               <property name="minimumSize">
+                <size>
+                 <width>75</width>
+                 <height>75</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>75</height>
+                </size>
+               </property>
+               <property name="textVisible">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_move">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>移动/重命名：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_move_data">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>0</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="ProgressRing" name="pgr_move">
                <property name="minimumSize">
                 <size>
                  <width>75</width>
