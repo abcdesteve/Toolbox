@@ -249,21 +249,20 @@ class FSA(QWidget, Ui_fsa):
         pass
 
 
-def _gen_snap(rel_path: list[str], full_path: str, parent_files: list, lis_files: list, scan_mode: str, error_count, error_msg, lock) -> str:
+def _gen_snap(rel_path: list[str], full_path: str, parent_files: dict[tuple,dict], lis_files: list, scan_mode: str, error_count, error_msg, lock) -> str:
     try:
         data = {"path": rel_path, "size": os.path.getsize(full_path),
                 "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
                 "hash": {}, "type": ""}
-        # 暂不显示缩略图以提速
+        # 暂不生成缩略图以提速
         if scan_mode == 'Loose':
-            for temp in parent_files:
-                if temp['path'] == rel_path:
-                    if temp['size'] == data['size'] and temp['last_edit'] == data['last_edit']:
-                        data['type'] = 'same'
-                        # print(f'宽松模式，跳过 {full_path} 的哈希计算')
-                    else:
-                        data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
-                    break
+            if tuple(rel_path) in parent_files.keys():
+                temp=parent_files[tuple(rel_path)]
+                if temp['size'] == data['size'] and temp['last_edit'] == data['last_edit']:
+                    data['type'] = 'same'
+                    # print(f'宽松模式，跳过 {full_path} 的哈希计算')
+                else:
+                    data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
             else:
                 data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
         elif scan_mode == 'Strict':
@@ -492,18 +491,22 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.popup = ProgressPopUp().run(self, '')
         threading.Thread(target=worker, args=[index_config]).start()
 
-    def snap_calc_new(self, parent_files) -> tuple[list[dict], dict[str, str]]:
+    def snap_calc_new(self, parent_data:list[dict]) -> tuple[list[dict], dict[str, str]]:
         '''由选中的文件生成快照信息，不会计算缩略图\n\n提供thumbnail_map以解决文件信息中不含绝对路径的问题\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
         def _gen_snap_callback(result):
             full_path = result
             self.popup.processed += 1
             self.popup.currentItem = full_path
 
+        # 索引父文件列表加速查找，tuple才能作为key，_gen_snap比较的时候记得转tuple
+        parent_files={tuple(i['path']):i for i in parent_data}
+
         lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
             "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
         self.popup.total = len(lis)
         process_count = max(1, min(MAX_PROCESS, len(lis)))  # 无变动时可能为0
         self.popup.title = f'等待多进程启动…… ({process_count}/{multiprocessing.cpu_count()})'
+
         mpManager = multiprocessing.Manager()
         error_count = mpManager.Value('i', 0)
         error_msg = mpManager.Value('s', '')
@@ -566,11 +569,10 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         for old_item in ref:
             is_match = False
             for new_item in obj:
-                if new_item['type'] == 'same':
-                    is_match = True
-                    break
                 if old_item['path'] == new_item['path']:
                     is_match = True
+                    if new_item['type'] == 'same':
+                        break
                     # 都有hash时才严格比较，否则宽松比较并更新new_item的hash
                     if 'blake3' in new_item['hash'] and 'blake3' in old_item['hash']:
                         if old_item['hash']['blake3'] == new_item['hash']['blake3']:
