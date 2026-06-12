@@ -1,0 +1,99 @@
+name: Build 神龙工具箱
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Select branch to build'
+        required: true
+        default: 'v2.3'
+        type: choice
+        options:
+          - v1.0
+          - v1.1
+          - v1.2
+          - v1.3
+          - v2.0
+          - v2.1
+          - v2.2
+          - v2.3
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.branch }}
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install -r requirement.txt
+
+    - name: Build release version (no console)
+      run: |
+        $branchName = "${{ inputs.branch }}"
+        $exeName = "神龙工具箱_${branchName}_amd64.exe"
+        pyinstaller `
+          --onefile `
+          --windowed `
+          --name "$exeName" `
+          --distpath "./dist" `
+          --buildpath "./build" `
+          --specpath "./spec" `
+          --add-data "bin:bin" `
+          --add-data "sl_lib/icons:sl_lib/icons" `
+          --add-data "update.md:." `
+          main.py
+
+    - name: Build debug version (with console)
+      run: |
+        $branchName = "${{ inputs.branch }}"
+        $exeName = "神龙工具箱_${branchName}_amd64_debug.exe"
+        pyinstaller `
+          --onefile `
+          --console `
+          --name "$exeName" `
+          --distpath "./dist" `
+          --buildpath "./build" `
+          --specpath "./spec" `
+          --add-data "bin:bin" `
+          --add-data "sl_lib/icons:sl_lib/icons" `
+          --add-data "update.md:." `
+          main.py
+
+    - name: Clean up build artifacts
+      if: always()
+      run: |
+        if (Test-Path "./build") {
+          Remove-Item -Recurse -Force "./build"
+        }
+        if (Test-Path "./spec") {
+          Remove-Item -Recurse -Force "./spec"
+        }
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: builds-${{ inputs.branch }}
+        path: ./dist/*.exe
+        retention-days: 90
+
+    - name: Create release
+      if: success()
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./dist/*.exe
+        tag_name: build-${{ inputs.branch }}-${{ github.run_number }}
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
