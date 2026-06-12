@@ -48,6 +48,7 @@ class Ui_progress_popup(object):
         font = QFont()
         font.setPointSize(16)
         self.label_title.setFont(font)
+        self.label_title.setWordWrap(True)
 
         self.verticalLayout.addWidget(self.label_title)
 

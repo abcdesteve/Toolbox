@@ -413,7 +413,7 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
 
         self.label_time_left.setVisible(show_time)
 
-        self.start_time = time.time()
+        self.start_time = self.stage_time = time.time()
 
         self.timer = QTimer(interval=1000)
         self.timer.timeout.connect(self._auto_update)
@@ -459,8 +459,13 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
         self.ProgressBar.setValue(int(percentage))
         return self
 
+    def new_stage(self):
+        self.stage_time = time.time()
+
     def _updateTime(self):
-        def format_time(seconds):
+        def format_time(seconds: int | float):
+            if seconds <= 0:
+                return '正在计算'
             if seconds > 60 * 60 * 24:
                 return "超过1天"
             h = seconds // 3600
@@ -473,10 +478,11 @@ class ProgressPopUp(MaskDialogBase, Ui_progress_popup):
             if m:
                 return '%02d:%02d' % (m, seconds)
             return f'{seconds}s'
-        past_time = time.time() - self.start_time
-        self.label_time_past.setText('已用时间：' + format_time(past_time))
-        if self.ProgressBar.value() * self.total != 0:
-            left_time = past_time / (self.ProgressBar.value() / 100) - past_time
+
+        self.label_time_past.setText('已用时间：' + format_time(time.time() - self.start_time))
+        if self.processed * self.total != 0:
+            past_time = time.time() - self.stage_time
+            left_time = past_time / (self.processed / self.total) - past_time
             self.label_time_left.setText('剩余时间：' + format_time(left_time))
 
 

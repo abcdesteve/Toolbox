@@ -80,6 +80,9 @@
             <pointsize>16</pointsize>
            </font>
           </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>

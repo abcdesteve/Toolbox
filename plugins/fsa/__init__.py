@@ -243,30 +243,16 @@ class FSA(QWidget, Ui_fsa):
                                         self.TableWidget.item(self.TableWidget.currentRow(), 1).text(), del_id),
                                     yes_text="确认删除"):
                 self.popup = ProgressPopUp().run(self, '', delay=0)
-                threading.Thread(target=self.subwin_snapshot_wizard.snap_delete, args=(del_id, self.popup)).start()
+                threading.Thread(target=self.subwin_snapshot_wizard.delete_snap, args=(del_id, self.popup)).start()
 
     def export_snap(self):
         pass
 
 
-def _gen_snap(rel_path: list[str], full_path: str, parent_files: dict[tuple,dict], lis_files: list, scan_mode: str, error_count, error_msg, lock) -> str:
+def _gen_snap(data:dict, full_path: str, lis_files: list, error_count, error_msg, lock) -> str:
     try:
-        data = {"path": rel_path, "size": os.path.getsize(full_path),
-                "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
-                "hash": {}, "type": ""}
         # 暂不生成缩略图以提速
-        if scan_mode == 'Loose':
-            if tuple(rel_path) in parent_files.keys():
-                temp=parent_files[tuple(rel_path)]
-                if temp['size'] == data['size'] and temp['last_edit'] == data['last_edit']:
-                    data['type'] = 'same'
-                    # print(f'宽松模式，跳过 {full_path} 的哈希计算')
-                else:
-                    data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
-            else:
-                data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
-        elif scan_mode == 'Strict':
-            data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
+        data['hash'] = sltk.calc_hash(full_path, md5=True, crc32=True, blake3=True, sha1=True, sha256=True)
         lis_files.append(data)
     except Exception as e:
         with lock:
@@ -405,18 +391,21 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
 
         def worker(config_index: dict):
             self.popup.title = '正在回溯快照……'
-            parent_files, error_msg = self.snap_retrace(parent_id)
+            parent_files, error_msg = self.retrace_snap(parent_id)
             if error_msg:
                 QMessageBox.information('快照创建已被撤销', f'请手动删除当前节点 {self_id}\n错误信息：\n\n{error_msg}')
                 return
-            self.popup.title = '正在扫描文件……'
-            all_files, thumbnail_map = self.snap_calc_new(parent_files)
+            self.popup.new_stage()
+            self.popup.title = '准备扫描文件……'
+            all_files, thumbnail_map = self.calc_new_snap(parent_files)
             self.popup.total = len(all_files)
             self.popup.processed = 0
-            self.popup.start_time = time.time()
+            self.popup.new_stage()
             self.popup.title = '正在计算差异……'
             self.snap_config['statistics']['file_count'] = len(all_files)  # calc_delta后all_files被污染
-            new_files, deleted_files = self.snap_calc_delta(parent_files, all_files)
+            new_files, deleted_files = self.calc_snap_delta(parent_files, all_files)
+            self.popup.new_stage()
+            self.popup.title = '正在保存快照……'
             # 保存结果
             self.snap_config['statistics']['delta'] = len(new_files) + len(deleted_files)
             self.snap_config['statistics']['del'] = len(deleted_files)
@@ -432,6 +421,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 json.dump(config_index, file)
 
             process_count = max(1, min(MAX_PROCESS, len(new_files)))  # 无变动时可能为0
+            self.popup.new_stage()
             self.popup.title = f'等待多进程启动…… ({process_count}/{multiprocessing.cpu_count()})'
             mpManager = multiprocessing.Manager()
             error_count = mpManager.Value('i', 0)
@@ -448,6 +438,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                                                         "thumbnails", i['hash']['blake3'] + ".webp")
                             p.apply_async(_gen_thumb, args=(rel_path, full_path, thumb_path, error_count, error_msg, lock), callback=_gen_thumb_callback, error_callback=print)
                     # 这两步必须在with中，一离开with池就被销毁了
+                    self.popup.new_stage()
                     self.popup.title = '正在生成缩略图……'
                     p.close()  # 拒绝新提交
                     p.join()  # 等待所有任务完成
@@ -491,7 +482,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         self.popup = ProgressPopUp().run(self, '')
         threading.Thread(target=worker, args=[index_config]).start()
 
-    def snap_calc_new(self, parent_data:list[dict]) -> tuple[list[dict], dict[str, str]]:
+    def calc_new_snap(self, parent_data: list[dict]) -> tuple[list[dict], dict[str, str]]:
         '''由选中的文件生成快照信息，不会计算缩略图\n\n提供thumbnail_map以解决文件信息中不含绝对路径的问题\n\n注意未勾选`检查哈希`时字典中`hash`项为空'''
         def _gen_snap_callback(result):
             full_path = result
@@ -499,12 +490,13 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             self.popup.currentItem = full_path
 
         # 索引父文件列表加速查找，tuple才能作为key，_gen_snap比较的时候记得转tuple
-        parent_files={tuple(i['path']):i for i in parent_data}
+        parent_files = {tuple(i['path']): i for i in parent_data}
 
         lis: list[QTreeWidgetItem] = [i for i in self.TreeWidget.findItems(
             "*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0) if not i.data(0, Qt.ItemDataRole.UserRole)]
         self.popup.total = len(lis)
         process_count = max(1, min(MAX_PROCESS, len(lis)))  # 无变动时可能为0
+        self.popup.new_stage()
         self.popup.title = f'等待多进程启动…… ({process_count}/{multiprocessing.cpu_count()})'
 
         mpManager = multiprocessing.Manager()
@@ -520,7 +512,23 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 if os.path.isfile(full_path):
                     if full_path.lower().endswith(EXT_PICTURE):
                         thumbnail_map[sltk.join_path(*path[1])] = full_path
-                    p.apply_async(_gen_snap, args=(path[1], full_path, parent_files, lis_files, self.switch_scan_mode.currentRouteKey(), error_count, error_msg, lock), callback=_gen_snap_callback, error_callback=print)
+
+                    data = {"path": path[1], "size": os.path.getsize(full_path),
+                            "last_edit": int(time.strftime(r"%Y%m%d%H%M%S", time.gmtime(os.path.getmtime(full_path)))),
+                            "hash": {}, "type": ""}
+                    if self.switch_scan_mode.currentRouteKey() == 'Fast':
+                        _gen_snap_callback(full_path)
+                        lis_files.append(data)
+                        continue
+                    if self.switch_scan_mode.currentRouteKey() == 'Loose' and tuple(path[1]) in parent_files.keys():
+                        temp = parent_files[tuple(path[1])]
+                        if temp['size'] == data['size'] and temp['last_edit'] == data['last_edit']:
+                            data['type']= 'same'
+                            _gen_snap_callback(full_path)
+                            lis_files.append(data)
+                            continue
+                    p.apply_async(_gen_snap, args=(data, full_path, lis_files, error_count, error_msg, lock), callback=_gen_snap_callback, error_callback=print)
+            self.popup.new_stage()
             self.popup.title = '正在扫描文件……'
             p.close()
             p.join()
@@ -529,7 +537,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                                      Q_ARG(str, 'create'), Q_ARG(int, error_count.get()), Q_ARG(str, str(error_msg.get())))
         return list(lis_files), thumbnail_map  # 记得转回正常类型，共享类型很多功能不完善
 
-    def snap_retrace(self, from_id: str) -> tuple[list[dict] | str, str]:
+    def retrace_snap(self, from_id: str) -> tuple[list[dict] | str, str]:
         '''从给定的快照id开始（含），一直回溯到根快照，重建给定id的完整文件信息\n\n注意回溯时不会考虑hash\n\n`self_id`只作为报错信息使用'''
         def is_duplicate(path: list[str], lis: list[dict]):
             for i in lis:
@@ -556,7 +564,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             QMessageBox.warning(self, "快照回溯失败", f"回溯节点 {from_id} 时出现异常，节点可能已经损坏或被异常删除")
             return '', repr(e)
 
-    def snap_calc_delta(self, ref: list[dict[str, str | int | list | dict]], obj: list[dict[str, str | int | list | dict]]) -> tuple[list[dict[str, str | int | list | dict]], list[dict[str, list[str]]]]:
+    def calc_snap_delta(self, ref: list[dict[str, str | int | list | dict]], obj: list[dict[str, str | int | list | dict]]) -> tuple[list[dict[str, str | int | list | dict]], list[dict[str, list[str]]]]:
         '''!!!会修改obj，不要在该方法后复用obj!!!\n\n比较两个快照，返回`files`与`deleted`两个列表，格式与`manifest.json`相同'''
         lis_files: list[dict] = []
         lis_deleted: list[dict[str, list[str]]] = []
@@ -600,14 +608,14 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
         del obj
         return lis_files, lis_deleted
 
-    def snap_rebase(self, obj_id: str, new_parent_id: str):
+    def rebase_snap(self, obj_id: str, new_parent_id: str):
         '''将快照obj_id的父节点改为new_parent_id'''
         with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
             obj_config = json.load(file)
         try:
-            obj_state, _ = self.snap_retrace(obj_id)
-            new_parent_state, _ = self.snap_retrace(new_parent_id)
-            lis_file, lis_deleted = self.snap_calc_delta(new_parent_state, obj_state)
+            obj_state, _ = self.retrace_snap(obj_id)
+            new_parent_state, _ = self.retrace_snap(new_parent_id)
+            lis_file, lis_deleted = self.calc_snap_delta(new_parent_state, obj_state)
             obj_config['parent'] = new_parent_id
             obj_config['statistics']['delta'] = len(lis_file) + len(lis_deleted)
             obj_config['statistics']['del'] = len(lis_deleted)
@@ -623,7 +631,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             temp = self if self.isVisible() else self.mainwindow
             QMessageBox.warning(temp, '变更快照父节点失败', f"尝试更改快照 {obj_config['comment']} ({obj_id}) 的父节点时出现异常，变更已被撤销\n\n{e}")
 
-    def snap_delete(self, obj_id: str, popup: ProgressPopUp):
+    def delete_snap(self, obj_id: str, popup: ProgressPopUp):
         '''删除快照obj_id'''
         history = []
         with open(sltk.join_path(self.vault_dir, "snapshots", obj_id, "manifest.json"), 'r', encoding='utf-8') as file:
@@ -639,7 +647,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     config: dict = json.load(file)
                 if config['parent'] == obj_id:
                     popup.currentItem = f'正在变基子快照 {config["comment"]} ({config["id"]})'
-                    self.snap_rebase(config['id'], parent_id)
+                    self.rebase_snap(config['id'], parent_id)
                     history.append(config['id'])
                     # 迁移缩略图，变基之后需要重新读取manifest
                     old_thumbnails = os.listdir(sltk.join_path(self.vault_dir, "snapshots", obj_id, "thumbnails"))
@@ -733,8 +741,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 if not self.file_filter(full_path) or full_path in previous_items:
                     continue
                 treeWidgetItem = QTreeWidgetItem(parent)
-                treeWidgetItem.setFlags(treeWidgetItem.flags(
-                ) & ~Qt.ItemFlag.ItemIsEditable & ~Qt.ItemFlag.ItemIsUserCheckable & ~Qt.ItemFlag.ItemIsUserTristate)
+                treeWidgetItem.setFlags(treeWidgetItem.flags() & ~Qt.ItemFlag.ItemIsEditable & ~Qt.ItemFlag.ItemIsUserCheckable & ~Qt.ItemFlag.ItemIsUserTristate)
                 treeWidgetItem.setText(0, final_path)
 
                 if os.path.isfile(full_path):
@@ -742,23 +749,17 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                     # temp.setCheckState(2,Qt.CheckState.Unchecked)
                     treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, False)
                     temp = sltk.split_path(full_path)
-                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [
-                                           temp[:-(depth + 1)], temp[-(depth + 1):]])
-                    self.label_count_data.setText(
-                        str(int(self.label_count_data.text()) + 1))
+                    treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [temp[:-(depth + 1)], temp[-(depth + 1):]])
+                    self.label_count_data.setText(str(int(self.label_count_data.text()) + 1))
                 # 二次判断防止无效符号链接
                 elif os.path.isdir(full_path):
                     if flag_include_children or depth == 0:
-                        treeWidgetItem.setIcon(
-                            0, map_icon(final_path, True))
+                        treeWidgetItem.setIcon(0, map_icon(final_path, True))
                         # temp.setCheckState(2,Qt.CheckState.Checked)
-                        treeWidgetItem.setData(
-                            0, Qt.ItemDataRole.UserRole, True)
+                        treeWidgetItem.setData(0, Qt.ItemDataRole.UserRole, True)
                         temp = sltk.split_path(full_path)
-                        treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [
-                                               temp[:-(depth + 1)], temp[-(depth + 1):]])
-                        count, error = self.recurse_folder(
-                            full_path, flag_include_children, previous_items, treeWidgetItem, depth + 1)
+                        treeWidgetItem.setData(1, Qt.ItemDataRole.UserRole, [temp[:-(depth + 1)], temp[-(depth + 1):]])
+                        count, error = self.recurse_folder(full_path, flag_include_children, previous_items, treeWidgetItem, depth + 1)
                         fail_count += count
                         if treeWidgetItem.childCount() == 0:
                             if parent:
@@ -783,8 +784,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
                 # QMessageBox.information(self,"提示",f"{fail_count}个文件添加失败\n最后一次错误信息：\n{error}")
         else:
             return fail_count, error
-        QMetaObject.invokeMethod(
-            self, "update_btn_status", Qt.ConnectionType.QueuedConnection)
+        QMetaObject.invokeMethod(self, "update_btn_status", Qt.ConnectionType.QueuedConnection)
 
     def calc_file_count(self):
         return sum([0 if item.data(0, Qt.ItemDataRole.UserRole)else 1 for item in self.TreeWidget.findItems("*", Qt.MatchFlag.MatchWildcard | Qt.MatchFlag.MatchRecursive, 0)])
@@ -794,8 +794,7 @@ class SnapshotWizard(FluentWindow, Ui_snapshot_wizard):
             if i.parent():
                 i.parent().removeChild(i)
             else:
-                self.TreeWidget.takeTopLevelItem(
-                    self.TreeWidget.indexOfTopLevelItem(i))
+                self.TreeWidget.takeTopLevelItem(self.TreeWidget.indexOfTopLevelItem(i))
         self.label_count_data.setText(str(self.calc_file_count()))
         self.update_btn_status()
 
