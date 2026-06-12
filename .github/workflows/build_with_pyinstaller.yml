@@ -48,8 +48,7 @@ jobs:
           --windowed `
           --name "$exeName" `
           --distpath "./dist" `
-          --buildpath "./build" `
-          --specpath "./spec" `
+          --workpath "./build" `
           --add-data "bin:bin" `
           --add-data "sl_lib/icons:sl_lib/icons" `
           --add-data "update.md:." `
@@ -64,8 +63,7 @@ jobs:
           --console `
           --name "$exeName" `
           --distpath "./dist" `
-          --buildpath "./build" `
-          --specpath "./spec" `
+          --workpath "./build" `
           --add-data "bin:bin" `
           --add-data "sl_lib/icons:sl_lib/icons" `
           --add-data "update.md:." `
